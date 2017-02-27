@@ -44,9 +44,15 @@ test {
 }
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter")
-    compile("org.springframework:spring-web")
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile 'org.springframework.boot:spring-boot-starter'
+    compile 'org.springframework:spring-web'
+
+    compile 'javax.inject:javax.inject:1'
+    compile 'org.projectlombok:lombok:1.16.10'
+
+    compile 'me.ramswaroop.jbot:jbot:3.0.2'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
 
 task wrapper(type: Wrapper) {
