@@ -6,9 +6,6 @@
 *.jar
 *.war
 *.ear
-/gamification.iws
-/gamification.ipr
-/gamification.iml
 !/gradle/wrapper/gradle-wrapper.jar
 .gradle/
 build/
