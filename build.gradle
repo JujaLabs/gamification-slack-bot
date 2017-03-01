@@ -1,0 +1,60 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.1.RELEASE")
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+group 'ua.com.juja'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+
+jar {
+    baseName = "gamification-slack-bot"
+    version = "1"
+}
+
+description = "microservices-gamification-slack-bot"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+test.testLogging {
+    events "skipped", "failed"
+    exceptionFormat "SHORT"
+    showStandardStreams = true
+}
+
+test {
+    afterTest { desc, result ->
+        println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
+    }
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter'
+    compile 'org.springframework:spring-web'
+
+    compile 'javax.inject:javax.inject:1'
+    compile 'org.projectlombok:lombok:1.16.10'
+
+    compile 'me.ramswaroop.jbot:jbot:3.0.2'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.3'
+}
