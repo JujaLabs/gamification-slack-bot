@@ -1,6 +1,6 @@
 package juja.microservices.gamification.slackbot.controller;
 
-import juja.microservices.gamification.slackbot.entities.CodenjoyRequest;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -17,29 +17,34 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 /**
  * Created by Nikol on 3/4/2017.
  */
-public class AchievementControllerTest {
+public class CodenjoyControllerTest {
     private static final String EXPECTED_REQUEST = "{\"from\":\"Bill\",\"firstPlace\":\"Walter\",\"secondPlace\":\"Bob\",\"thirdPlace\":\"Jonh\"}";
-    private static final String RESPONSE = "[\"Walter\",\"Bob\",\"Jonh\"]";
+    private static final String EXPECTED_RESPONSE = "[\"Walter\",\"Bob\",\"Jonh\"]";
+    private static final String CODENJOY_URL = "/achieve/codenjoy";
+    private CodenjoyController codenjoyController;
+    private RestTemplate restTemplate;
 
+    @Before
+    public void setup(){
+        restTemplate = new RestTemplate();
+        codenjoyController = new CodenjoyController(restTemplate);
+    }
 
     @Test
     public void sendCodenjoy() throws Exception {
-        RestTemplate restTemplate = new RestTemplate();
         MockRestServiceServer server = MockRestServiceServer.bindTo(restTemplate).build();
-        server.expect(manyTimes(), requestTo("/achieve/codenjoy"))
+        server.expect(manyTimes(), requestTo(CODENJOY_URL))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(createRequestMatcher())
-                .andRespond(withSuccess(RESPONSE, MediaType.TEXT_HTML));
-        CodenjoyRequest codenjoyRequest = new CodenjoyRequest("Bill", "Walter", "Bob", "Jonh");
+                .andRespond(withSuccess(EXPECTED_RESPONSE, MediaType.TEXT_HTML));
 
-        String actualResponse = restTemplate.postForObject("/achieve/codenjoy", codenjoyRequest, String.class);
+        String actualResponse = codenjoyController.sendCodenjoy("Bill", "Walter", "Bob", "Jonh");
 
-        assertEquals(RESPONSE, actualResponse);
+        assertEquals(EXPECTED_RESPONSE, actualResponse);
         server.verify();
     }
 
     private RequestMatcher createRequestMatcher() {
         return request -> assertEquals(EXPECTED_REQUEST, request.getBody().toString());
     }
-
 }
