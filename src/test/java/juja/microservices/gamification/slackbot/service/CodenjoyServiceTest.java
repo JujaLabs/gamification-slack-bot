@@ -1,4 +1,4 @@
-package juja.microservices.gamification.slackbot.controller;
+package juja.microservices.gamification.slackbot.service;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,17 +17,17 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 /**
  * Created by Nikol on 3/4/2017.
  */
-public class CodenjoyControllerTest {
+public class CodenjoyServiceTest {
     private static final String EXPECTED_REQUEST = "{\"from\":\"Bill\",\"firstPlace\":\"Walter\",\"secondPlace\":\"Bob\",\"thirdPlace\":\"Jonh\"}";
     private static final String EXPECTED_RESPONSE = "[\"Walter\",\"Bob\",\"Jonh\"]";
     private static final String CODENJOY_URL = "/achieve/codenjoy";
-    private CodenjoyController codenjoyController;
+    private CodenjoyService codenjoyService;
     private RestTemplate restTemplate;
 
     @Before
     public void setup(){
         restTemplate = new RestTemplate();
-        codenjoyController = new CodenjoyController(restTemplate);
+        codenjoyService = new CodenjoyService(restTemplate);
     }
 
     @Test
@@ -38,7 +38,7 @@ public class CodenjoyControllerTest {
                 .andExpect(createRequestMatcher())
                 .andRespond(withSuccess(EXPECTED_RESPONSE, MediaType.TEXT_HTML));
 
-        String actualResponse = codenjoyController.sendCodenjoy("Bill", "Walter", "Bob", "Jonh");
+        String actualResponse = codenjoyService.sendCodenjoy("Bill", "Walter", "Bob", "Jonh");
 
         assertEquals(EXPECTED_RESPONSE, actualResponse);
         server.verify();
