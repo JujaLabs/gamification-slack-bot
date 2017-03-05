@@ -9,7 +9,6 @@ import lombok.Getter;
  */
 @Getter
 public class CodenjoyRequest {
-
     private String from;
     private String firstPlace;
     private String secondPlace;
@@ -36,8 +35,6 @@ public class CodenjoyRequest {
                 .append(secondPlace).append("\n")
                 .append("thirdPlace: ")
                 .append(thirdPlace).append("\n");
-
-
         return stringBuilder.toString();
     }
 

@@ -1,4 +1,5 @@
 package juja.microservices.gamification.slackbot.controller;
+
 import juja.microservices.gamification.slackbot.entities.CodenjoyRequest;
 import org.springframework.web.client.RestTemplate;
 
@@ -7,9 +8,8 @@ import org.springframework.web.client.RestTemplate;
  */
 
 public class CodenjoyController {
-    RestTemplate restTemplate;
-
     private static final String CODENJOY_URL = "/achieve/codenjoy";
+    private RestTemplate restTemplate;
 
     public CodenjoyController(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;

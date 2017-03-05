@@ -25,7 +25,7 @@ public class CodenjoyControllerTest {
     private RestTemplate restTemplate;
 
     @Before
-    public void setup(){
+    public void setup() {
         restTemplate = new RestTemplate();
         codenjoyController = new CodenjoyController(restTemplate);
     }
