@@ -6,5 +6,5 @@ import juja.microservices.gamification.slackbot.model.DailyAchievement;
  * @author Danil Kuznetsov
  */
 public interface GamificationService {
-    public String sendDailyAchievement(DailyAchievement daily);
+    String sendDailyAchievement(DailyAchievement daily);
 }
