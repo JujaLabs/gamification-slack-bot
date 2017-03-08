@@ -4,7 +4,7 @@ import juja.microservices.gamification.slackbot.entities.CodenjoyRequest;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * Created by Nikol on 3/4/2017.
+ * Created by Nikolay on 3/4/2017.
  */
 
 public class CodenjoyController {
