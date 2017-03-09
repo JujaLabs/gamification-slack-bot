@@ -3,6 +3,7 @@ package juja.microservices.gamification.slackbot.dao;
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
 import juja.microservices.gamification.slackbot.model.CodenjoyAchievment;
 import juja.microservices.gamification.slackbot.model.DailyAchievement;
+import juja.microservices.gamification.slackbot.model.ThanksAchievement;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -19,8 +20,8 @@ public class RestGamificationRepository implements GamificationRepository {
     private final RestTemplate restTemplate;
 
     private final String URL_SEND_DAILY = "/achieve/daily";
-
     private final String URL_SEND_CODENJOY = "/achieve/codenjoy";
+    private final String URL_SEND_THANKS = "/achieve/thanks";
 
     @Inject
     public RestGamificationRepository(RestTemplate restTemplate) {
@@ -54,6 +55,20 @@ public class RestGamificationRepository implements GamificationRepository {
         String result = "";
         try {
             ResponseEntity<String> response = restTemplate.exchange(URL_SEND_CODENJOY, HttpMethod.POST, request, String.class);
+            result = response.getBody();
+        } catch (HttpClientErrorException ex) {
+            throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
+        }
+        return result;
+    }
+
+    @Override
+    public String saveThanksAchievement(ThanksAchievement thanks) {
+
+        HttpEntity<ThanksAchievement> request = new HttpEntity<>(thanks, setupBaseHttpHeaders());
+        String result = "";
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(URL_SEND_THANKS, HttpMethod.POST, request, String.class);
             result = response.getBody();
         } catch (HttpClientErrorException ex) {
             throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
