@@ -3,6 +3,7 @@ package juja.microservices.gamification.slackbot.service;
 import juja.microservices.gamification.slackbot.dao.GamificationRepository;
 import juja.microservices.gamification.slackbot.model.CodenjoyAchievment;
 import juja.microservices.gamification.slackbot.model.DailyAchievement;
+import juja.microservices.gamification.slackbot.model.ThanksAchievement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,5 +68,21 @@ public class DefaultGamificationServiceTest {
         //then
         assertThat(result, equalTo(expectedAchievementId));
         verify(gamificationRepository).saveCodenjoyAchievement(codenjoyAchievment);
+    }
+
+    @Test
+    public void shouldSaveNewThanksAndReturnNewAchievementId() {
+
+        //given
+        String expectedAchievementId = "100";
+        ThanksAchievement thanksAchievement = new ThanksAchievement("Bill", "Bob", "Thanks to Bob");
+        given(gamificationRepository.saveThanksAchievement(thanksAchievement)).willReturn(expectedAchievementId);
+
+        //when
+        String result = gamificationService.sendThanksAchievement(thanksAchievement);
+
+        //then
+        assertThat(result, equalTo(expectedAchievementId));
+        verify(gamificationRepository).saveThanksAchievement(thanksAchievement);
     }
 }
