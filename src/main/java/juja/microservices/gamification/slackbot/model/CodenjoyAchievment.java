@@ -1,11 +1,13 @@
 package juja.microservices.gamification.slackbot.model;
 
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * Created by Nikol on 3/4/2017.
  */
 @Getter
+@ToString
 public class CodenjoyAchievment {
     private String from;
     private String firstPlace;
