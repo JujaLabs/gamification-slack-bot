@@ -1,6 +1,6 @@
 package juja.microservices.gamification.slackbot.controller;
 
-import juja.microservices.gamification.slackbot.model.CodenjoyAchievment;
+import juja.microservices.gamification.slackbot.utils.CodenjoyHandler;
 import me.ramswaroop.jbot.core.slack.models.RichMessage;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
 
 /**
  * Created by Nikol on 3/9/2017.
@@ -24,6 +22,7 @@ public class SlackCommandController {
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public RichMessage onReceiveSlashCommand(@RequestParam("token") String token,
                                              @RequestParam("user_id") String userId,
+                                             @RequestParam("user_name") String userName,
                                              @RequestParam("command") String command,
                                              @RequestParam("text") String text,
                                              @RequestParam("response_url") String responseUrl) {
@@ -32,7 +31,8 @@ public class SlackCommandController {
             return new RichMessage("Sorry! You're not lucky enough to use our slack command.");
         }
         /** build response */
-        //parse message
+        CodenjoyHandler codenjoyHandler = new CodenjoyHandler();
+        codenjoyHandler.recieveCodenjoyAchievment(userName, text);
         return null;
     }
 
