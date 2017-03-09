@@ -1,5 +1,6 @@
 package juja.microservices.gamification.slackbot.dao;
 
+import juja.microservices.gamification.slackbot.model.CodenjoyAchievment;
 import juja.microservices.gamification.slackbot.model.DailyAchievement;
 
 /**
@@ -8,4 +9,6 @@ import juja.microservices.gamification.slackbot.model.DailyAchievement;
 
 public interface GamificationRepository {
     String saveDailyAchievement(DailyAchievement daily);
+
+    String saveCodenjoyAchievement(CodenjoyAchievment codenjoy);
 }

@@ -1,6 +1,7 @@
 package juja.microservices.gamification.slackbot.dao;
 
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
+import juja.microservices.gamification.slackbot.model.CodenjoyAchievment;
 import juja.microservices.gamification.slackbot.model.DailyAchievement;
 import org.junit.Before;
 import org.junit.Rule;
@@ -83,5 +84,41 @@ public class RestGamificationRepositoryTest {
         //when
         gamificationRepository.saveDailyAchievement(new DailyAchievement("101", "description"));
     }
+
+    @Test
+    public void shouldReturnIdAchievementWhenSendCodenjoyToRemoteGamificationService() {
+        //given
+        String expectedRequestBody = "{\"from\":\"Bill\",\"firstPlace\":\"Walter\",\"secondPlace\":\"Bob\",\"thirdPlace\":\"Jonh\"}";
+        String expectedRequestHeader = "application/json";
+        mockServer.expect(requestTo("/achieve/codenjoy"))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
+                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
+                .andRespond(withSuccess("1000", MediaType.APPLICATION_JSON));
+        //when
+        String result = gamificationRepository.saveCodenjoyAchievement(new CodenjoyAchievment("Bill", "Walter", "Bob", "Jonh"));
+
+        // then
+        mockServer.verify();
+        assertThat(result, equalTo("1000"));
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenSendCodenjoyToRemoteGamificationServiceThrowException() {
+        // given
+        String expectedRequestBody = "{\"from\":\"Bill\",\"firstPlace\":\"Walter\",\"secondPlace\":\"Bob\",\"thirdPlace\":\"Jonh\"}";
+        String expectedRequestHeader = "application/json";
+        mockServer.expect(requestTo("/achieve/codenjoy"))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
+                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
+                .andRespond(withBadRequest().body("bad request"));
+        //then
+        thrown.expect(GamificationExchangeException.class);
+        thrown.expectMessage(containsString("Gamification Exchange Error"));
+        //when
+        gamificationRepository.saveCodenjoyAchievement(new CodenjoyAchievment("Bill", "Walter", "Bob", "Jonh"));
+    }
+
 }
 
