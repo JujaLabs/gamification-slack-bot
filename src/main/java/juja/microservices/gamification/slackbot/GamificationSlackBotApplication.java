@@ -2,8 +2,12 @@ package juja.microservices.gamification.slackbot;
 
 import juja.microservices.gamification.slackbot.dao.GamificationRepository;
 import juja.microservices.gamification.slackbot.dao.RestGamificationRepository;
+import juja.microservices.gamification.slackbot.dao.RestUserRepository;
+import juja.microservices.gamification.slackbot.dao.UserRepository;
 import juja.microservices.gamification.slackbot.service.DefaultGamificationService;
+import juja.microservices.gamification.slackbot.service.DefaultUserService;
 import juja.microservices.gamification.slackbot.service.GamificationService;
+import juja.microservices.gamification.slackbot.service.UserService;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.boot.SpringApplication;
@@ -43,6 +47,16 @@ public class GamificationSlackBotApplication {
     @Bean
     public GamificationService gamificationService() {
         return new DefaultGamificationService(gamificationDao());
+    }
+
+    @Bean
+    public UserRepository userDao(){
+        return new RestUserRepository(restTemplate());
+    }
+
+    @Bean
+    public UserService userService(){
+        return new DefaultUserService(userDao());
     }
 
     private ClientHttpRequestFactory httpRequestFactory() {
