@@ -1,65 +1,62 @@
 package juja.microservices.gamification.slackbot.utils;
 
+import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
 import juja.microservices.gamification.slackbot.model.CodenjoyAchievment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by Nikol on 3/9/2017.
  */
 public class CodenjoyHandler {
-    private final int expectedArrayLength = 4;
-    private final String regExpForSplit = "-";
-    private final String[] tokens = {"/codenjoy", "1th", "2th", "3th"};
+    /**
+     * Slack
+     * Usernames must be all lowercase. They cannot be longer than 21 characters and
+     * can only contain letters, numbers, periods, hyphens, and underscores.
+     * ([a-z0-9\.\_\-]){1,21}
+     * Command example -1th @slack_nick_name -2th @slack_nick_name2 -3th @slack_nick_name3
+     * quick test regExp http://regexr.com/
+     */
+    private final String namePattern = "([a-z0-9\\.\\_\\-]){1,21}";
+    private final String commandPattern =   "-1th\\s@" + namePattern + "\\s" +
+                                            "-2th\\s@" + namePattern + "\\s" +
+                                            "-3th\\s@" + namePattern;
+    private final String regExpForSplit = " -";
+    private final char slackNameFirstChar = '@';
 
-    //     /codenjoy -1th @slack_nick_name -2th @slack_nick_name2 -3th @slack_nick_name3
-    public CodenjoyAchievment recieveCodenjoyAchievment(String from, String text) {
-        String[] parametersArray = createParametersArray(text);
-        checkParametersArray(parametersArray);
-        return createCodenjoyAchievment(from, parametersArray);
+    public CodenjoyAchievment recieveCodenjoyAchievment(String from, String command) {
+        checkCommand(command);
+        return createCodenjoyAchievment(from, createNamesList(command));
     }
 
-    private void checkParametersArray(String[] array){
-        checkArrayLength(array);
-        checkOrder(array);
-    }
-
-    private void checkArrayLength(String[] array) {
-        if (array.length != expectedArrayLength) {
-            throw new RuntimeException("wrong command parameters count");
+    private void checkCommand (String command){
+        if (command == null){
+            throw new WrongCommandFormatException(String.format("Wrong command text expected %s, but actual null",
+                    "-1th @slack_nick_name -2th @slack_nick_name2 -3th @slack_nick_name3", command));
+        }
+        if(!Pattern.matches(commandPattern, command)){
+            throw new WrongCommandFormatException(String.format("Wrong command text expected %s, but actual %s",
+                    "-1th @slack_nick_name -2th @slack_nick_name2 -3th @slack_nick_name3", command));
         }
     }
 
-    private void checkOrder(String[] array) {
-        for (int i = 0; i < array.length; i++) {
-            if(!array[i].contains(tokens[i])){
-                throw new RuntimeException(String.format("wrong parameter %s", array[i]));
-            }
-        }
+    private CodenjoyAchievment createCodenjoyAchievment(String from, List<String> names){
+        return new CodenjoyAchievment(from, names.get(0), names.get(1), names.get(2)); //todo something with the magic numbers
     }
 
-    private String[] trimArrayElements(String[] array) {
-        String[] result = new String[array.length];
-        for (int i = 0; i < array.length; i++) {
-            result[i] = array[i].trim();
-        }
-        return result;
+    private List<String> createNamesList(String command) {
+        List<String> parameters = Arrays.asList(command.split(regExpForSplit));
+        return extractNames(parameters);
     }
 
-    private CodenjoyAchievment createCodenjoyAchievment(String from, String[] array){
-        List<String> nicknames = extractNickNames(array);
-        return new CodenjoyAchievment(from, nicknames.get(0), nicknames.get(1), nicknames.get(2));
-    }
-
-    private String[] createParametersArray(String text) {
-        return trimArrayElements(text.split(regExpForSplit));
-    }
-
-    private List<String> extractNickNames(String[] array){
+    private List<String> extractNames(List<String> parameters){
         List<String> result = new ArrayList<>();
-        for (int i = 1; i < array.length; i++) {
-            result.add(array[i].substring(array[i].indexOf('@')));
+        for (String parameter : parameters) {
+            parameter.trim();
+            result.add(parameter.substring(parameter.indexOf(slackNameFirstChar)));
         }
         return result;
     }
