@@ -1,5 +1,6 @@
 package juja.microservices.gamification.slackbot.utils;
 
+import juja.microservices.gamification.slackbot.dao.DummyUserRepository;
 import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
 import juja.microservices.gamification.slackbot.model.CodenjoyAchievment;
 import org.junit.Before;
@@ -15,7 +16,7 @@ public class CodenjoyHandlerTest {
 
     @Before
     public void setup(){
-        codenjoyHandler = new CodenjoyHandler();
+        codenjoyHandler = new CodenjoyHandler(new DummyUserRepository());
     }
 
     @Test
@@ -23,9 +24,9 @@ public class CodenjoyHandlerTest {
         //given
         final String commandText = "-1th @slack_nick_name -2th @slack_nick_name2 -3th @slack_nick_name3";
         final CodenjoyAchievment expectedCodenjoy = new CodenjoyAchievment("from",
-                "@slack_nick_name",
-                "@slack_nick_name2",
-                "@slack_nick_name3");
+                "@slack_nick_nameUser",
+                "@slack_nick_name2User",
+                "@slack_nick_name3User");
         //when
         CodenjoyAchievment codenjoy = codenjoyHandler.recieveCodenjoyAchievment("from", commandText);
         //then
