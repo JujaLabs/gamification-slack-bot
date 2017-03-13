@@ -25,7 +25,6 @@ public class CodenjoyHandler {
         return createCodenjoyAchievment(from, recieveUserNamesBySlackNames(slackNames));
     }
 
-
     private List<String> recieveUserNamesBySlackNames(List<String> slackNames) {
         List<String> result = new ArrayList<>();
         for (String slackName : slackNames) {
@@ -48,9 +47,9 @@ public class CodenjoyHandler {
          * quick test regExp http://regexr.com/
          */
         private final String namePattern = "([a-z0-9\\.\\_\\-]){1,21}";
-        private final String commandPattern = "-1th\\s@" + namePattern + "\\s" +
-                "-2th\\s@" + namePattern + "\\s" +
-                "-3th\\s@" + namePattern;
+        private final String commandPattern =   "-1th\\s@" + namePattern + "\\s" +
+                                                "-2th\\s@" + namePattern + "\\s" +
+                                                "-3th\\s@" + namePattern;
         private final String regExpForSplit = " -";
         private final char slackNameFirstChar = '@';
 

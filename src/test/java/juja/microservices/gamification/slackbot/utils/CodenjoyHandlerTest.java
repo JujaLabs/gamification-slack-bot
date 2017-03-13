@@ -15,12 +15,12 @@ public class CodenjoyHandlerTest {
     private CodenjoyHandler codenjoyHandler;
 
     @Before
-    public void setup(){
+    public void setup() {
         codenjoyHandler = new CodenjoyHandler(new DummyUserRepository());
     }
 
     @Test
-    public void receiveCodenjoyAchievmentTest(){
+    public void receiveCodenjoyAchievmentTest() {
         //given
         final String commandText = "-1th @slack_nick_name -2th @slack_nick_name2 -3th @slack_nick_name3";
         final CodenjoyAchievment expectedCodenjoy = new CodenjoyAchievment("from",
@@ -34,7 +34,7 @@ public class CodenjoyHandlerTest {
     }
 
     @Test(expected = WrongCommandFormatException.class)
-    public void receiveCodenjoyAchievmentIfCommandNullTest(){
+    public void receiveCodenjoyAchievmentIfCommandNullTest() {
         //given
         final String commandText = null;
         //when
@@ -42,7 +42,7 @@ public class CodenjoyHandlerTest {
     }
 
     @Test(expected = WrongCommandFormatException.class)
-    public void receiveCodenjoyAchievmentIfWrongParametersCountTest(){
+    public void receiveCodenjoyAchievmentIfWrongParametersCountTest() {
         //given
         final String commandText = "-1th @slack_nick_name -3th @slack_nick_name3";
         //when
@@ -50,7 +50,7 @@ public class CodenjoyHandlerTest {
     }
 
     @Test(expected = WrongCommandFormatException.class)
-    public void receiveCodenjoyAchievmentIfWrongParametersOrderTest(){
+    public void receiveCodenjoyAchievmentIfWrongParametersOrderTest() {
         //given
         final String commandText = "-2th @slack_nick_name2 -1th @slack_nick_name -3th @slack_nick_name3";
         //when
@@ -58,7 +58,7 @@ public class CodenjoyHandlerTest {
     }
 
     @Test(expected = WrongCommandFormatException.class)
-    public void receiveCodenjoyAchievmentIfWrongCommandSlackNameWithoutDog(){
+    public void receiveCodenjoyAchievmentIfWrongCommandSlackNameWithoutDog() {
         //given
         final String commandText = "-1th @slack_nick_name -2th slack_nick_name2 -3th @slack_nick_name3";
         //when
@@ -66,7 +66,7 @@ public class CodenjoyHandlerTest {
     }
 
     @Test(expected = WrongCommandFormatException.class)
-    public void receiveCodenjoyAchievmentIfWrongCommandWithForbiddenSymbol(){
+    public void receiveCodenjoyAchievmentIfWrongCommandWithForbiddenSymbol() {
         //given
         final String commandText = "-1th @slack_nick*name -2th slack_nick_name2 -3th @slack_nick_name3";
         //when
@@ -74,7 +74,7 @@ public class CodenjoyHandlerTest {
     }
 
     @Test(expected = WrongCommandFormatException.class)
-    public void receiveCodenjoyAchievmentIfEmptyCommand(){
+    public void receiveCodenjoyAchievmentIfEmptyCommand() {
         //given
         final String commandText = "";
         //when
