@@ -20,8 +20,7 @@ public class CodenjoyHandler {
     }
 
     public CodenjoyAchievment recieveCodenjoyAchievment(String from, String command) {
-        CodenjoyParcer parcer = new CodenjoyParcer();
-        List<String> slackNames = parcer.recieveSlackNames(command);
+        List<String> slackNames = new CodenjoyParcer().recieveSlackNames(command);
         return createCodenjoyAchievment(from, recieveUserNamesBySlackNames(slackNames));
     }
 
