@@ -2,19 +2,19 @@ package juja.microservices.gamification.slackbot.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Objects;
-
 /**
- * Created by Artem on 08.03.2017.
+ * Created by Artem
  */
 
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode
 public class User {
 
     private String uuid;
@@ -40,24 +40,5 @@ public class User {
         this.linkedin = linkedin;
         this.facebook = facebook;
         this.twitter = twitter;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        User user = (User) o;
-        return Objects.equals(uuid, user.uuid) &&
-                Objects.equals(gmail, user.gmail) &&
-                Objects.equals(slack, user.slack) &&
-                Objects.equals(skype, user.skype) &&
-                Objects.equals(linkedin, user.linkedin) &&
-                Objects.equals(facebook, user.facebook) &&
-                Objects.equals(twitter, user.twitter);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(uuid, gmail, slack, skype, linkedin, facebook, twitter);
     }
 }
