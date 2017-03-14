@@ -43,6 +43,11 @@ public class GamificationSlackBotApplication {
         return new DefaultGamificationService(gamificationDao());
     }
 
+    @Bean
+    public UserRepository userDao(){return new RestUserRepository(restTemplate());}
+
+    @Bean
+    public UserService userService(){return new DefaultUserService(userDao());}
 
     private ClientHttpRequestFactory httpRequestFactory() {
         return new HttpComponentsClientHttpRequestFactory(httpClient());
