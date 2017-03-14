@@ -20,7 +20,7 @@ public class DefaultUserService implements  UserService {
     }
 
     @Override
-    public User searchUser() {
-        return userRepository.findUserBySlackGmail();
+    public User findUserBySlack(String slackNickname) {
+        return userRepository.findUserBySlack(slackNickname);
     }
 }

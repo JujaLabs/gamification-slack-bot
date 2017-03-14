@@ -7,7 +7,7 @@ import juja.microservices.gamification.slackbot.model.User;
  */
 public interface UserRepository {
 
-    User findUserBySlackGmail();
+    User findUserBySlack(String slackNickname);
 
 
 }
