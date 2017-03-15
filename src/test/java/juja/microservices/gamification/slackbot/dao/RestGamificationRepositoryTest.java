@@ -83,5 +83,6 @@ public class RestGamificationRepositoryTest {
         //when
         gamificationRepository.saveDailyAchievement(new DailyAchievement("101", "description"));
     }
+
 }
 

@@ -44,5 +44,4 @@ public class RestGamificationRepository implements GamificationRepository {
         return result;
     }
 
-    
 }
