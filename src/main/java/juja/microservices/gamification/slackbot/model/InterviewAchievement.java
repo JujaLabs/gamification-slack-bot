@@ -11,12 +11,12 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Interview {
+public class InterviewAchievement {
 
     private String from;
     private String description;
 
-    public Interview(String from, String description) {
+    public InterviewAchievement(String from, String description) {
         this.from = from;
         this.description = description;
     }

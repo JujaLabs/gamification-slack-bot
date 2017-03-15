@@ -1,7 +1,7 @@
 package juja.microservices.gamification.slackbot.dao;
 
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
-import juja.microservices.gamification.slackbot.model.Interview;
+import juja.microservices.gamification.slackbot.model.InterviewAchievement;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -27,14 +27,14 @@ public class RestInterviewRepository implements InterviewRepository {
 
 
     @Override
-    public String saveInterviewAchievement(Interview interview) {
-        HttpEntity<Interview> request = new HttpEntity<>(interview, setupBaseHttpHeaders());
+    public String saveInterviewAchievement(InterviewAchievement interviewAchievement) {
+        HttpEntity<InterviewAchievement> request = new HttpEntity<>(interviewAchievement, setupBaseHttpHeaders());
         String result = "";
         try {
             ResponseEntity<String> response = restTemplate.exchange(URL_SEND_INTERVIEW, HttpMethod.POST, request, String.class);
             result = response.getBody();
         } catch (HttpClientErrorException ex) {
-            throw new GamificationExchangeException("Interview Exchange Error: ", ex);
+            throw new GamificationExchangeException("InterviewAchievement Exchange Error: ", ex);
         }
         return result;
     }

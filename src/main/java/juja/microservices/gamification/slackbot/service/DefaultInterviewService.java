@@ -1,7 +1,7 @@
 package juja.microservices.gamification.slackbot.service;
 
 import juja.microservices.gamification.slackbot.dao.InterviewRepository;
-import juja.microservices.gamification.slackbot.model.Interview;
+import juja.microservices.gamification.slackbot.model.InterviewAchievement;
 
 /**
  * Created by Artem
@@ -15,7 +15,7 @@ public class DefaultInterviewService implements InterviewService {
     }
 
     @Override
-    public String saveInterviewAchievement(Interview interview) {
-        return interviewRepository.saveInterviewAchievement(interview);
+    public String saveInterviewAchievement(InterviewAchievement interviewAchievement) {
+        return interviewRepository.saveInterviewAchievement(interviewAchievement);
     }
 }

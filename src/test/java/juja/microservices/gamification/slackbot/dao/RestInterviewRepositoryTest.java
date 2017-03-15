@@ -1,7 +1,7 @@
 package juja.microservices.gamification.slackbot.dao;
 
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
-import juja.microservices.gamification.slackbot.model.Interview;
+import juja.microservices.gamification.slackbot.model.InterviewAchievement;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -59,7 +59,7 @@ public class RestInterviewRepositoryTest {
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
                 .andRespond(withSuccess("1000", MediaType.APPLICATION_JSON));
         //when
-        String result = interviewRepository.saveInterviewAchievement(new Interview("101", "description"));
+        String result = interviewRepository.saveInterviewAchievement(new InterviewAchievement("101", "description"));
 
         // then
         mockServer.verify();
@@ -78,9 +78,9 @@ public class RestInterviewRepositoryTest {
                 .andRespond(withBadRequest().body("bad request"));
         //then
         thrown.expect(GamificationExchangeException.class);
-        thrown.expectMessage(containsString("Interview Exchange Error"));
+        thrown.expectMessage(containsString("InterviewAchievement Exchange Error"));
         //when
-        interviewRepository.saveInterviewAchievement(new Interview("101", "description"));
+        interviewRepository.saveInterviewAchievement(new InterviewAchievement("101", "description"));
     }
 
 }
