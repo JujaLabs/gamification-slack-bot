@@ -49,6 +49,12 @@ public class GamificationSlackBotApplication {
     @Bean
     public UserService userService(){return new DefaultUserService(userDao());}
 
+    @Bean
+    public InterviewRepository interviewDao(){return new RestInterviewRepository(restTemplate());}
+
+    @Bean
+    public InterviewService interviewService(){return new DefaultInterviewService(interviewDao());}
+
     private ClientHttpRequestFactory httpRequestFactory() {
         return new HttpComponentsClientHttpRequestFactory(httpClient());
     }
