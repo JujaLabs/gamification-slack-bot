@@ -22,5 +22,4 @@ public class DefaultGamificationService implements GamificationService {
     public String sendDailyAchievement(DailyAchievement daily) {
         return gamificationRepository.saveDailyAchievement(daily);
     }
-
 }
