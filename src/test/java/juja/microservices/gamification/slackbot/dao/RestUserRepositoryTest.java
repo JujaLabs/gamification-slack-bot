@@ -52,37 +52,29 @@ public class RestUserRepositoryTest {
     @Test
     public void shouldReturnUserWhenSendUserDataToRemoteUserService() {
         //given
-        String expectedRequestBody = "/users/search/slackNickname=@user";
-        String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo("/users/search/slackNickname=@user"))
                 .andExpect(method(HttpMethod.GET))
-                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
-                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
                 .andRespond(withSuccess("{\"uuid\":\"a1b\",\"gmail\":\"mail@gmail.com\",\"slack\":\"@user\",\"skype\":\"user_skype\",\"linkedin\":\"user.linkedin\"," +
-                        "\"facebook\":\"user.facebook\",\"twitter\":\"user.twitter\"}",MediaType.APPLICATION_JSON));
+                        "\"facebook\":\"user.facebook\",\"twitter\":\"user.twitter\"}", MediaType.APPLICATION_JSON));
 
         //when
         User result = userRepository.findUserBySlack("@user");
 
         // then
         mockServer.verify();
-        assertThat(result,equalTo(new User("a1b","mail@gmail.com","@user","user_skype","user.linkedin","user.facebook","user.twitter")));
+        assertThat(result, equalTo(new User("a1b", "mail@gmail.com", "@user", "user_skype", "user.linkedin", "user.facebook", "user.twitter")));
     }
 
- /*   @Test
-    public void shouldThrowExceptionWhenSendSearchUserToRemoteUserServiceThrowException() {
+    @Test
+    public void shouldThrowExceptionWhenFindUserBySlackToRemoteUserServiceThrowException() {
         // given
-        String expectedRequestBody = "";
-        String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo("/users/search"))
+        mockServer.expect(requestTo("/users/search/slackNickname=@user"))
                 .andExpect(method(HttpMethod.GET))
-                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
-                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
                 .andRespond(withBadRequest().body("bad request"));
         //then
         thrown.expect(GamificationExchangeException.class);
         thrown.expectMessage(containsString("User Exchange Error"));
         //when
-        userRepository.findUserBySlack();
-    }*/
+        userRepository.findUserBySlack("@user");
+    }
 }
