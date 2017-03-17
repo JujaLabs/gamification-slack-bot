@@ -3,6 +3,7 @@ package juja.microservices.gamification.slackbot.dao;
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
 import juja.microservices.gamification.slackbot.model.CodenjoyAchievment;
 import juja.microservices.gamification.slackbot.model.DailyAchievement;
+import juja.microservices.gamification.slackbot.model.InterviewAchievement;
 import juja.microservices.gamification.slackbot.model.ThanksAchievement;
 import org.junit.Before;
 import org.junit.Rule;
@@ -154,6 +155,41 @@ public class RestGamificationRepositoryTest {
         thrown.expectMessage(containsString("Gamification Exchange Error"));
         //when
         gamificationRepository.saveThanksAchievement(new ThanksAchievement("Bill", "Bob", "Thanks to Bob"));
+    }
+
+    @Test
+    public void shouldReturnIdAchievementWhenSendIntrviewToRemoteGamificationService() {
+        //given
+        String expectedRequestBody = "{\"from\":\"101\",\"description\":\"description\"}";
+        String expectedRequestHeader = "application/json";
+        mockServer.expect(requestTo("/achieve/interview"))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
+                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
+                .andRespond(withSuccess("1000", MediaType.APPLICATION_JSON));
+        //when
+        String result = gamificationRepository.saveInterviewAchievement(new InterviewAchievement("101", "description"));
+
+        // then
+        mockServer.verify();
+        assertThat(result, equalTo("1000"));
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenSendInterviewToRemoteInterviewServiceThrowException() {
+        // given
+        String expectedRequestBody = "{\"from\":\"101\",\"description\":\"description\"}";
+        String expectedRequestHeader = "application/json";
+        mockServer.expect(requestTo("/achieve/interview"))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
+                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
+                .andRespond(withBadRequest().body("bad request"));
+        //then
+        thrown.expect(GamificationExchangeException.class);
+        thrown.expectMessage(containsString("Gamification Exchange Error"));
+        //when
+        gamificationRepository.saveInterviewAchievement(new InterviewAchievement("101", "description"));
     }
 }
 
