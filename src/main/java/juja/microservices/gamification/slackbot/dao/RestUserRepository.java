@@ -11,13 +11,11 @@ import org.springframework.web.client.RestTemplate;
 import javax.inject.Inject;
 import java.util.HashMap;
 
-@PropertySource("application.properties")
-
 /**
  * Created by Artem
  */
 
-
+@PropertySource("application.properties")
 public class RestUserRepository implements UserRepository {
 
     private final RestTemplate restTemplate;

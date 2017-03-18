@@ -13,13 +13,11 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 
-@PropertySource("application.properties")
-
 /**
  * @author Danil Kuznetsov
  */
 
-
+@PropertySource("application.properties")
 public class RestGamificationRepository implements GamificationRepository {
 
     private final RestTemplate restTemplate;
