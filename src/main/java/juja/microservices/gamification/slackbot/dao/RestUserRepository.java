@@ -2,14 +2,16 @@ package juja.microservices.gamification.slackbot.dao;
 
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
 import juja.microservices.gamification.slackbot.model.User;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.inject.Inject;
 import java.util.HashMap;
-import java.util.Map;
+
+@PropertySource("application.properties")
 
 /**
  * Created by Artem
@@ -19,7 +21,11 @@ import java.util.Map;
 public class RestUserRepository implements UserRepository {
 
     private final RestTemplate restTemplate;
-    private final String URL_GET_USER = "/users/search";
+
+    @Value("${user.baseURL}")
+    private String BASE_URL;
+    @Value("${endpoint.userSearch}")
+    private String URL_GET_USER;
 
 
     @Inject
@@ -31,7 +37,7 @@ public class RestUserRepository implements UserRepository {
     public User findUserBySlack(String slackNickname) {
         HashMap<String, String> urlVariables = new HashMap<>(1);
         urlVariables.put("slackNickname", slackNickname);
-        String urlTemplate = URL_GET_USER + "/slackNickname={slackNickname}";
+        String urlTemplate = BASE_URL+ URL_GET_USER + "/slackNickname={slackNickname}";
         User result;
         try {
             ResponseEntity<User> response = this.restTemplate.getForEntity(urlTemplate, User.class, urlVariables);

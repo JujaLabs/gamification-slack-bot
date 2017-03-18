@@ -52,7 +52,7 @@ public class RestUserRepositoryTest {
     @Test
     public void shouldReturnUserWhenSendUserDataToRemoteUserService() {
         //given
-        mockServer.expect(requestTo("/users/search/slackNickname=@user"))
+        mockServer.expect(requestTo("http://user.juja.com.ua/users/search/slackNickname=@user"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess("{\"uuid\":\"a1b\",\"gmail\":\"mail@gmail.com\",\"slack\":\"@user\",\"skype\":\"user_skype\",\"linkedin\":\"user.linkedin\"," +
                         "\"facebook\":\"user.facebook\",\"twitter\":\"user.twitter\"}", MediaType.APPLICATION_JSON));
@@ -68,7 +68,7 @@ public class RestUserRepositoryTest {
     @Test
     public void shouldThrowExceptionWhenFindUserBySlackToRemoteUserServiceThrowException() {
         // given
-        mockServer.expect(requestTo("/users/search/slackNickname=@user"))
+        mockServer.expect(requestTo("http://user.juja.com.ua/users/search/slackNickname=@user"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withBadRequest().body("bad request"));
         //then
