@@ -6,6 +6,6 @@ package juja.microservices.gamification.slackbot.dao;
  */
 public class DummyUserRepository {
     public String getUserNameBySlackName(String slackName) {
-        return slackName + "User";
+        return slackName.substring(1) + "User";
     }
 }
