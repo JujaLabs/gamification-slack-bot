@@ -21,9 +21,9 @@ public class RestUserRepository implements UserRepository {
     private final RestTemplate restTemplate;
 
     @Value("${user.baseURL}")
-    private String BASE_URL;
+    private String urlBase;
     @Value("${endpoint.userSearch}")
-    private String URL_GET_USER;
+    private String urlGetUser;
 
 
     @Inject
@@ -35,7 +35,7 @@ public class RestUserRepository implements UserRepository {
     public User findUserBySlack(String slackNickname) {
         HashMap<String, String> urlVariables = new HashMap<>(1);
         urlVariables.put("slackNickname", slackNickname);
-        String urlTemplate = BASE_URL+ URL_GET_USER + "/slackNickname={slackNickname}";
+        String urlTemplate = urlBase + urlGetUser + "/slackNickname={slackNickname}";
         User result;
         try {
             ResponseEntity<User> response = this.restTemplate.getForEntity(urlTemplate, User.class, urlVariables);
