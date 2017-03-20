@@ -1,7 +1,10 @@
 package juja.microservices.gamification.slackbot.controller;
 
+import juja.microservices.gamification.slackbot.model.Achievement;
 import juja.microservices.gamification.slackbot.model.CodenjoyAchievment;
+import juja.microservices.gamification.slackbot.model.User;
 import juja.microservices.gamification.slackbot.service.GamificationService;
+import juja.microservices.gamification.slackbot.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -28,7 +31,10 @@ public class SlackCommandControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    private GamificationService service;
+    private GamificationService gamificationService;
+
+    @MockBean
+    private UserService userService;
 
     @Test
     public void onReceiveSlashCommand_When_IncorrectToken_Should_ReturnSorryRichMessage() throws Exception {
@@ -60,7 +66,9 @@ public class SlackCommandControllerTest {
 
     @Test
     public void onReceiveSlashCommandReturnOkRichMessage() throws Exception {
-        when(service.sendCodenjoyAchievement(any(CodenjoyAchievment.class))).thenReturn("ok");
+        final String URL_SEND_CODENJOY = "/achieve/codenjoy";
+        when(gamificationService.sendAchievement(any(String.class), any(Achievement.class))).thenReturn("ok");
+        when(userService.findUserBySlack(any(String.class))).thenReturn(new User("uuid", "gmail", "slack", "skype", "lin", "face", "tw"));
         mvc.perform(MockMvcRequestBuilders.post("/commands/codenjoy?" +
                         "token={slashCommandToken}&" +
                         "team_id={team_id}&" +
