@@ -46,4 +46,19 @@ public class RestUserRepository implements UserRepository {
         return result;
     }
 
+    @Override
+    public String findUuidUserBySlack(String slackNickname) {
+        HashMap<String, String> urlVariables = new HashMap<>(1);
+        urlVariables.put("slackNickname", slackNickname);
+        String urlTemplate = urlGetUser + "/slackNickname={slackNickname}";
+        String uuidUser;
+        try {
+            ResponseEntity<User> response = this.restTemplate.getForEntity(urlTemplate, User.class, urlVariables);
+            uuidUser = response.getBody().getUuid();
+        } catch (HttpClientErrorException ex) {
+            throw new GamificationExchangeException("User Exchange Error: ", ex);
+        }
+        return uuidUser;
+    }
+
 }

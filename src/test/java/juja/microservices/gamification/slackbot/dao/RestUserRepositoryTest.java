@@ -66,6 +66,21 @@ public class RestUserRepositoryTest {
     }
 
     @Test
+    public void shouldReturnUuidUserWhenSendUserDataToRemoteUserService() {
+        //given
+        mockServer.expect(requestTo("/users/search/slackNickname=@user"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess("{\"uuid\":\"a1b\",\"gmail\":\"mail@gmail.com\",\"slack\":\"@user\",\"skype\":\"user_skype\",\"linkedin\":\"user.linkedin\"," +
+                        "\"facebook\":\"user.facebook\",\"twitter\":\"user.twitter\"}", MediaType.APPLICATION_JSON));
+        //when
+        String result = userRepository.findUuidUserBySlack("@user");
+
+        // then
+        mockServer.verify();
+        assertThat(result, equalTo("a1b"));
+    }
+
+    @Test
     public void shouldThrowExceptionWhenFindUserBySlackToRemoteUserServiceThrowException() {
         // given
         mockServer.expect(requestTo("http://user.juja.com.ua/users/search/slackNickname=@user"))
