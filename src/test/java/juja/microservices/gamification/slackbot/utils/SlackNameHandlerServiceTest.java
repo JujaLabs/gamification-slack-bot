@@ -1,5 +1,7 @@
 package juja.microservices.gamification.slackbot.utils;
 
+import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
+import juja.microservices.gamification.slackbot.model.Command;
 import juja.microservices.gamification.slackbot.model.User;
 import juja.microservices.gamification.slackbot.service.SlackNameHandlerService;
 import juja.microservices.gamification.slackbot.service.UserService;
@@ -19,89 +21,122 @@ public class SlackNameHandlerServiceTest {
     private User defaultUser;
 
     @Before
-    public void setup(){
+    public void setup() {
         userService = mock(UserService.class);
         slackNameHandlerService = new SlackNameHandlerService(userService);
         defaultUser = new User("uuid", "gmail", "slack", "skype", "linkedin", "facebook", "twitter");
+
     }
 
     @Test
-    public void changeSlackNamesToUuidEmptyString() throws Exception {
+    public void changeSlackNamesToUuidWhenTextWithoutSlackNames() throws Exception {
         //given
-        final String TEXT = "";
-        when(userService.findUserBySlack("")).thenReturn(defaultUser);
+        Command command = new Command("commandName", "@from.user", "textWithoutSlackNames");
+        when(userService.findUserBySlack(command.getFromUser())).thenReturn(defaultUser);
         //when
-        String preparedText = slackNameHandlerService.handle(TEXT);
+        Command preparedCommand = slackNameHandlerService.handle(command);
         //then
-        assertEquals("", preparedText);
+        assertEquals("Command(name=commandName, fromUser=uuid, text=textWithoutSlackNames)", preparedCommand.toString());
+    }
+
+
+    @Test
+    public void changeSlackNamesToUuid() throws Exception {
+        //given
+        Command command = new Command("commandName", "@from.user", "text @from.user TexT text.");
+        when(userService.findUserBySlack(command.getFromUser())).thenReturn(defaultUser);
+        //when
+        Command preparedCommand = slackNameHandlerService.handle(command);
+        //then
+        assertEquals("Command(name=commandName, fromUser=uuid, text=text @#uuid#@ TexT text.)", preparedCommand.toString());
     }
 
     @Test
-    public void changeSlackNamesToUuidStringWithoutSlackNames() throws Exception {
+    public void changeSlackNamesToUuidWhenTwoSlackNamesInText() throws Exception {
         //given
-        final String TEXT = "string without slack names";
-        when(userService.findUserBySlack("")).thenReturn(defaultUser);
+        Command command = new Command("commandName", "@from.user", "text @from.user TexT @from.user text.");
+        when(userService.findUserBySlack(command.getFromUser())).thenReturn(defaultUser);
         //when
-        String preparedText = slackNameHandlerService.handle(TEXT);
+        Command preparedCommand = slackNameHandlerService.handle(command);
         //then
-        assertEquals("string without slack names", preparedText);
+        assertEquals("Command(name=commandName, fromUser=uuid, text=text @#uuid#@ TexT @#uuid#@ text.)", preparedCommand.toString());
     }
 
     @Test
-    public void changeSlackNamesToUuidStringWithSlackName() throws Exception {
+    public void changeSlackNamesToUuidIfSlackNameWithoutSpace() throws Exception {
         //given
-        final String TEXT = "text text @slack_name";
-        defaultUser.setUuid("slack_nameUser");
-        when(userService.findUserBySlack("@slack_name")).thenReturn(defaultUser);
+        Command command = new Command("commandName", "@from.user", "text@from.user TexT text.");
+        when(userService.findUserBySlack(command.getFromUser())).thenReturn(defaultUser);
         //when
-        String preparedText = slackNameHandlerService.handle(TEXT);
+        Command preparedCommand = slackNameHandlerService.handle(command);
         //then
-        assertEquals("text text @#slack_nameUser#@", preparedText);
+        assertEquals("Command(name=commandName, fromUser=uuid, text=text@#uuid#@ TexT text.)", preparedCommand.toString());
     }
 
     @Test
-    public void changeSlackNamesToUuidStringWithSlackNames() throws Exception {
+    public void changeSlackNamesToUuidIfTwoSlackNameWithoutSpace() throws Exception {
         //given
-        when(userService.findUserBySlack("@slack_name1")).thenReturn(new User("uuid1", "gmail", "slack", "skype", "linkedin", "facebook", "twitter"));
-        when(userService.findUserBySlack("@slack_name2")).thenReturn(new User("uuid2", "gmail", "slack", "skype", "linkedin", "facebook", "twitter"));
-        final String TEXT = "text text @slack_name1 text text @slack_name2 text";
+        Command command = new Command("commandName", "@from.user", "text@from.user TexT@from.user text.");
+        when(userService.findUserBySlack(command.getFromUser())).thenReturn(defaultUser);
         //when
-        String preparedText = slackNameHandlerService.handle(TEXT);
+        Command preparedCommand = slackNameHandlerService.handle(command);
         //then
-        assertEquals("text text @#uuid1#@ text text @#uuid2#@ text", preparedText);
+        assertEquals("Command(name=commandName, fromUser=uuid, text=text@#uuid#@ TexT@#uuid#@ text.)", preparedCommand.toString());
+    }
+
+    @Test(expected = WrongCommandFormatException.class)
+    public void changeSlackNamesToUuidifCommandNull() throws Exception {
+        //given
+        Command command = null;
+        //when
+        slackNameHandlerService.handle(command);
+    }
+
+    @Test(expected = WrongCommandFormatException.class)
+    public void changeSlackNamesToUuidIfSlackNameUseProhibitiveSymbol() throws Exception {
+        //given
+        Command command = new Command("commandName", "@from.u#ser", "text@from.user TexT@from.user text.");
+        ;
+        //when
+        slackNameHandlerService.handle(command);
+    }
+
+    @Test(expected = WrongCommandFormatException.class)
+    public void changeSlackNamesToUuidIfSlackNameNull() throws Exception {
+        //given
+        Command command = new Command("commandName", null, "text@from.user TexT@from.user text.");
+        ;
+        //when
+        slackNameHandlerService.handle(command);
+    }
+
+    @Test(expected = WrongCommandFormatException.class)
+    public void changeSlackNamesToUuidIfSlackNameIsEmpty() throws Exception {
+        //given
+        Command command = new Command("commandName", "", "text@from.user TexT@from.user text.");
+        //when
+        slackNameHandlerService.handle(command);
     }
 
     @Test
-    public void changeSlackNamesToUuidStringSlackNameNotSeparateWithSpace() throws Exception {
+    public void changeSlackNamesToUuidIfTextNull() throws Exception {
         //given
-        final String TEXT = "text text@slack_name1 text text@slack_name2 text";
-        when(userService.findUserBySlack("@slack_name1")).thenReturn(new User("uuid1", "gmail", "slack", "skype", "linkedin", "facebook", "twitter"));
-        when(userService.findUserBySlack("@slack_name2")).thenReturn(new User("uuid2", "gmail", "slack", "skype", "linkedin", "facebook", "twitter"));
+        Command command = new Command("commandName", "@from.user", null);
+        when(userService.findUserBySlack(command.getFromUser())).thenReturn(defaultUser);
         //when
-        String preparedText = slackNameHandlerService.handle(TEXT);
+        Command preparedCommand = slackNameHandlerService.handle(command);
         //then
-        assertEquals("text text@#uuid1#@ text text@#uuid2#@ text", preparedText);
+        assertEquals("Command(name=commandName, fromUser=uuid, text=)", preparedCommand.toString());
     }
 
     @Test
-    public void changeSlackNamesToUuidWhenSlackNameCorrectButUseUpcaseForSlackNames(){
+    public void changeSlackNamesToUuidIfTextEmpty() throws Exception {
         //given
-        final String TEXT = "Text texT @Slack_Name1 teXt text@Slack_Name2 text";
-        when(userService.findUserBySlack("@slack_name1")).thenReturn(new User("uuid1", "gmail", "slack", "skype", "linkedin", "facebook", "twitter"));
-        when(userService.findUserBySlack("@slack_name2")).thenReturn(new User("uuid2", "gmail", "slack", "skype", "linkedin", "facebook", "twitter"));
+        Command command = new Command("commandName", "@from.user", "");
+        when(userService.findUserBySlack(command.getFromUser())).thenReturn(defaultUser);
         //when
-        String preparedText = slackNameHandlerService.handle(TEXT);
+        Command preparedCommand = slackNameHandlerService.handle(command);
         //then
-        assertEquals("Text texT @#uuid1#@ teXt text@#uuid2#@ text", preparedText);
-    }
-
-    @Test
-    public void changeSlackNamesToUuidWhenTextIsNull(){
-        //given
-        final String TEXT = null;
-        //when
-        String preparedText = slackNameHandlerService.handle(TEXT);
-        //then
-        assertEquals("", preparedText);
+        assertEquals("Command(name=commandName, fromUser=uuid, text=)", preparedCommand.toString());
     }
 }
