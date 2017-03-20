@@ -55,7 +55,7 @@ public class SlackCommandControllerTest {
                 "UHASHB8JB",
                 "test-channel",
                 "UNJSD9OKM",
-                "uname",
+                "@uname",
                 "/command",
                 "/codenjoy -1th @slack_nick_name -2th @slack_nick_name2 -3th @slack_nick_name3",
                 "http://example.com")
@@ -86,7 +86,7 @@ public class SlackCommandControllerTest {
                 "UHASHB8JB",
                 "test-channel",
                 "UNJSD9OKM",
-                "uname",
+                "@uname",
                 "/codenjoy",
                 "-1th @slack_nick_name -2th @slack_nick_name2 -3th @slack_nick_name3",
                 "http://example.com")
