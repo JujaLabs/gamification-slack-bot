@@ -1,5 +1,7 @@
 package juja.microservices.gamification.slackbot.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -8,7 +10,7 @@ import lombok.ToString;
  */
 @Getter
 @ToString
-public class CodenjoyAchievment {
+public class CodenjoyAchievment implements Achievement {
     private String from;
     private String firstPlace;
     private String secondPlace;
@@ -22,5 +24,16 @@ public class CodenjoyAchievment {
         this.firstPlace = firstPlace;
         this.secondPlace = secondPlace;
         this.thirdPlace = thirdPlace;
+    }
+
+    @Override
+    public ObjectNode toJson() {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode objectNode = mapper.createObjectNode();
+        objectNode.put("from", from);
+        objectNode.put("firstPlace", firstPlace);
+        objectNode.put("secondPlace", secondPlace);
+        objectNode.put("thirdPlace", thirdPlace);
+        return objectNode;
     }
 }
