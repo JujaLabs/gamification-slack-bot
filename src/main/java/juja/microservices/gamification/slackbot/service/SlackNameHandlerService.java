@@ -41,10 +41,7 @@ public class SlackNameHandlerService {
             throw new WrongCommandFormatException("Command is null");
         }
         if (command.getFromUser() == null) {
-            throw new WrongCommandFormatException("User name sending command is null");
-        }
-        if (command.getFromUser() == null) {
-            throw new WrongCommandFormatException("User name sending command is null");
+            throw new WrongCommandFormatException("User name sent command is null");
         }
         checkSlackName(command.getFromUser());
         if (command.getText() == null) {
