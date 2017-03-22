@@ -1,6 +1,7 @@
 package juja.microservices.gamification.slackbot.controller;
 
 import juja.microservices.gamification.slackbot.model.Achievement;
+import juja.microservices.gamification.slackbot.model.CodenjoyAchievment;
 import juja.microservices.gamification.slackbot.model.User;
 import juja.microservices.gamification.slackbot.service.GamificationService;
 import juja.microservices.gamification.slackbot.service.UserService;
@@ -65,8 +66,7 @@ public class GamificationSlackCommandControllerTest {
 
     @Test
     public void onReceiveSlashCommandReturnOkRichMessage() throws Exception {
-        final String URL_SEND_CODENJOY = "/achieve/codenjoy";
-        when(gamificationService.sendAchievement(any(String.class), any(Achievement.class))).thenReturn("ok");
+        when(gamificationService.sendCodenjoyAchievement(any(CodenjoyAchievment.class))).thenReturn("ok");
         when(userService.findUserBySlack(any(String.class))).thenReturn(new User("uuid", "gmail", "slack", "skype", "lin", "face", "tw"));
         mvc.perform(MockMvcRequestBuilders.post("/commands/codenjoy?" +
                         "token={slashCommandToken}&" +

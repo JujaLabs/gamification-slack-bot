@@ -86,19 +86,4 @@ public class DefaultGamificationServiceTest {
         assertThat(result, equalTo(expectedAchievementId));
         verify(gamificationRepository).saveThanksAchievement(thanksAchievement);
     }
-
-    @Test
-    public void shouldSaveNewAchievmentAndReturnNewAchievementId() {
-        //given
-        String expectedAchievementId = "100";
-        Achievement achievment = new CodenjoyAchievment("Bill", "Walter", "Bob", "Jonh");
-        given(gamificationRepository.saveAchievement("url", achievment)).willReturn(expectedAchievementId);
-
-        //when
-        String result = gamificationService.sendAchievement("url", achievment);
-
-        //then
-        assertThat(result, equalTo(expectedAchievementId));
-        verify(gamificationRepository).saveAchievement("url", achievment);
-    }
 }

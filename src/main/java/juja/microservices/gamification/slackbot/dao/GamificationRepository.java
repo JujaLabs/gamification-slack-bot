@@ -8,8 +8,6 @@ import juja.microservices.gamification.slackbot.model.*;
 
 public interface GamificationRepository {
 
-    String saveAchievement(String url, Achievement achievement);
-
     String saveDailyAchievement(DailyAchievement daily);
 
     String saveCodenjoyAchievement(CodenjoyAchievment codenjoy);

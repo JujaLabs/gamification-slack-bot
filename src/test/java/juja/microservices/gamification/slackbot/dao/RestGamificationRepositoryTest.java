@@ -191,24 +191,5 @@ public class RestGamificationRepositoryTest {
         //when
         gamificationRepository.saveInterviewAchievement(new InterviewAchievement("101", "description"));
     }
-
-    @Test
-    public void shouldReturnIdAchievementWhenSendAchievmentToRemoteGamificationService() {
-        //given
-        String expectedRequestBody = "{\"from\":\"Bill\",\"firstPlace\":\"Walter\",\"secondPlace\":\"Bob\",\"thirdPlace\":\"Jonh\"}";
-        String expectedRequestHeader = "application/json";
-        final String URL = "/achieve/codenjoy";
-        mockServer.expect(requestTo("/achieve/codenjoy"))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
-                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withSuccess("1000", MediaType.APPLICATION_JSON));
-        //when
-        String result = gamificationRepository.saveAchievement(URL, new CodenjoyAchievment("Bill", "Walter", "Bob", "Jonh"));
-
-        // then
-        mockServer.verify();
-        assertThat(result, equalTo("1000"));
-    }
 }
 

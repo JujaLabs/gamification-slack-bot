@@ -18,11 +18,6 @@ public class DefaultGamificationService implements GamificationService {
     }
 
     @Override
-    public String sendAchievement(String url, Achievement achievement) {
-        return gamificationRepository.saveAchievement(url, achievement);
-    }
-
-    @Override
     public String sendDailyAchievement(DailyAchievement daily) {
         return gamificationRepository.saveDailyAchievement(daily);
     }
