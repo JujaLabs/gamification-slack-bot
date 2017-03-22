@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by Nikol on 3/9/2017.
  */
 @RestController
-public class SlackCommandController {
+public class GamificationSlackCommandController {
     private final String slackToken = "slashCommandToken"; // todo read slackToken from properties
     private final String URL_SEND_CODENJOY = "/achieve/codenjoy";
     private final String URL_RECEIVE_CODENJOY = "/commands/codenjoy"; // todo read url from properties
@@ -29,7 +29,7 @@ public class SlackCommandController {
     private UserService userService;
     private AchievementFactory achievmentFactory;
 
-    public SlackCommandController(GamificationService gamificationService, UserService userService) {
+    public GamificationSlackCommandController(GamificationService gamificationService, UserService userService) {
         this.gamificationService = gamificationService;
         this.userService = userService;
         this.achievmentFactory = new AchievementFactory(new SlackNameHandlerService(userService));

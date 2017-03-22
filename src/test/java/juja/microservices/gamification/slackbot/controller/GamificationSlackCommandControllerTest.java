@@ -1,7 +1,6 @@
 package juja.microservices.gamification.slackbot.controller;
 
 import juja.microservices.gamification.slackbot.model.Achievement;
-import juja.microservices.gamification.slackbot.model.CodenjoyAchievment;
 import juja.microservices.gamification.slackbot.model.User;
 import juja.microservices.gamification.slackbot.service.GamificationService;
 import juja.microservices.gamification.slackbot.service.UserService;
@@ -25,8 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by Nikol on 3/11/2017.
  */
 @RunWith(SpringRunner.class)
-@WebMvcTest(SlackCommandController.class)
-public class SlackCommandControllerTest {
+@WebMvcTest(GamificationSlackCommandController.class)
+public class GamificationSlackCommandControllerTest {
     @Inject
     private MockMvc mvc;
 
@@ -94,4 +93,5 @@ public class SlackCommandControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value("ok"));
     }
+    //todo add tests if wrong command format
 }
