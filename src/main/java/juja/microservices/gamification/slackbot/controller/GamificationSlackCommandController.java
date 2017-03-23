@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.inject.Inject;
+
 
 /**
  * Created by Nikol on 3/9/2017.
@@ -28,9 +30,10 @@ public class GamificationSlackCommandController {
     private GamificationService gamificationService;
     private AchievementFactory achievmentFactory;
 
-    public GamificationSlackCommandController(GamificationService gamificationService, UserService userService) {
+    @Inject
+    public GamificationSlackCommandController(GamificationService gamificationService, AchievementFactory achievementFactory) {
         this.gamificationService = gamificationService;
-        this.achievmentFactory = new AchievementFactory(new SlackNameHandlerService(userService));
+        this.achievmentFactory = achievementFactory;
     }
 
     @RequestMapping(value = URL_RECEIVE_CODENJOY,
