@@ -2,6 +2,7 @@ package juja.microservices.gamification.slackbot;
 
 import juja.microservices.gamification.slackbot.dao.*;
 import juja.microservices.gamification.slackbot.service.*;
+import juja.microservices.gamification.slackbot.utils.AchievementFactory;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.boot.SpringApplication;
@@ -48,6 +49,16 @@ public class GamificationSlackBotApplication {
 
     @Bean
     public UserService userService(){return new DefaultUserService(userDao());}
+
+    @Bean
+    public SlackNameHandlerService slackNameHandlerService(){
+        return new SlackNameHandlerService(userService());
+    }
+
+    @Bean
+    public AchievementFactory achievmentFactory(){
+        return new AchievementFactory(slackNameHandlerService());
+    }
 
     private ClientHttpRequestFactory httpRequestFactory() {
         return new HttpComponentsClientHttpRequestFactory(httpClient());
