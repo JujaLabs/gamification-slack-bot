@@ -1,11 +1,14 @@
 package juja.microservices.gamification.slackbot.controller;
 
+import juja.microservices.gamification.slackbot.model.Achievement;
 import juja.microservices.gamification.slackbot.model.CodenjoyAchievment;
 import juja.microservices.gamification.slackbot.model.User;
 import juja.microservices.gamification.slackbot.service.GamificationService;
 import juja.microservices.gamification.slackbot.service.UserService;
+import juja.microservices.gamification.slackbot.utils.AchievementFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -31,6 +34,9 @@ public class GamificationSlackCommandControllerTest {
 
     @MockBean
     private GamificationService gamificationService;
+
+    @Inject
+    private AchievementFactory achievementFactory;
 
     @MockBean
     private UserService userService;

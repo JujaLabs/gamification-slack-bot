@@ -5,12 +5,15 @@ import juja.microservices.gamification.slackbot.model.Achievement;
 import juja.microservices.gamification.slackbot.model.Command;
 import juja.microservices.gamification.slackbot.service.SlackNameHandlerService;
 
+import javax.inject.Inject;
+
 /**
  * Created by Nikol on 3/19/2017.
  */
 public class AchievementFactory {
     private SlackNameHandlerService slackNameHandlerService;
 
+    @Inject
     public AchievementFactory(SlackNameHandlerService slackNameHandlerService) {
         this.slackNameHandlerService = slackNameHandlerService;
     }

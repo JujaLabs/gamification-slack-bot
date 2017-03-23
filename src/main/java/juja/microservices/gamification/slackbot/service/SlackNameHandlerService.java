@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
  * Created by Nikolay on 3/16/2017.
  */
 public class SlackNameHandlerService {
-    @Inject
     private UserService userService;
     private final String USER_UUID_START_TOKEN = "@#";
     private final String USER_UUID_FINISH_TOKEN = "#@";
@@ -27,6 +26,7 @@ public class SlackNameHandlerService {
      */
     private final String SLACK_NAME_PATTERN = "@([a-zA-z0-9\\.\\_\\-]){1,21}";
 
+    @Inject
     public SlackNameHandlerService(UserService userService) {
         this.userService = userService;
     }
