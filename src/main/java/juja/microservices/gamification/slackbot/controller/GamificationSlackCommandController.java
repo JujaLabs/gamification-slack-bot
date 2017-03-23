@@ -10,7 +10,6 @@ import juja.microservices.gamification.slackbot.utils.AchievementFactory;
 import juja.microservices.gamification.slackbot.service.GamificationService;
 
 import me.ramswaroop.jbot.core.slack.models.RichMessage;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,13 +23,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class GamificationSlackCommandController {
     private final String slackToken = "slashCommandToken"; // todo read slackToken from properties
+    private final String URL_SEND_CODENJOY = "/achieve/codenjoy";
     private final String URL_RECEIVE_CODENJOY = "/commands/codenjoy"; // todo read url from properties
 
     private GamificationService gamificationService;
+    private UserService userService;
     private AchievementFactory achievmentFactory;
 
     public GamificationSlackCommandController(GamificationService gamificationService, UserService userService) {
         this.gamificationService = gamificationService;
+        this.userService = userService;
         this.achievmentFactory = new AchievementFactory(new SlackNameHandlerService(userService));
     }
 
@@ -41,14 +43,19 @@ public class GamificationSlackCommandController {
                                                      @RequestParam("user_name") String fromUser,
                                                      @RequestParam("command") String commandName,
                                                      @RequestParam("text") String text) {
+        Command command = new Command(commandName, fromUser, text);
+        return getRichMessage(token, command, URL_SEND_CODENJOY);
+    }
+
+    private RichMessage getRichMessage(String token, Command command, String urlForSend) {
         if (!token.equals(slackToken)) {
             return new RichMessage("Sorry! You're not lucky enough to use our slack command.");
         }
         String response;
         try {
-            Achievement achievement = achievmentFactory.createAchievement(new Command(commandName, fromUser, text));
+            Achievement achievement = achievmentFactory.createAchievement(command);
             response = gamificationService.sendCodenjoyAchievement((CodenjoyAchievment) achievement);
-        } catch (Exception ex) {
+        }catch (Exception ex){
             return new RichMessage(ex.getMessage());
         }
         return new RichMessage(response);
