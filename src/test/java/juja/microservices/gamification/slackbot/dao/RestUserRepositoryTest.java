@@ -68,7 +68,7 @@ public class RestUserRepositoryTest {
     @Test
     public void shouldReturnUuidUserWhenSendUserDataToRemoteUserService() {
         //given
-        mockServer.expect(requestTo("/users/search/slackNickname=@user"))
+        mockServer.expect(requestTo("http://user.juja.com.ua/users/search/slackNickname=@user"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess("{\"uuid\":\"a1b\",\"gmail\":\"mail@gmail.com\",\"slack\":\"@user\",\"skype\":\"user_skype\",\"linkedin\":\"user.linkedin\"," +
                         "\"facebook\":\"user.facebook\",\"twitter\":\"user.twitter\"}", MediaType.APPLICATION_JSON));
@@ -91,5 +91,18 @@ public class RestUserRepositoryTest {
         thrown.expectMessage(containsString("User Exchange Error"));
         //when
         userRepository.findUserBySlack("@user");
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenFindUserUuidBySlackToRemoteUserServiceThrowException() {
+        // given
+        mockServer.expect(requestTo("http://user.juja.com.ua/users/search/slackNickname=@user"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withBadRequest().body("bad request"));
+        //then
+        thrown.expect(GamificationExchangeException.class);
+        thrown.expectMessage(containsString("User Exchange Error"));
+        //when
+        userRepository.findUuidUserBySlack("@user");
     }
 }
