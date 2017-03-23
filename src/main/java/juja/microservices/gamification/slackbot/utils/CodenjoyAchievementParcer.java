@@ -17,6 +17,8 @@ public class CodenjoyAchievementParcer implements AchievementParcer {
     private final String UUID_PATTERN = "@#([a-zA-z0-9\\.\\_\\-]){1,21}#@";
     private final String[] COMMAND_TOKENS = {"-1th", "-2th", "-3th"};
     private final String COMMAND_NAME = "/codenjoy";
+    private final String PARCED_UUID_START_TOKEN = "@#";
+    private final String PARCED_UUID_FINISH_TOKEN = "#@";
 
     public Achievement createAchievementFromCommand(Command command) {
         checkCommand(command);
@@ -67,6 +69,7 @@ public class CodenjoyAchievementParcer implements AchievementParcer {
     }
 
     private String cleanTheUuidOfMarkers(String uuidWithMarkers){
-        return uuidWithMarkers.replaceAll("@#", "").replaceAll("#@", "");
+        return uuidWithMarkers.replaceAll(PARCED_UUID_START_TOKEN, "")
+                .replaceAll(PARCED_UUID_FINISH_TOKEN, "");
     }
 }

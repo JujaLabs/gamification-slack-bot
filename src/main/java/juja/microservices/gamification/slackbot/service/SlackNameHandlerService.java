@@ -15,8 +15,8 @@ import java.util.regex.Pattern;
  */
 public class SlackNameHandlerService {
     private UserService userService;
-    private final String USER_UUID_START_TOKEN = "@#";
-    private final String USER_UUID_FINISH_TOKEN = "#@";
+    private final String PARCED_UUID_START_TOKEN = "@#";
+    private final String PARCED_UUID_FINISH_TOKEN = "#@";
     /**
      * Slack name cannot be longer than 21 characters and
      * can only contain letters, numbers, periods, hyphens, and underscores.
@@ -88,7 +88,7 @@ public class SlackNameHandlerService {
         for (String slackName : slackNames) {
             //todo if slack name not found
             String uuid = userService.findUserBySlack(slackName.toLowerCase()).getUuid();
-            text = text.replaceAll(slackName, USER_UUID_START_TOKEN + uuid + USER_UUID_FINISH_TOKEN);
+            text = text.replaceAll(slackName, PARCED_UUID_START_TOKEN + uuid + PARCED_UUID_FINISH_TOKEN);
         }
         return text;
     }
