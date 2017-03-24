@@ -3,6 +3,8 @@ package juja.microservices.gamification.slackbot.service;
 import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
 import juja.microservices.gamification.slackbot.model.Command;
 import juja.microservices.gamification.slackbot.model.User;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -13,10 +15,13 @@ import java.util.regex.Pattern;
 /**
  * Created by Nikolay on 3/16/2017.
  */
+@PropertySource("application.properties")
 public class SlackNameHandlerService {
     private UserService userService;
-    private final String PARCED_UUID_START_TOKEN = "@#";
-    private final String PARCED_UUID_FINISH_TOKEN = "#@";
+    @Value("${parcedUuid.startMarker}")
+    private String parcedUuidStartMarker;
+    @Value("${parcedUuid.finishMarker}")
+    private String parcedUuidFinishMarker;
     /**
      * Slack name cannot be longer than 21 characters and
      * can only contain letters, numbers, periods, hyphens, and underscores.
@@ -88,7 +93,7 @@ public class SlackNameHandlerService {
         for (String slackName : slackNames) {
             //todo if slack name not found
             String uuid = userService.findUserBySlack(slackName.toLowerCase()).getUuid();
-            text = text.replaceAll(slackName, PARCED_UUID_START_TOKEN + uuid + PARCED_UUID_FINISH_TOKEN);
+            text = text.replaceAll(slackName, parcedUuidStartMarker + uuid + parcedUuidFinishMarker);
         }
         return text;
     }

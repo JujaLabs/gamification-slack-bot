@@ -1,4 +1,4 @@
-package juja.microservices.gamification.slackbot.utils;
+package juja.microservices.gamification.slackbot.service;
 
 import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
 import juja.microservices.gamification.slackbot.model.Command;
@@ -7,6 +7,12 @@ import juja.microservices.gamification.slackbot.service.SlackNameHandlerService;
 import juja.microservices.gamification.slackbot.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.inject.Inject;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -15,17 +21,18 @@ import static org.mockito.Mockito.when;
 /**
  * Created by Nikol on 3/18/2017.
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class SlackNameHandlerServiceTest {
+    @Inject
     private SlackNameHandlerService slackNameHandlerService;
+    @MockBean
     private UserService userService;
     private User defaultUser;
 
     @Before
     public void setup() {
-        userService = mock(UserService.class);
-        slackNameHandlerService = new SlackNameHandlerService(userService);
         defaultUser = new User("uuid", "gmail", "slack", "skype", "linkedin", "facebook", "twitter");
-
     }
 
     @Test
