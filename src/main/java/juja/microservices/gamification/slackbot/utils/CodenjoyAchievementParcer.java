@@ -14,11 +14,8 @@ import java.util.regex.Pattern;
  */
 public class CodenjoyAchievementParcer implements AchievementParcer {
     private final String COMMAND_EXAMPLE = "/codenjoy -1th @slack_nick_name -2th @slack_nick_name2 -3th @slack_nick_name3";
-    private final String UUID_PATTERN = "@#([a-zA-z0-9\\.\\_\\-]){1,21}#@";
     private final String[] COMMAND_TOKENS = {"-1th", "-2th", "-3th"};
     private final String COMMAND_NAME = "/codenjoy";
-    private final String PARCED_UUID_START_TOKEN = "@#";
-    private final String PARCED_UUID_FINISH_TOKEN = "#@";
 
     public Achievement createAchievementFromCommand(Command command) {
         checkCommand(command);
@@ -58,7 +55,7 @@ public class CodenjoyAchievementParcer implements AchievementParcer {
     private String findUuid(String token, String[] splitedText) {
         for (String s : splitedText) {
             if (s.contains(token)) {
-                Pattern uuidPattern = Pattern.compile(UUID_PATTERN);
+                Pattern uuidPattern = Pattern.compile(PARCED_UUID_PATTERN);
                 Matcher matcher = uuidPattern.matcher(s.substring(s.indexOf(token)));
                 if (matcher.find()) {
                     return cleanTheUuidOfMarkers(matcher.group());
@@ -69,7 +66,7 @@ public class CodenjoyAchievementParcer implements AchievementParcer {
     }
 
     private String cleanTheUuidOfMarkers(String uuidWithMarkers){
-        return uuidWithMarkers.replaceAll(PARCED_UUID_START_TOKEN, "")
-                .replaceAll(PARCED_UUID_FINISH_TOKEN, "");
+        return uuidWithMarkers.replaceAll(PARCED_UUID_START_MARKER, "")
+                .replaceAll(PARCED_UUID_FINISH_MARKER, "");
     }
 }
