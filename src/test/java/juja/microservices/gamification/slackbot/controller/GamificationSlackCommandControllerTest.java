@@ -1,14 +1,12 @@
 package juja.microservices.gamification.slackbot.controller;
 
-import juja.microservices.gamification.slackbot.model.Achievement;
-import juja.microservices.gamification.slackbot.model.CodenjoyAchievment;
+import juja.microservices.gamification.slackbot.model.CodenjoyAchievement;
 import juja.microservices.gamification.slackbot.model.User;
 import juja.microservices.gamification.slackbot.service.GamificationService;
 import juja.microservices.gamification.slackbot.service.UserService;
 import juja.microservices.gamification.slackbot.utils.AchievementFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -71,7 +69,7 @@ public class GamificationSlackCommandControllerTest {
 
     @Test
     public void onReceiveSlashCommandReturnOkRichMessage() throws Exception {
-        when(gamificationService.sendCodenjoyAchievement(any(CodenjoyAchievment.class))).thenReturn("ok");
+        when(gamificationService.sendCodenjoyAchievement(any(CodenjoyAchievement.class))).thenReturn("ok");
         when(userService.findUserBySlack(any(String.class))).thenReturn(new User("uuid", "gmail", "slack", "skype", "lin", "face", "tw"));
         mvc.perform(MockMvcRequestBuilders.post("/commands/codenjoy?" +
                         "token={slashCommandToken}&" +
@@ -101,7 +99,7 @@ public class GamificationSlackCommandControllerTest {
 
     @Test
     public void onReceiveSlashCommandReturnIfToken2thWithoutSlackName() throws Exception {
-        when(gamificationService.sendCodenjoyAchievement(any(CodenjoyAchievment.class))).thenReturn("ok");
+        when(gamificationService.sendCodenjoyAchievement(any(CodenjoyAchievement.class))).thenReturn("ok");
         when(userService.findUserBySlack(any(String.class))).thenReturn(new User("uuid", "gmail", "slack", "skype", "lin", "face", "tw"));
         mvc.perform(MockMvcRequestBuilders.post("/commands/codenjoy?" +
                         "token={slashCommandToken}&" +
@@ -131,7 +129,7 @@ public class GamificationSlackCommandControllerTest {
 
     @Test
     public void onReceiveSlashCommandReturnIfWrongCommand() throws Exception {
-        when(gamificationService.sendCodenjoyAchievement(any(CodenjoyAchievment.class))).thenReturn("ok");
+        when(gamificationService.sendCodenjoyAchievement(any(CodenjoyAchievement.class))).thenReturn("ok");
         when(userService.findUserBySlack(any(String.class))).thenReturn(new User("uuid", "gmail", "slack", "skype", "lin", "face", "tw"));
         mvc.perform(MockMvcRequestBuilders.post("/commands/codenjoy?" +
                         "token={slashCommandToken}&" +

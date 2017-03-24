@@ -10,16 +10,16 @@ import lombok.ToString;
  */
 @Getter
 @ToString
-public class CodenjoyAchievment implements Achievement {
+public class CodenjoyAchievement implements Achievement {
     private String from;
     private String firstPlace;
     private String secondPlace;
     private String thirdPlace;
 
-    public CodenjoyAchievment(String from,
-                              String firstPlace,
-                              String secondPlace,
-                              String thirdPlace) {
+    public CodenjoyAchievement(String from,
+                               String firstPlace,
+                               String secondPlace,
+                               String thirdPlace) {
         this.from = from;
         this.firstPlace = firstPlace;
         this.secondPlace = secondPlace;

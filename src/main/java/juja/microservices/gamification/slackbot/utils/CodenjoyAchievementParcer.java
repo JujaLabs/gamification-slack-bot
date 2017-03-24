@@ -20,7 +20,7 @@ public class CodenjoyAchievementParcer implements AchievementParcer {
     public Achievement createAchievementFromCommand(Command command) {
         checkCommand(command);
         List<String> winners = receiveUserNames(command.getText());
-        return new CodenjoyAchievment(command.getFromUser(), winners.get(0), winners.get(1), winners.get(2));
+        return new CodenjoyAchievement(command.getFromUser(), winners.get(0), winners.get(1), winners.get(2));
     }
 
     private List<String> receiveUserNames(String text) {

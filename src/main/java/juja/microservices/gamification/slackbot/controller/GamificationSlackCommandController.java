@@ -2,10 +2,8 @@ package juja.microservices.gamification.slackbot.controller;
 
 
 import juja.microservices.gamification.slackbot.model.Achievement;
-import juja.microservices.gamification.slackbot.model.CodenjoyAchievment;
+import juja.microservices.gamification.slackbot.model.CodenjoyAchievement;
 import juja.microservices.gamification.slackbot.model.Command;
-import juja.microservices.gamification.slackbot.service.SlackNameHandlerService;
-import juja.microservices.gamification.slackbot.service.UserService;
 import juja.microservices.gamification.slackbot.utils.AchievementFactory;
 import juja.microservices.gamification.slackbot.service.GamificationService;
 
@@ -49,7 +47,7 @@ public class GamificationSlackCommandController {
         String response;
         try {
             Achievement achievement = achievmentFactory.createAchievement(new Command(commandName, fromUser, text));
-            response = gamificationService.sendCodenjoyAchievement((CodenjoyAchievment) achievement);
+            response = gamificationService.sendCodenjoyAchievement((CodenjoyAchievement) achievement);
         }catch (Exception ex){
             return new RichMessage(ex.getMessage());
         }

@@ -9,7 +9,7 @@ public interface GamificationService {
 
     String sendDailyAchievement(DailyAchievement daily);
 
-    String sendCodenjoyAchievement(CodenjoyAchievment codenjoy);
+    String sendCodenjoyAchievement(CodenjoyAchievement codenjoy);
 
     String sendThanksAchievement(ThanksAchievement thanks);
 

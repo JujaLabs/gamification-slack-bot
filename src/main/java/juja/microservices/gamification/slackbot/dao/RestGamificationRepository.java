@@ -59,7 +59,7 @@ public class RestGamificationRepository implements GamificationRepository {
     }
 
     @Override
-    public String saveCodenjoyAchievement(CodenjoyAchievment codenjoy) {
+    public String saveCodenjoyAchievement(CodenjoyAchievement codenjoy) {
         return sendAchievment(urlSendCodenjoy, codenjoy);
     }
 
