@@ -2,14 +2,17 @@ package juja.microservices.gamification.slackbot.utils;
 
 import juja.microservices.gamification.slackbot.model.Achievement;
 import juja.microservices.gamification.slackbot.model.Command;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Created by Nikol on 3/19/2017.
  */
-public interface AchievementParcer {
-    //todo read the constans from property file
-    String PARCED_UUID_PATTERN = "@#([a-zA-z0-9\\.\\_\\-]){1,21}#@"; //todo uuid format???
-    String PARCED_UUID_START_MARKER = "@#";
-    String PARCED_UUID_FINISH_MARKER = "#@";
-    Achievement createAchievementFromCommand(Command command);
+public abstract class AchievementParcer {
+    @Value("${parcedUuid.pattern}")
+    protected String parcedUuidPattern;
+    @Value("${parcedUuid.startMarker}")
+    protected String parcedUuidStartMarker;
+    @Value("${parcedUuid.finishMarker}")
+    protected String parcedUuidFinishMarker;
+    public abstract Achievement createAchievementFromCommand(Command command);
 }

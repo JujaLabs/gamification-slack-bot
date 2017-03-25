@@ -12,16 +12,19 @@ import javax.inject.Inject;
  */
 public class AchievementFactory {
     private SlackNameHandlerService slackNameHandlerService;
+    private CodenjoyAchievementParcer codenjoyAchievementParcer;
 
     @Inject
-    public AchievementFactory(SlackNameHandlerService slackNameHandlerService) {
+    public AchievementFactory(SlackNameHandlerService slackNameHandlerService,
+                              CodenjoyAchievementParcer codenjoyAchievementParcer) {
         this.slackNameHandlerService = slackNameHandlerService;
+        this.codenjoyAchievementParcer = codenjoyAchievementParcer;
     }
 
     public Achievement createAchievement (Command command){
         command = prepare(command);
         if(command.getName().equals("/codenjoy")){
-            return new CodenjoyAchievementParcer().createAchievementFromCommand(command);
+            return codenjoyAchievementParcer.createAchievementFromCommand(command);
         }
         throw new WrongCommandFormatException(String.format("Command %s is not supported", command.getName()));
     }

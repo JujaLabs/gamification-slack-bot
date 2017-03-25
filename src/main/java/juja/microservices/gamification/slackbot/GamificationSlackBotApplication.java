@@ -3,6 +3,7 @@ package juja.microservices.gamification.slackbot;
 import juja.microservices.gamification.slackbot.dao.*;
 import juja.microservices.gamification.slackbot.service.*;
 import juja.microservices.gamification.slackbot.utils.AchievementFactory;
+import juja.microservices.gamification.slackbot.utils.CodenjoyAchievementParcer;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.boot.SpringApplication;
@@ -56,8 +57,14 @@ public class GamificationSlackBotApplication {
     }
 
     @Bean
+    public CodenjoyAchievementParcer codenjoyAchievementParcer(){
+        return new CodenjoyAchievementParcer();
+    }
+
+    @Bean
     public AchievementFactory achievmentFactory(){
-        return new AchievementFactory(slackNameHandlerService());
+        return new AchievementFactory(slackNameHandlerService(),
+                codenjoyAchievementParcer());
     }
 
     private ClientHttpRequestFactory httpRequestFactory() {
