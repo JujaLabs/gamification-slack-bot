@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 /**
  * Created by Nikol on 3/9/2017.
  */
-public class CodenjoyAchievementParcer implements AchievementParcer {
+public class CodenjoyAchievementParcer extends AchievementParcer {
     private final String COMMAND_EXAMPLE = "/codenjoy -1th @slack_nick_name -2th @slack_nick_name2 -3th @slack_nick_name3";
     private final String[] COMMAND_TOKENS = {"-1th", "-2th", "-3th"};
     private final String COMMAND_NAME = "/codenjoy";
@@ -55,7 +55,7 @@ public class CodenjoyAchievementParcer implements AchievementParcer {
     private String findUuid(String token, String[] splitedText) {
         for (String s : splitedText) {
             if (s.contains(token)) {
-                Pattern uuidPattern = Pattern.compile(PARCED_UUID_PATTERN);
+                Pattern uuidPattern = Pattern.compile(parcedUuidPattern);
                 Matcher matcher = uuidPattern.matcher(s.substring(s.indexOf(token)));
                 if (matcher.find()) {
                     return cleanTheUuidOfMarkers(matcher.group());
@@ -66,7 +66,7 @@ public class CodenjoyAchievementParcer implements AchievementParcer {
     }
 
     private String cleanTheUuidOfMarkers(String uuidWithMarkers){
-        return uuidWithMarkers.replaceAll(PARCED_UUID_START_MARKER, "")
-                .replaceAll(PARCED_UUID_FINISH_MARKER, "");
+        return uuidWithMarkers.replaceAll(parcedUuidStartMarker, "")
+                .replaceAll(parcedUuidFinishMarker, "");
     }
 }

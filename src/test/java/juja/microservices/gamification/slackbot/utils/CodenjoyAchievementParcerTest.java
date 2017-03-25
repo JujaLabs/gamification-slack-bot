@@ -3,21 +3,23 @@ package juja.microservices.gamification.slackbot.utils;
 import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
 import juja.microservices.gamification.slackbot.model.Achievement;
 import juja.microservices.gamification.slackbot.model.Command;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.inject.Inject;
 
 import static org.junit.Assert.*;
 
 /**
  * Created by Nikol on 3/20/2017.
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class CodenjoyAchievementParcerTest {
-    private AchievementParcer codenjoyParcer;
-
-    @Before
-    public void setup() {
-        codenjoyParcer = new CodenjoyAchievementParcer();
-    }
+    @Inject
+    private CodenjoyAchievementParcer codenjoyParcer;
 
     @Test
     public void createAchievementFromCommand() throws Exception {
