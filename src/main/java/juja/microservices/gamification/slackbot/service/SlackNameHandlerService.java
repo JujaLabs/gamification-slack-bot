@@ -1,8 +1,6 @@
 package juja.microservices.gamification.slackbot.service;
 
-import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
 import juja.microservices.gamification.slackbot.model.Command;
-import juja.microservices.gamification.slackbot.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 
@@ -36,62 +34,19 @@ public class SlackNameHandlerService {
         this.userService = userService;
     }
 
+    //todo this is fake method. delete it after refactor
     public Command handle(Command command) {
-        check(command);
-        return changeSlackNamesToUuids(command);
-    }
-
-    private void check(Command command) {
-        if (command == null) {
-            throw new WrongCommandFormatException("Command is null");
-        }
-        if (command.getFromUser() == null) {
-            throw new WrongCommandFormatException("User name sent command is null");
-        }
-        checkSlackName(command.getFromUser());
-        if (command.getText() == null) {
-            command.setText("");
-        }
-    }
-
-    private void checkSlackName(String slackName) {
-        Pattern p = Pattern.compile(SLACK_NAME_PATTERN);
-        Matcher m = p.matcher(slackName);
-        if (!m.matches()) {
-            throw new WrongCommandFormatException(String.format("The slack name '%s' is not impossible", slackName));
-        }
-    }
-
-    private Command changeSlackNamesToUuids(Command command) {
-        command.setFromUser(changeSlackNameToUuid(command.getFromUser()));
-        command.setText(changeSlackNamesToUuids(command.getText()));
         return command;
     }
 
-    private String changeSlackNameToUuid(String slackName) {
-        User user = userService.findUserBySlack(slackName.toLowerCase());
-        String uuid = user.getUuid();
-        return uuid;
-    }
-
-    private String changeSlackNamesToUuids(String text) {
-        List<String> slackNames = extractSlackNamesFromText(text);
-        return changeSlackNamesToUuids(text, slackNames);
-    }
-
-    private List<String> extractSlackNamesFromText(String text) {
+    public String replaceSlackNamesToUuids(String text) {
+        if (text == null) {
+            return "";
+        }
         Pattern pattern = Pattern.compile(SLACK_NAME_PATTERN);
         Matcher matcher = pattern.matcher(text);
-        List<String> slackNames = new ArrayList<>();
         while (matcher.find()) {
-            slackNames.add(matcher.group());
-        }
-        return slackNames;
-    }
-
-    private String changeSlackNamesToUuids(String text, List<String> slackNames) {
-        for (String slackName : slackNames) {
-            //todo if slack name not found
+            String slackName = matcher.group();
             String uuid = userService.findUserBySlack(slackName.toLowerCase()).getUuid();
             text = text.replaceAll(slackName, parcedUuidStartMarker + uuid + parcedUuidFinishMarker);
         }
