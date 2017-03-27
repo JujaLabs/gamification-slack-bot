@@ -9,7 +9,7 @@ import javax.inject.Inject;
  * Created by Artem
  */
 
-public class DefaultUserService implements  UserService {
+public class DefaultUserService implements UserService {
 
     private final UserRepository userRepository;
 
@@ -22,5 +22,10 @@ public class DefaultUserService implements  UserService {
     @Override
     public User findUserBySlack(String slackNickname) {
         return userRepository.findUserBySlack(slackNickname);
+    }
+
+    @Override
+    public String findUuidUserBySlack(String slackNickname) {
+        return userRepository.findUuidUserBySlack(slackNickname);
     }
 }
