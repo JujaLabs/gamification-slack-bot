@@ -1,12 +1,10 @@
 package juja.microservices.gamification.slackbot.controller;
 
-
-import juja.microservices.gamification.slackbot.model.Achievement;
 import juja.microservices.gamification.slackbot.model.CodenjoyAchievement;
-import juja.microservices.gamification.slackbot.model.Command;
-import juja.microservices.gamification.slackbot.utils.AchievementFactory;
 import juja.microservices.gamification.slackbot.service.GamificationService;
 
+import juja.microservices.gamification.slackbot.service.SlackNameHandlerService;
+import juja.microservices.gamification.slackbot.service.UserService;
 import me.ramswaroop.jbot.core.slack.models.RichMessage;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,14 +22,18 @@ import javax.inject.Inject;
 public class GamificationSlackCommandController {
     private final String slackToken = "slashCommandToken"; // todo read slackToken from properties
     private final String URL_RECEIVE_CODENJOY = "/commands/codenjoy"; // todo read url from properties
+    private final SlackNameHandlerService slackNameHandlerService;
+    private final UserService userService;
 
     private GamificationService gamificationService;
-    private AchievementFactory achievmentFactory;
 
     @Inject
-    public GamificationSlackCommandController(GamificationService gamificationService, AchievementFactory achievementFactory) {
+    public GamificationSlackCommandController(GamificationService gamificationService,
+                                              UserService userService,
+                                              SlackNameHandlerService slackNameHandlerService) {
         this.gamificationService = gamificationService;
-        this.achievmentFactory = achievementFactory;
+        this.slackNameHandlerService = slackNameHandlerService;
+        this.userService = userService;
     }
 
     @RequestMapping(value = URL_RECEIVE_CODENJOY,
@@ -46,8 +48,10 @@ public class GamificationSlackCommandController {
         }
         String response;
         try {
-            Achievement achievement = achievmentFactory.createAchievement(new Command(commandName, fromUser, text));
-            response = gamificationService.sendCodenjoyAchievement((CodenjoyAchievement) achievement);
+            String fromUserUuid = userService.findUserBySlack(fromUser).getUuid();
+            String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
+            CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, preparedTextWithUuid);
+            response = gamificationService.sendCodenjoyAchievement(codenjoy);
         }catch (Exception ex){
             return new RichMessage(ex.getMessage());
         }

@@ -1,6 +1,5 @@
 package juja.microservices.gamification.slackbot.dao;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
 
 import juja.microservices.gamification.slackbot.model.*;
@@ -46,7 +45,6 @@ public class RestGamificationRepository implements GamificationRepository {
 
     @Override
     public String saveDailyAchievement(DailyAchievement daily) {
-        //todo return sendAchievment(urlSendDaily, daily);
         HttpEntity<DailyAchievement> request = new HttpEntity<>(daily, setupBaseHttpHeaders());
         String result = "";
         try {
@@ -60,12 +58,19 @@ public class RestGamificationRepository implements GamificationRepository {
 
     @Override
     public String saveCodenjoyAchievement(CodenjoyAchievement codenjoy) {
-        return sendAchievment(urlSendCodenjoy, codenjoy);
+        HttpEntity<CodenjoyAchievement> request = new HttpEntity<>(codenjoy, setupBaseHttpHeaders());
+        String result = "";
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendCodenjoy, HttpMethod.POST, request, String.class);
+            result = response.getBody();
+        } catch (HttpClientErrorException ex) {
+            throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
+        }
+        return result;
     }
 
     @Override
     public String saveThanksAchievement(ThanksAchievement thanks) {
-        //todo return sendAchievment(urlSendThanks, thanks);
         HttpEntity<ThanksAchievement> request = new HttpEntity<>(thanks, setupBaseHttpHeaders());
         String result = "";
         try {
@@ -79,7 +84,6 @@ public class RestGamificationRepository implements GamificationRepository {
 
     @Override
     public String saveInterviewAchievement(InterviewAchievement interview) {
-        //todo return sendAchievment(urlSendInterview, interview);
         HttpEntity<InterviewAchievement> request = new HttpEntity<>(interview, setupBaseHttpHeaders());
         String result = "";
         try {
@@ -90,17 +94,4 @@ public class RestGamificationRepository implements GamificationRepository {
         }
         return result;
     }
-
-    private String sendAchievment(String url, Achievement achievement) {
-        HttpEntity<ObjectNode> request = new HttpEntity<>(achievement.toJson(), setupBaseHttpHeaders());
-        String result = "";
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(urlBase + url, HttpMethod.POST, request, String.class);
-            result = response.getBody();
-        } catch (HttpClientErrorException ex) {
-            throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
-        }
-        return result;
-    }
-
 }

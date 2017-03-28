@@ -2,7 +2,6 @@ package juja.microservices.gamification.slackbot.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
 import lombok.Getter;
 import lombok.ToString;
@@ -17,7 +16,7 @@ import java.util.regex.Pattern;
 @ToString
 @JsonIgnoreProperties({"parcedUuidPattern", "parcedUuidStartMarker",
         "parcedUuidFinishMarker", "command_EXAMPLE"})
-public class CodenjoyAchievement implements Achievement {
+public class CodenjoyAchievement {
     @JsonProperty
     private String from;
     @JsonProperty
@@ -82,12 +81,5 @@ public class CodenjoyAchievement implements Achievement {
     private String cleanTheUuidOfMarkers(String uuidWithMarkers) {
         return uuidWithMarkers.replaceAll(parcedUuidStartMarker, "")
                 .replaceAll(parcedUuidFinishMarker, "");
-    }
-
-
-    //todo fake method delete after refactor
-    @Override
-    public ObjectNode toJson() {
-        return null;
     }
 }

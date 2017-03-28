@@ -1,10 +1,7 @@
 package juja.microservices.gamification.slackbot.service;
 
-import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
-import juja.microservices.gamification.slackbot.model.Command;
+
 import juja.microservices.gamification.slackbot.model.User;
-import juja.microservices.gamification.slackbot.service.SlackNameHandlerService;
-import juja.microservices.gamification.slackbot.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,8 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.inject.Inject;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 /**

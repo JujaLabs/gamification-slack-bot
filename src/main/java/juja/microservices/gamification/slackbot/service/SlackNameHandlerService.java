@@ -1,12 +1,9 @@
 package juja.microservices.gamification.slackbot.service;
 
-import juja.microservices.gamification.slackbot.model.Command;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,11 +29,6 @@ public class SlackNameHandlerService {
     @Inject
     public SlackNameHandlerService(UserService userService) {
         this.userService = userService;
-    }
-
-    //todo this is fake method. delete it after refactor
-    public Command handle(Command command) {
-        return command;
     }
 
     public String replaceSlackNamesToUuids(String text) {
