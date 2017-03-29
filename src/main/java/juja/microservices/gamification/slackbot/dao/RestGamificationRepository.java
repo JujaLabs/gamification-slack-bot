@@ -1,12 +1,11 @@
 package juja.microservices.gamification.slackbot.dao;
 
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
-import juja.microservices.gamification.slackbot.model.CodenjoyAchievment;
-import juja.microservices.gamification.slackbot.model.DailyAchievement;
-import juja.microservices.gamification.slackbot.model.InterviewAchievement;
-import juja.microservices.gamification.slackbot.model.ThanksAchievement;
+
+import juja.microservices.gamification.slackbot.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -46,7 +45,6 @@ public class RestGamificationRepository implements GamificationRepository {
 
     @Override
     public String saveDailyAchievement(DailyAchievement daily) {
-
         HttpEntity<DailyAchievement> request = new HttpEntity<>(daily, setupBaseHttpHeaders());
         String result = "";
         try {
@@ -59,9 +57,8 @@ public class RestGamificationRepository implements GamificationRepository {
     }
 
     @Override
-    public String saveCodenjoyAchievement(CodenjoyAchievment codenjoy) {
-
-        HttpEntity<CodenjoyAchievment> request = new HttpEntity<>(codenjoy, setupBaseHttpHeaders());
+    public String saveCodenjoyAchievement(CodenjoyAchievement codenjoy) {
+        HttpEntity<CodenjoyAchievement> request = new HttpEntity<>(codenjoy, setupBaseHttpHeaders());
         String result = "";
         try {
             ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendCodenjoy, HttpMethod.POST, request, String.class);
@@ -74,7 +71,6 @@ public class RestGamificationRepository implements GamificationRepository {
 
     @Override
     public String saveThanksAchievement(ThanksAchievement thanks) {
-
         HttpEntity<ThanksAchievement> request = new HttpEntity<>(thanks, setupBaseHttpHeaders());
         String result = "";
         try {

@@ -1,7 +1,7 @@
 package juja.microservices.gamification.slackbot.dao;
 
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
-import juja.microservices.gamification.slackbot.model.CodenjoyAchievment;
+import juja.microservices.gamification.slackbot.model.CodenjoyAchievement;
 import juja.microservices.gamification.slackbot.model.DailyAchievement;
 import juja.microservices.gamification.slackbot.model.InterviewAchievement;
 import juja.microservices.gamification.slackbot.model.ThanksAchievement;
@@ -110,7 +110,7 @@ public class RestGamificationRepositoryTest {
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
                 .andRespond(withSuccess("1000", MediaType.APPLICATION_JSON));
         //when
-        String result = gamificationRepository.saveCodenjoyAchievement(new CodenjoyAchievment("Bill", "Walter", "Bob", "Jonh"));
+        String result = gamificationRepository.saveCodenjoyAchievement(new CodenjoyAchievement("Bill", "Walter", "Bob", "Jonh"));
 
         // then
         mockServer.verify();
@@ -131,7 +131,7 @@ public class RestGamificationRepositoryTest {
         thrown.expect(GamificationExchangeException.class);
         thrown.expectMessage(containsString("Gamification Exchange Error"));
         //when
-        gamificationRepository.saveCodenjoyAchievement(new CodenjoyAchievment("Bill", "Walter", "Bob", "Jonh"));
+        gamificationRepository.saveCodenjoyAchievement(new CodenjoyAchievement("Bill", "Walter", "Bob", "Jonh"));
     }
 
     @Test

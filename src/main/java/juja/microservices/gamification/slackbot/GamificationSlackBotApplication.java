@@ -1,5 +1,6 @@
 package juja.microservices.gamification.slackbot;
 
+import juja.microservices.gamification.slackbot.controller.GamificationSlackCommandController;
 import juja.microservices.gamification.slackbot.dao.*;
 import juja.microservices.gamification.slackbot.service.*;
 import org.apache.http.client.HttpClient;
@@ -48,6 +49,16 @@ public class GamificationSlackBotApplication {
 
     @Bean
     public UserService userService(){return new DefaultUserService(userDao());}
+
+    @Bean
+    public SlackNameHandlerService slackNameHandlerService(){
+        return new SlackNameHandlerService(userService());
+    }
+
+    @Bean
+    public GamificationSlackCommandController gamificationSlackCommandController (){
+        return new GamificationSlackCommandController(gamificationService(), userService(), slackNameHandlerService());
+    }
 
     private ClientHttpRequestFactory httpRequestFactory() {
         return new HttpComponentsClientHttpRequestFactory(httpClient());

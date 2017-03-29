@@ -1,10 +1,7 @@
 package juja.microservices.gamification.slackbot.service;
 
 import juja.microservices.gamification.slackbot.dao.GamificationRepository;
-import juja.microservices.gamification.slackbot.model.CodenjoyAchievment;
-import juja.microservices.gamification.slackbot.model.DailyAchievement;
-import juja.microservices.gamification.slackbot.model.InterviewAchievement;
-import juja.microservices.gamification.slackbot.model.ThanksAchievement;
+import juja.microservices.gamification.slackbot.model.*;
 
 import javax.inject.Inject;
 
@@ -26,7 +23,7 @@ public class DefaultGamificationService implements GamificationService {
     }
 
     @Override
-    public String sendCodenjoyAchievement(CodenjoyAchievment codenjoy) {
+    public String sendCodenjoyAchievement(CodenjoyAchievement codenjoy) {
         return gamificationRepository.saveCodenjoyAchievement(codenjoy);
     }
 
