@@ -39,7 +39,7 @@ public class SlackNameHandlerService {
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
             String slackName = matcher.group();
-            String uuid = userService.findUserBySlack(slackName.toLowerCase()).getUuid();
+            String uuid = userService.findUuidUserBySlack(slackName.toLowerCase());
             text = text.replaceAll(slackName, parcedUuidStartMarker + uuid + parcedUuidFinishMarker);
         }
         return text;

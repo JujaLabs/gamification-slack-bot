@@ -66,7 +66,7 @@ public class GamificationSlackCommandControllerTest {
     @Test
     public void onReceiveSlashCommandReturnOkRichMessage() throws Exception {
         when(gamificationService.sendCodenjoyAchievement(any(CodenjoyAchievement.class))).thenReturn("ok");
-        when(userService.findUserBySlack(any(String.class))).thenReturn(new User("uuid", "gmail", "slack", "skype", "lin", "face", "tw"));
+        when(userService.findUuidUserBySlack("@slack.ame")).thenReturn("uuid");
         mvc.perform(MockMvcRequestBuilders.post("/commands/codenjoy?" +
                         "token={slashCommandToken}&" +
                         "team_id={team_id}&" +
@@ -96,7 +96,7 @@ public class GamificationSlackCommandControllerTest {
     @Test
     public void onReceiveSlashCommandReturnIfToken2thWithoutSlackName() throws Exception {
         when(gamificationService.sendCodenjoyAchievement(any(CodenjoyAchievement.class))).thenReturn("ok");
-        when(userService.findUserBySlack(any(String.class))).thenReturn(new User("uuid", "gmail", "slack", "skype", "lin", "face", "tw"));
+        when(userService.findUuidUserBySlack("@slack.name")).thenReturn("uuid");
         mvc.perform(MockMvcRequestBuilders.post("/commands/codenjoy?" +
                         "token={slashCommandToken}&" +
                         "team_id={team_id}&" +

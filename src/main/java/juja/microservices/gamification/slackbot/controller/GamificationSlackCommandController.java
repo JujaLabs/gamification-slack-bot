@@ -48,7 +48,7 @@ public class GamificationSlackCommandController {
         }
         String response;
         try {
-            String fromUserUuid = userService.findUserBySlack(fromUser).getUuid();
+            String fromUserUuid = userService.findUuidUserBySlack(fromUser);
             String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
             CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, preparedTextWithUuid);
             response = gamificationService.sendCodenjoyAchievement(codenjoy);

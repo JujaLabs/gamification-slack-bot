@@ -1,7 +1,5 @@
 package juja.microservices.gamification.slackbot.service;
 
-
-import juja.microservices.gamification.slackbot.model.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,11 +22,11 @@ public class SlackNameHandlerServiceTest {
     private SlackNameHandlerService slackNameHandlerService;
     @MockBean
     private UserService userService;
-    private User defaultUser;
+    private String defaultUuid;
 
     @Before
     public void setup() {
-        defaultUser = new User("uuid", "gmail", "slack", "skype", "linkedin", "facebook", "twitter");
+        defaultUuid = "uuid";
     }
 
     @Test
@@ -46,7 +44,7 @@ public class SlackNameHandlerServiceTest {
     public void changeSlackNamesToUuid() throws Exception {
         //given
         String text = "text @slack.name TexT text.";
-        when(userService.findUserBySlack("@slack.name")).thenReturn(defaultUser);
+        when(userService.findUuidUserBySlack("@slack.name")).thenReturn(defaultUuid);
         //when
         String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
         //then
@@ -57,7 +55,7 @@ public class SlackNameHandlerServiceTest {
     public void changeSlackNamesToUuidWhenTwoSlackNamesInText() throws Exception {
         //given
         String text = "text @slack.name TexT @slack.name text.";
-        when(userService.findUserBySlack("@slack.name")).thenReturn(defaultUser);
+        when(userService.findUuidUserBySlack("@slack.name")).thenReturn(defaultUuid);
         //when
         String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
         //then
@@ -67,7 +65,7 @@ public class SlackNameHandlerServiceTest {
     @Test
     public void changeSlackNamesToUuidIfSlackNameWithoutSpace() throws Exception {
         String text = "text@slack.name TexT text.";
-        when(userService.findUserBySlack("@slack.name")).thenReturn(defaultUser);
+        when(userService.findUuidUserBySlack("@slack.name")).thenReturn(defaultUuid);
         //when
         String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
         //then
@@ -77,7 +75,7 @@ public class SlackNameHandlerServiceTest {
     @Test
     public void changeSlackNamesToUuidIfTwoSlackNameWithoutSpace() throws Exception {
         String text = "text@slack.name TexT@slack.name text.";
-        when(userService.findUserBySlack("@slack.name")).thenReturn(defaultUser);
+        when(userService.findUuidUserBySlack("@slack.name")).thenReturn(defaultUuid);
         //when
         String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
         //then
@@ -88,7 +86,7 @@ public class SlackNameHandlerServiceTest {
     public void changeSlackNamesToUuidIfSlackNameInUpperCase() throws Exception {
         //given
         String text = "text @SLACK.NAME TexT text.";
-        when(userService.findUserBySlack("@slack.name")).thenReturn(defaultUser);
+        when(userService.findUuidUserBySlack("@slack.name")).thenReturn(defaultUuid);
         //when
         String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
         //then
@@ -99,7 +97,7 @@ public class SlackNameHandlerServiceTest {
     public void changeSlackNamesToUuidIfSomeCharSlackNameInUpperCase() throws Exception {
         //given
         String text = "text @SlACK.NaME TexT text.";
-        when(userService.findUserBySlack("@slack.name")).thenReturn(defaultUser);
+        when(userService.findUuidUserBySlack("@slack.name")).thenReturn(defaultUuid);
         //when
         String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
         //then
