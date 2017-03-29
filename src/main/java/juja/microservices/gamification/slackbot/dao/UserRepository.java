@@ -9,5 +9,6 @@ public interface UserRepository {
 
     User findUserBySlack(String slackNickname);
 
+    String findUuidUserBySlack(String slackNickname);
 
 }

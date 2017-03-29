@@ -10,6 +10,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -43,6 +44,17 @@ public class RestGamificationRepositoryTest {
 
     private MockRestServiceServer mockServer;
 
+    @Value("${gamification.baseURL}")
+    private String urlBase;
+    @Value("${endpoint.daily}")
+    private String urlSendDaily;
+    @Value("${endpoint.codenjoy}")
+    private String urlSendCodenjoy;
+    @Value("${endpoint.thanks}")
+    private String urlSendThanks;
+    @Value("${endpoint.interview}")
+    private String urlSendInterview;
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -57,7 +69,7 @@ public class RestGamificationRepositoryTest {
         //given
         String expectedRequestBody = "{\"from\":\"101\",\"description\":\"description\"}";
         String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo("http://gamification.juja.com.ua/achieve/daily"))
+        mockServer.expect(requestTo(urlBase + urlSendDaily))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
@@ -75,7 +87,7 @@ public class RestGamificationRepositoryTest {
         // given
         String expectedRequestBody = "{\"from\":\"101\",\"description\":\"description\"}";
         String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo("http://gamification.juja.com.ua/achieve/daily"))
+        mockServer.expect(requestTo(urlBase + urlSendDaily))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
@@ -92,7 +104,7 @@ public class RestGamificationRepositoryTest {
         //given
         String expectedRequestBody = "{\"from\":\"Bill\",\"firstPlace\":\"Walter\",\"secondPlace\":\"Bob\",\"thirdPlace\":\"Jonh\"}";
         String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo("http://gamification.juja.com.ua/achieve/codenjoy"))
+        mockServer.expect(requestTo(urlBase + urlSendCodenjoy))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
@@ -110,7 +122,7 @@ public class RestGamificationRepositoryTest {
         // given
         String expectedRequestBody = "{\"from\":\"Bill\",\"firstPlace\":\"Walter\",\"secondPlace\":\"Bob\",\"thirdPlace\":\"Jonh\"}";
         String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo("http://gamification.juja.com.ua/achieve/codenjoy"))
+        mockServer.expect(requestTo(urlBase + urlSendCodenjoy))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
@@ -127,7 +139,7 @@ public class RestGamificationRepositoryTest {
         //given
         String expectedRequestBody = "{\"from\":\"Bill\",\"to\":\"Bob\",\"description\":\"Thanks to Bob\"}";
         String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo("http://gamification.juja.com.ua/achieve/thanks"))
+        mockServer.expect(requestTo(urlBase + urlSendThanks))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
@@ -145,7 +157,7 @@ public class RestGamificationRepositoryTest {
         // given
         String expectedRequestBody = "{\"from\":\"Bill\",\"to\":\"Bob\",\"description\":\"Thanks to Bob\"}";
         String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo("http://gamification.juja.com.ua/achieve/thanks"))
+        mockServer.expect(requestTo(urlBase + urlSendThanks))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
@@ -162,7 +174,7 @@ public class RestGamificationRepositoryTest {
         //given
         String expectedRequestBody = "{\"from\":\"101\",\"description\":\"description\"}";
         String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo("http://gamification.juja.com.ua/achieve/interview"))
+        mockServer.expect(requestTo(urlBase + urlSendInterview))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
@@ -180,7 +192,7 @@ public class RestGamificationRepositoryTest {
         // given
         String expectedRequestBody = "{\"from\":\"101\",\"description\":\"description\"}";
         String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo("http://gamification.juja.com.ua/achieve/interview"))
+        mockServer.expect(requestTo(urlBase + urlSendInterview))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))

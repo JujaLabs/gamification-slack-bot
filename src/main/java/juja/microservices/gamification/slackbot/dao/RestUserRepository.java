@@ -46,4 +46,9 @@ public class RestUserRepository implements UserRepository {
         return result;
     }
 
+    @Override
+    public String findUuidUserBySlack(String slackNickname) {
+        return findUserBySlack(slackNickname).getUuid();
+    }
+
 }
