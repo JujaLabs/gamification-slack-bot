@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 /**
  * Created by Nikolay on 3/16/2017.
  */
-@PropertySource("application.properties")
 public class SlackNameHandlerService {
     private UserService userService;
     @Value("${parcedUuid.startMarker}")

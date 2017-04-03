@@ -15,7 +15,6 @@ import java.util.HashMap;
  * Created by Artem
  */
 
-@PropertySource("application.properties")
 public class RestUserRepository implements UserRepository {
 
     private final RestTemplate restTemplate;
