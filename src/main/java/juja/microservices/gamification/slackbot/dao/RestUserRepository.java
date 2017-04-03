@@ -1,6 +1,7 @@
 package juja.microservices.gamification.slackbot.dao;
 
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
+import juja.microservices.gamification.slackbot.exceptions.UserNotFoundException;
 import juja.microservices.gamification.slackbot.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -39,6 +40,9 @@ public class RestUserRepository implements UserRepository {
         User result;
         try {
             ResponseEntity<User> response = this.restTemplate.getForEntity(urlTemplate, User.class, urlVariables);
+            if (response.getStatusCodeValue() == 400) {
+                throw new UserNotFoundException(String.format("User with slack name '%s' not found.", slackNickname));
+            }
             result = response.getBody();
         } catch (HttpClientErrorException ex) {
             throw new GamificationExchangeException("User Exchange Error: ", ex);
