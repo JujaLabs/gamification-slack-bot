@@ -1,6 +1,7 @@
 package juja.microservices.gamification.slackbot.controller;
 
 import juja.microservices.gamification.slackbot.model.CodenjoyAchievement;
+import juja.microservices.gamification.slackbot.model.DailyAchievement;
 import juja.microservices.gamification.slackbot.service.GamificationService;
 
 import juja.microservices.gamification.slackbot.service.SlackNameHandlerService;
@@ -22,6 +23,7 @@ import javax.inject.Inject;
 public class GamificationSlackCommandController {
     private final String slackToken = "slashCommandToken"; // todo read slackToken from properties
     private final String URL_RECEIVE_CODENJOY = "/commands/codenjoy"; // todo read url from properties
+    private final String URL_RECEIVE_DAILY = "/commands/daily";
     private final SlackNameHandlerService slackNameHandlerService;
     private final UserService userService;
 
@@ -44,7 +46,7 @@ public class GamificationSlackCommandController {
                                                      @RequestParam("command") String commandName,
                                                      @RequestParam("text") String text) {
         if (!token.equals(slackToken)) {
-            return new RichMessage("Sorry! You're not lucky enough to use our slack command.");
+            return getRichMessageInvalidSlackCommand();
         }
         String response;
         try {
@@ -52,9 +54,30 @@ public class GamificationSlackCommandController {
             String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
             CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, preparedTextWithUuid);
             response = gamificationService.sendCodenjoyAchievement(codenjoy);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             return new RichMessage(ex.getMessage());
         }
         return new RichMessage(response);
+    }
+
+    @RequestMapping(value = URL_RECEIVE_DAILY,
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public RichMessage onReceiveSlashCommandDaily(@RequestParam("token") String token,
+                                                  @RequestParam("user_name") String fromUser,
+                                                  @RequestParam("command") String commandName,
+                                                  @RequestParam("text") String text) {
+        if (!token.equals(slackToken)) {
+            return getRichMessageInvalidSlackCommand();
+        }
+
+        String fromUserUuid = userService.findUuidUserBySlack(fromUser);
+        DailyAchievement daily = new DailyAchievement(fromUserUuid, text);
+
+        return new RichMessage(gamificationService.sendDailyAchievement(daily));
+    }
+
+    private RichMessage getRichMessageInvalidSlackCommand() {
+        return new RichMessage("Sorry! You're not lucky enough to use our slack command.");
     }
 }
