@@ -36,7 +36,7 @@ public class GamificationSlackCommandControllerTest {
     private UserService userService;
 
     @Test
-    public void onReceiveSlashCommandCodenjoy_When_IncorrectToken_Should_ReturnSorryRichMessage() throws Exception {
+    public void onReceiveSlashCommandCodenjoyWhenIncorrectTokenShouldReturnSorryRichMessage() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/commands/codenjoy?" +
                         "token={slashCommandToken}&" +
                         "team_id={team_id}&" +
@@ -124,7 +124,7 @@ public class GamificationSlackCommandControllerTest {
     }
 
     @Test
-    public void onReceiveSlashCommandDaily_When_IncorrectToken_Should_ReturnSorryRichMessage() throws Exception {
+    public void onReceiveSlashCommandDailyWhenIncorrectTokenShouldReturnSorryRichMessage() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/commands/daily?" +
                         "token={slashCommandToken}&" +
                         "team_id={team_id}&" +
