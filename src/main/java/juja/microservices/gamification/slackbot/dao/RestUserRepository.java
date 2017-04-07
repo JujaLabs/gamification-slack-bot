@@ -22,7 +22,6 @@ import java.util.Map;
  * Created by Artem
  */
 
-@PropertySource("application.properties")
 public class RestUserRepository implements UserRepository {
 
     private final RestTemplate restTemplate;

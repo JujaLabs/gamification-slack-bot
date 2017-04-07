@@ -16,7 +16,6 @@ import javax.inject.Inject;
  * @author Danil Kuznetsov
  */
 
-@PropertySource("application.properties")
 public class RestGamificationRepository implements GamificationRepository {
 
     private final RestTemplate restTemplate;
