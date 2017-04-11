@@ -1,5 +1,7 @@
 package juja.microservices.gamification.slackbot.service;
 
+import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
+import juja.microservices.gamification.slackbot.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 
@@ -10,7 +12,6 @@ import java.util.regex.Pattern;
 /**
  * Created by Nikolay on 3/16/2017.
  */
-@PropertySource("application.properties")
 public class SlackNameHandlerService {
     private UserService userService;
     @Value("${parcedUuid.startMarker}")
@@ -21,7 +22,6 @@ public class SlackNameHandlerService {
      * Slack name cannot be longer than 21 characters and
      * can only contain letters, numbers, periods, hyphens, and underscores.
      * ([a-z0-9\.\_\-]){1,21}
-     * Command example -1th @slack_nick_name -2th @slack_nick_name2 -3th @slack_nick_name3
      * quick test regExp http://regexr.com/
      */
     private final String SLACK_NAME_PATTERN = "@([a-zA-z0-9\\.\\_\\-]){1,21}";
@@ -38,9 +38,13 @@ public class SlackNameHandlerService {
         Pattern pattern = Pattern.compile(SLACK_NAME_PATTERN);
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
-            String slackName = matcher.group();
-            String uuid = userService.findUuidUserBySlack(slackName.toLowerCase());
-            text = text.replaceAll(slackName, parcedUuidStartMarker + uuid + parcedUuidFinishMarker);
+            try {
+                String slackName = matcher.group();
+                String uuid = userService.findUuidUserBySlack(slackName.toLowerCase());
+                text = text.replaceAll(slackName, parcedUuidStartMarker + uuid + parcedUuidFinishMarker);
+            } catch (UserNotFoundException ex) {
+                //
+            }
         }
         return text;
     }

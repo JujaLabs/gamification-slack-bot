@@ -1,6 +1,7 @@
 package juja.microservices.gamification.slackbot.dao;
 
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
+import juja.microservices.gamification.slackbot.exceptions.UserNotFoundException;
 import juja.microservices.gamification.slackbot.model.User;
 import org.junit.Before;
 import org.junit.Rule;
@@ -108,6 +109,30 @@ public class RestUserRepositoryTest {
         //then
         thrown.expect(GamificationExchangeException.class);
         thrown.expectMessage(containsString("User Exchange Error"));
+        //when
+        userRepository.findUuidUserBySlack("@user");
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenUuidNotFoundAndInternalErrorCode0() {
+        // given
+        mockServer.expect(requestTo(urlBase + urlGetUser + "/slackNickname=@user"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":0,\"clientMessage\":\"Oops something went wrong :(\",\"developerMessage\":\"General exception for this service\",\"exceptionMessage\":\"No users found by your request!\",\"detailErrors\":[]}"));
+        //then
+        thrown.expect(UserNotFoundException.class);
+        //when
+        userRepository.findUuidUserBySlack("@user");
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenUuidNotFoundAndInternalErrorCodeNot0() {
+        // given
+        mockServer.expect(requestTo(urlBase + urlGetUser + "/slackNickname=@user"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":9,\"clientMessage\":\"Oops something went wrong :(\",\"developerMessage\":\"General exception for this service\",\"exceptionMessage\":\"unknown Error\",\"detailErrors\":[]}"));
+        //then
+        thrown.expect(GamificationExchangeException.class);
         //when
         userRepository.findUuidUserBySlack("@user");
     }

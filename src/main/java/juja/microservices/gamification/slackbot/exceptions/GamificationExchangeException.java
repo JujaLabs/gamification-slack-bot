@@ -9,4 +9,8 @@ public class GamificationExchangeException extends RuntimeException {
     public GamificationExchangeException(String message, HttpClientErrorException ex) {
         super(message, ex);
     }
+
+    public GamificationExchangeException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
