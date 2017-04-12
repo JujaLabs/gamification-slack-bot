@@ -2,9 +2,10 @@ package juja.microservices.gamification.slackbot.controller;
 
 import juja.microservices.gamification.slackbot.model.CodenjoyAchievement;
 import juja.microservices.gamification.slackbot.model.DailyAchievement;
+import juja.microservices.gamification.slackbot.model.ThanksAchievement;
 import juja.microservices.gamification.slackbot.service.GamificationService;
 
-import juja.microservices.gamification.slackbot.service.SlackNameHandlerService;
+import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import juja.microservices.gamification.slackbot.service.UserService;
 import me.ramswaroop.jbot.core.slack.models.RichMessage;
 import org.springframework.http.MediaType;
@@ -24,6 +25,7 @@ public class GamificationSlackCommandController {
     private final String slackToken = "slashCommandToken"; // todo read slackToken from properties
     private final String URL_RECEIVE_CODENJOY = "/commands/codenjoy"; // todo read url from properties
     private final String URL_RECEIVE_DAILY = "/commands/daily";
+    private final String URL_RECEIVE_THANKS = "/commands/thanks";
     private final SlackNameHandlerService slackNameHandlerService;
     private final UserService userService;
 
@@ -75,6 +77,22 @@ public class GamificationSlackCommandController {
         DailyAchievement daily = new DailyAchievement(fromUserUuid, text);
 
         return new RichMessage(gamificationService.sendDailyAchievement(daily));
+    }
+
+    @RequestMapping(value = URL_RECEIVE_THANKS,
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public RichMessage onReceiveSlashCommandThanks(@RequestParam("token") String token,
+                                                  @RequestParam("user_name") String fromUser,
+                                                  @RequestParam("command") String commandName,
+                                                  @RequestParam("text") String text) {
+        if (!token.equals(slackToken)) {
+            return getRichMessageInvalidSlackCommand();
+        }
+        String fromUserUuid = userService.findUuidUserBySlack(fromUser);
+        String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
+        ThanksAchievement thanks = new ThanksAchievement(fromUserUuid, preparedTextWithUuid);
+        return new RichMessage(gamificationService.sendThanksAchievement(thanks));
     }
 
     private RichMessage getRichMessageInvalidSlackCommand() {
