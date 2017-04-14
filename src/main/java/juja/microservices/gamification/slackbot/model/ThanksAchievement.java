@@ -36,7 +36,8 @@ public class ThanksAchievement {
     public ThanksAchievement(String fromUserUuid, String text) {
         this.from = fromUserUuid;
         this.to = findUuid(text);
-        this.description = text.replaceAll(parcedUuidStartMarker,"").replaceAll(parcedUuidFinishMarker,"");
+        this.description = text.replaceAll(parcedUuidStartMarker.concat(this.to).concat(parcedUuidFinishMarker),"").
+                replaceAll(" +"," ");
     }
 
     @Override
@@ -50,17 +51,20 @@ public class ThanksAchievement {
     private String findUuid(String text) {
         Pattern pattern = Pattern.compile(parcedUuidPattern);
         Matcher matcher = pattern.matcher(text);
-        String uuid;
+        String uuid = "";
         if (matcher.find()) {
             uuid = matcher.group();
             if (matcher.find()) {
-                throw new WrongCommandFormatException(String.format("Wrong command. Example for this command %s",
-                        COMMAND_EXAMPLE));
+                throwWrongCommandFormatException();
             }
         } else {
-            throw new WrongCommandFormatException(String.format("Wrong command. Example for this command %s",
-                    COMMAND_EXAMPLE));
+            throwWrongCommandFormatException();
         }
         return uuid.replaceAll(parcedUuidStartMarker,"").replaceAll(parcedUuidFinishMarker,"");
+    }
+
+    private void throwWrongCommandFormatException() {
+        throw new WrongCommandFormatException(String.format("Wrong command. Example for this command %s",
+                COMMAND_EXAMPLE));
     }
 }

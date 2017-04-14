@@ -16,7 +16,7 @@ public class ThanksAchievementTest {
 
     @Before
     public void setup(){
-        expectedAchievement = new ThanksAchievement("max", "bob", "Thanks bob for help");
+        expectedAchievement = new ThanksAchievement("max", "bob", "Thanks for help");
     }
 
     @Test
