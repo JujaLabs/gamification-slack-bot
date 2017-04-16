@@ -88,11 +88,16 @@ public class GamificationSlackCommandController {
         if (!token.equals(slackToken)) {
             return getRichMessageInvalidSlackCommand();
         }
-
-        String fromUserUuid = userService.findUuidUserBySlack(fromUser);
-        InterviewAchievement interview = new InterviewAchievement(fromUserUuid, text);
-
-        return new RichMessage(gamificationService.saveInterviewAchievement(interview));
+        String response;
+        try {
+            String fromUserUuid = userService.findUuidUserBySlack(fromUser);
+            String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
+            InterviewAchievement interview = new InterviewAchievement(fromUserUuid, preparedTextWithUuid);
+            response = gamificationService.saveInterviewAchievement(interview);
+        } catch (Exception ex) {
+            return new RichMessage(ex.getMessage());
+        }
+        return new RichMessage(response);
     }
 
     private RichMessage getRichMessageInvalidSlackCommand() {
