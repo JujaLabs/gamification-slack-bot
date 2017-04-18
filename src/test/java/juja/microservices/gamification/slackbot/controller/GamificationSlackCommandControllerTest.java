@@ -176,7 +176,7 @@ public class GamificationSlackCommandControllerTest {
 
     @Test
     public void onReceiveSlashCommandInterviewReturnOkRichMessage() throws Exception {
-        when(gamificationService.saveInterviewAchievement(any(InterviewAchievement.class))).thenReturn("ok");
+        when(gamificationService.sendInterviewAchievement(any(InterviewAchievement.class))).thenReturn("ok");
         when(userService.findUuidUserBySlack("@slack.name")).thenReturn("uuid");
         mvc.perform(MockMvcRequestBuilders.post("/commands/interview?" +
                         "token={slashCommandToken}&" +

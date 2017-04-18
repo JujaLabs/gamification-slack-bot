@@ -117,7 +117,7 @@ public class GamificationSlackCommandController {
             String fromUserUuid = userService.findUuidUserBySlack(fromUser);
             String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
             InterviewAchievement interview = new InterviewAchievement(fromUserUuid, preparedTextWithUuid);
-            response = gamificationService.saveInterviewAchievement(interview);
+            response = gamificationService.sendInterviewAchievement(interview);
         } catch (Exception ex) {
             return new RichMessage(ex.getMessage());
         }
