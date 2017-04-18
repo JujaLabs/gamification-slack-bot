@@ -1,7 +1,8 @@
-package juja.microservices.gamification.slackbot.service;
+package juja.microservices.gamification.slackbot.service.impl;
 
 import juja.microservices.gamification.slackbot.dao.GamificationRepository;
 import juja.microservices.gamification.slackbot.model.*;
+import juja.microservices.gamification.slackbot.service.GamificationService;
 
 import javax.inject.Inject;
 
@@ -33,7 +34,7 @@ public class DefaultGamificationService implements GamificationService {
     }
 
     @Override
-    public String saveInterviewAchievement(InterviewAchievement interview) {
+    public String sendInterviewAchievement(InterviewAchievement interview) {
         return gamificationRepository.saveInterviewAchievement(interview);
     }
 }
