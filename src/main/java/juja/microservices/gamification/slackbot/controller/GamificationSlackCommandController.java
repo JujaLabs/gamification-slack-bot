@@ -2,6 +2,7 @@ package juja.microservices.gamification.slackbot.controller;
 
 import juja.microservices.gamification.slackbot.model.CodenjoyAchievement;
 import juja.microservices.gamification.slackbot.model.DailyAchievement;
+import juja.microservices.gamification.slackbot.model.InterviewAchievement;
 import juja.microservices.gamification.slackbot.model.ThanksAchievement;
 import juja.microservices.gamification.slackbot.service.GamificationService;
 
@@ -26,6 +27,7 @@ public class GamificationSlackCommandController {
     private final String URL_RECEIVE_CODENJOY = "/commands/codenjoy"; // todo read url from properties
     private final String URL_RECEIVE_DAILY = "/commands/daily";
     private final String URL_RECEIVE_THANKS = "/commands/thanks";
+    private final String URL_RECEIVE_INTERVIEW = "/commands/interview";
     private final SlackNameHandlerService slackNameHandlerService;
     private final UserService userService;
 
@@ -95,6 +97,27 @@ public class GamificationSlackCommandController {
             String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
             ThanksAchievement thanks = new ThanksAchievement(fromUserUuid, preparedTextWithUuid);
             response = gamificationService.sendThanksAchievement(thanks);
+        } catch (Exception ex) {
+            return new RichMessage(ex.getMessage());
+        }
+        return new RichMessage(response);
+    }
+
+    @RequestMapping(value = URL_RECEIVE_INTERVIEW,
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public RichMessage onReceiveSlashCommandInterview(@RequestParam("token") String token,
+                                                      @RequestParam("user_name") String fromUser,
+                                                      @RequestParam("text") String text) {
+        if (!token.equals(slackToken)) {
+            return getRichMessageInvalidSlackCommand();
+        }
+        String response;
+        try {
+            String fromUserUuid = userService.findUuidUserBySlack(fromUser);
+            String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
+            InterviewAchievement interview = new InterviewAchievement(fromUserUuid, preparedTextWithUuid);
+            response = gamificationService.saveInterviewAchievement(interview);
         } catch (Exception ex) {
             return new RichMessage(ex.getMessage());
         }
