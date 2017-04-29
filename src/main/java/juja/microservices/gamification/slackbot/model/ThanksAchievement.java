@@ -8,8 +8,6 @@ import lombok.ToString;
  * @author Vitalii Viazovoi
  */
 @Getter
-@Setter
-@ToString
 public class ThanksAchievement {
     private String from;
     private String to;

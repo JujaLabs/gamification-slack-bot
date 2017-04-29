@@ -9,8 +9,6 @@ import lombok.ToString;
  */
 
 @Getter
-@Setter
-@ToString
 public class InterviewAchievement {
 
     private String from;
