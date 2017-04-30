@@ -1,7 +1,6 @@
 package juja.microservices.gamification.slackbot.service;
 
 import juja.microservices.gamification.slackbot.dao.UserRepository;
-import juja.microservices.gamification.slackbot.model.ThanksAchievement;
 import juja.microservices.gamification.slackbot.model.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.inject.Inject;
 
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 

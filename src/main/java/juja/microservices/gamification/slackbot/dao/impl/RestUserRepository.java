@@ -9,8 +9,7 @@ import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeE
 import juja.microservices.gamification.slackbot.exceptions.UserNotFoundException;
 import juja.microservices.gamification.slackbot.model.User;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 

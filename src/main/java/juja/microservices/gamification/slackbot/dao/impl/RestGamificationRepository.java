@@ -2,11 +2,11 @@ package juja.microservices.gamification.slackbot.dao.impl;
 
 import juja.microservices.gamification.slackbot.dao.GamificationRepository;
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
-
-import juja.microservices.gamification.slackbot.model.*;
+import juja.microservices.gamification.slackbot.model.CodenjoyAchievement;
+import juja.microservices.gamification.slackbot.model.DailyAchievement;
+import juja.microservices.gamification.slackbot.model.InterviewAchievement;
+import juja.microservices.gamification.slackbot.model.ThanksAchievement;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
