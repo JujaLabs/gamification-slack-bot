@@ -20,7 +20,7 @@ public class CodenjoyAchievementTest {
     public ExpectedException thrown = ExpectedException.none();
 
     @Before
-    public void setup(){
+    public void setup() {
         objectMapper = new ObjectMapper();
     }
 
@@ -108,9 +108,12 @@ public class CodenjoyAchievementTest {
         CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, text);
     }
 
-
-
-
-
-
+    @Test(expected = WrongCommandFormatException.class)
+    public void ifUseTwoSameWinnerMarkers() throws Exception {
+        //given
+        String fromUserUuid = "uuid";
+        String text = "-1th @#uuid1#@ -2th @#uuid4#@ -2th @#uuid2#@ -3th @#uuid3#@";
+        //when
+        CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, text);
+    }
 }

@@ -136,4 +136,17 @@ public class RestUserRepositoryTest {
         //when
         userRepository.findUuidUserBySlack("@user");
     }
+
+    @Test
+    public void shouldThrowExceptionIfStringCanNotConvertToString() {
+        // given
+        mockServer.expect(requestTo(urlBase + urlGetUser + "/slackNickname=@user"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":0, bad json string"));
+        //then
+        thrown.expect(GamificationExchangeException.class);
+        thrown.expectMessage(containsString("can't parse or mapping"));
+        //when
+        userRepository.findUuidUserBySlack("@user");
+    }
 }
