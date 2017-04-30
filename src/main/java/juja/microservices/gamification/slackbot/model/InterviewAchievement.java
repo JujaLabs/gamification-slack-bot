@@ -10,8 +10,6 @@ import lombok.ToString;
  */
 
 @Getter
-@Setter
-@ToString
 public class InterviewAchievement {
     @JsonProperty
     private String from;

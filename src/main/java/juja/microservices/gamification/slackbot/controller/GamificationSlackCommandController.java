@@ -74,11 +74,15 @@ public class GamificationSlackCommandController {
         if (!token.equals(slackToken)) {
             return getRichMessageInvalidSlackCommand();
         }
-
+        String response;
+        try {
         String fromUserUuid = userService.findUuidUserBySlack(fromUser);
         DailyAchievement daily = new DailyAchievement(fromUserUuid, text);
-
-        return new RichMessage(gamificationService.sendDailyAchievement(daily));
+        response = gamificationService.sendDailyAchievement(daily);
+        } catch (Exception ex) {
+            return new RichMessage(ex.getMessage());
+        }
+        return new RichMessage(response);
     }
 
     @RequestMapping(value = URL_RECEIVE_THANKS,

@@ -6,8 +6,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Getter
-@Setter
-@ToString
 public class DailyAchievement {
     @JsonProperty
     private String from;

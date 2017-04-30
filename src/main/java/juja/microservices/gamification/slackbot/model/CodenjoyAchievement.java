@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
  * Created by Nikol on 3/4/2017.
  */
 @Getter
-@ToString
 @JsonIgnoreProperties({"parcedUuidPattern", "parcedUuidStartMarker",
         "parcedUuidFinishMarker", "command_EXAMPLE"})
 public class CodenjoyAchievement {
