@@ -61,7 +61,8 @@ public class RestUserRepositoryTest {
         //given
         mockServer.expect(requestTo(urlBase + urlGetUser + "/slackNickname=@user"))
                 .andExpect(method(HttpMethod.GET))
-                .andRespond(withSuccess("{\"uuid\":\"a1b\",\"gmail\":\"mail@gmail.com\",\"slack\":\"@user\",\"skype\":\"user_skype\",\"linkedin\":\"user.linkedin\"," +
+                .andRespond(withSuccess("{\"uuid\":\"a1b\",\"gmail\":\"mail@gmail.com\",\"slack\":\"@user\"," +
+                        "\"skype\":\"user_skype\",\"linkedin\":\"user.linkedin\"," +
                         "\"facebook\":\"user.facebook\",\"twitter\":\"user.twitter\"}", MediaType.APPLICATION_JSON));
 
         //when
@@ -69,7 +70,8 @@ public class RestUserRepositoryTest {
 
         // then
         mockServer.verify();
-        assertThat(result, equalTo(new User("a1b", "mail@gmail.com", "@user", "user_skype", "user.linkedin", "user.facebook", "user.twitter")));
+        assertThat(result, equalTo(new User("a1b", "mail@gmail.com", "@user",
+                "user_skype", "user.linkedin", "user.facebook", "user.twitter")));
     }
 
     @Test
@@ -77,7 +79,8 @@ public class RestUserRepositoryTest {
         //given
         mockServer.expect(requestTo(urlBase + urlGetUser + "/slackNickname=@user"))
                 .andExpect(method(HttpMethod.GET))
-                .andRespond(withSuccess("{\"uuid\":\"a1b\",\"gmail\":\"mail@gmail.com\",\"slack\":\"@user\",\"skype\":\"user_skype\",\"linkedin\":\"user.linkedin\"," +
+                .andRespond(withSuccess("{\"uuid\":\"a1b\",\"gmail\":\"mail@gmail.com\",\"slack\":\"@user\"," +
+                        "\"skype\":\"user_skype\",\"linkedin\":\"user.linkedin\"," +
                         "\"facebook\":\"user.facebook\",\"twitter\":\"user.twitter\"}", MediaType.APPLICATION_JSON));
         //when
         String result = userRepository.findUuidUserBySlack("@user");
@@ -118,7 +121,10 @@ public class RestUserRepositoryTest {
         // given
         mockServer.expect(requestTo(urlBase + urlGetUser + "/slackNickname=@user"))
                 .andExpect(method(HttpMethod.GET))
-                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":0,\"clientMessage\":\"Oops something went wrong :(\",\"developerMessage\":\"General exception for this service\",\"exceptionMessage\":\"No users found by your request!\",\"detailErrors\":[]}"));
+                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":0," +
+                        "\"clientMessage\":\"Oops something went wrong :(\"," +
+                        "\"developerMessage\":\"General exception for this service\"," +
+                        "\"exceptionMessage\":\"No users found by your request!\",\"detailErrors\":[]}"));
         //then
         thrown.expect(UserNotFoundException.class);
         //when
@@ -130,7 +136,10 @@ public class RestUserRepositoryTest {
         // given
         mockServer.expect(requestTo(urlBase + urlGetUser + "/slackNickname=@user"))
                 .andExpect(method(HttpMethod.GET))
-                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":9,\"clientMessage\":\"Oops something went wrong :(\",\"developerMessage\":\"General exception for this service\",\"exceptionMessage\":\"unknown Error\",\"detailErrors\":[]}"));
+                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":9," +
+                        "\"clientMessage\":\"Oops something went wrong :(\"," +
+                        "\"developerMessage\":\"General exception for this service\"," +
+                        "\"exceptionMessage\":\"unknown Error\",\"detailErrors\":[]}"));
         //then
         thrown.expect(GamificationExchangeException.class);
         //when

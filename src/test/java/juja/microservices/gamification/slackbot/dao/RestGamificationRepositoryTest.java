@@ -176,7 +176,8 @@ public class RestGamificationRepositoryTest {
         String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo(urlBase + urlSendInterview))
                 .andExpect(method(HttpMethod.POST))
-                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
+                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(),
+                        containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
                 .andRespond(withSuccess("1000", MediaType.APPLICATION_JSON));
         //when
@@ -194,7 +195,8 @@ public class RestGamificationRepositoryTest {
         String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo(urlBase + urlSendInterview))
                 .andExpect(method(HttpMethod.POST))
-                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
+                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(),
+                        containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
                 .andRespond(withBadRequest().body("bad request"));
         //then

@@ -73,7 +73,8 @@ public class RestUserRepository implements UserRepository {
             result = mapper.readValue(jsonInString, new TypeReference<HashMap<String, Object>>() {
             });
         } catch (JsonParseException | JsonMappingException exception){
-            throw new GamificationExchangeException(String.format("The string '%s' can't parse or mapping to Map<String, Object>", jsonInString), exception);
+            throw new GamificationExchangeException(String.format("The string '%s' can't parse or " +
+                    "mapping to Map<String, Object>", jsonInString), exception);
         } catch (IOException exception) {
             throw new GamificationExchangeException("A low-level I/O problem", exception);
         }
