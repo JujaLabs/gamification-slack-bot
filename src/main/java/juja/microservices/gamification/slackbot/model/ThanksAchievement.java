@@ -3,9 +3,6 @@ package juja.microservices.gamification.slackbot.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,7 +11,6 @@ import java.util.regex.Pattern;
  * @author Vitalii Viazovoi
  */
 @Getter
-@Setter
 @JsonIgnoreProperties({"parcedUuidPattern", "parcedUuidStartMarker",
         "parcedUuidFinishMarker", "PARCED_UUID_PATTERN_WITH_MARKERS", "command_EXAMPLE", "ONE_UUID"})
 public class ThanksAchievement {
