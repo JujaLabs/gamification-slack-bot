@@ -1,5 +1,6 @@
-package juja.microservices.gamification.slackbot.dao;
+package juja.microservices.gamification.slackbot.dao.impl;
 
+import juja.microservices.gamification.slackbot.dao.GamificationRepository;
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
 
 import juja.microservices.gamification.slackbot.model.*;
@@ -47,7 +48,8 @@ public class RestGamificationRepository implements GamificationRepository {
         HttpEntity<DailyAchievement> request = new HttpEntity<>(daily, setupBaseHttpHeaders());
         String result = "";
         try {
-            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendDaily, HttpMethod.POST, request, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendDaily,
+                    HttpMethod.POST, request, String.class);
             result = response.getBody();
         } catch (HttpClientErrorException ex) {
             throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
@@ -60,7 +62,8 @@ public class RestGamificationRepository implements GamificationRepository {
         HttpEntity<CodenjoyAchievement> request = new HttpEntity<>(codenjoy, setupBaseHttpHeaders());
         String result = "";
         try {
-            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendCodenjoy, HttpMethod.POST, request, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendCodenjoy,
+                    HttpMethod.POST, request, String.class);
             result = response.getBody();
         } catch (HttpClientErrorException ex) {
             throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
@@ -73,7 +76,8 @@ public class RestGamificationRepository implements GamificationRepository {
         HttpEntity<ThanksAchievement> request = new HttpEntity<>(thanks, setupBaseHttpHeaders());
         String result = "";
         try {
-            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendThanks, HttpMethod.POST, request, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendThanks,
+                    HttpMethod.POST, request, String.class);
             result = response.getBody();
         } catch (HttpClientErrorException ex) {
             throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
@@ -86,7 +90,8 @@ public class RestGamificationRepository implements GamificationRepository {
         HttpEntity<InterviewAchievement> request = new HttpEntity<>(interview, setupBaseHttpHeaders());
         String result = "";
         try {
-            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendInterview, HttpMethod.POST, request, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendInterview,
+                    HttpMethod.POST, request, String.class);
             result = response.getBody();
         } catch (HttpClientErrorException ex) {
             throw new GamificationExchangeException("Gamification Exchange Error: ", ex);

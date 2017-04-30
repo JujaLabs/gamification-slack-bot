@@ -2,7 +2,12 @@ package juja.microservices.gamification.slackbot;
 
 import juja.microservices.gamification.slackbot.controller.GamificationSlackCommandController;
 import juja.microservices.gamification.slackbot.dao.*;
+import juja.microservices.gamification.slackbot.dao.impl.RestGamificationRepository;
+import juja.microservices.gamification.slackbot.dao.impl.RestUserRepository;
 import juja.microservices.gamification.slackbot.service.*;
+import juja.microservices.gamification.slackbot.service.impl.DefaultGamificationService;
+import juja.microservices.gamification.slackbot.service.impl.DefaultUserService;
+import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.boot.SpringApplication;

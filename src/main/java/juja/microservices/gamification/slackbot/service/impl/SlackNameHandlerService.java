@@ -1,7 +1,8 @@
-package juja.microservices.gamification.slackbot.service;
+package juja.microservices.gamification.slackbot.service.impl;
 
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
 import juja.microservices.gamification.slackbot.exceptions.UserNotFoundException;
+import juja.microservices.gamification.slackbot.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 
