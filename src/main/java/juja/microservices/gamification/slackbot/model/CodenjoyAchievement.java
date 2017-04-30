@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by Nikolay on 3/4/2017.
+ * @author Nikolay Horushko
  */
 @Getter
 @JsonIgnoreProperties({"parsedUuidPattern", "parsedUuidStartMarker",

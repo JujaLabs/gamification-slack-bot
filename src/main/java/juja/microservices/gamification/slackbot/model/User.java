@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 /**
- * Created by Artem
+ * @author Artem
  */
 
 @Getter

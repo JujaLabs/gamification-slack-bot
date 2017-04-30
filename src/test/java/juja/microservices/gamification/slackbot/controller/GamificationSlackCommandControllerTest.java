@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Created by Nikolay on 3/11/2017.
+ * @author Nikolay Horushko
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(GamificationSlackCommandController.class)

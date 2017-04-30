@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Artem
+ * @author Artem
  */
 
 public class RestUserRepository implements UserRepository {

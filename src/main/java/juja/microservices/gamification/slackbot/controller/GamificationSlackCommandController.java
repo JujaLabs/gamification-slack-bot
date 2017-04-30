@@ -19,7 +19,7 @@ import javax.inject.Inject;
 
 
 /**
- * Created by Nikolay on 3/9/2017.
+ * @author Nikolay Horushko
  */
 @RestController
 public class GamificationSlackCommandController {

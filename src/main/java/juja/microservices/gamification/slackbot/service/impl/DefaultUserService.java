@@ -7,7 +7,7 @@ import juja.microservices.gamification.slackbot.service.UserService;
 import javax.inject.Inject;
 
 /**
- * Created by Artem
+ * @author Artem
  */
 
 public class DefaultUserService implements UserService {

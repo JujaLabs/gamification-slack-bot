@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by Nikolay on 3/16/2017.
+ * @author Nikolay Horushko
  */
 public class SlackNameHandlerService {
     private UserService userService;
