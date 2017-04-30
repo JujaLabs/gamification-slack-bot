@@ -11,7 +11,7 @@ import org.junit.rules.ExpectedException;
 import static org.junit.Assert.*;
 
 /**
- * Created by Nikol on 3/28/2017.
+ * Created by Nikolay on 3/28/2017.
  */
 public class CodenjoyAchievementTest {
     private ObjectMapper objectMapper;

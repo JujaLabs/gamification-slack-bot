@@ -60,7 +60,7 @@ public class DefaultGamificationServiceTest {
 
         //given
         String expectedAchievementId = "100";
-        CodenjoyAchievement codenjoyAchievement = new CodenjoyAchievement("Bill", "Walter", "Bob", "Jonh");
+        CodenjoyAchievement codenjoyAchievement = new CodenjoyAchievement("Bill", "Walter", "Bob", "John");
         given(gamificationRepository.saveCodenjoyAchievement(codenjoyAchievement)).willReturn(expectedAchievementId);
 
         //when

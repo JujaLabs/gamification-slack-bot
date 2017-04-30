@@ -31,7 +31,7 @@ public class ThanksAchievementTest {
     }
 
     @Test(expected = WrongCommandFormatException.class)
-    public void createAchievementWrongComand() throws Exception {
+    public void createAchievementWrongCommand() throws Exception {
         //given
         String fromUserUuid = "max";
         String text = "Thanks @#bob#@ @#max#@ for help";

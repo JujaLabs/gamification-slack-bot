@@ -102,7 +102,7 @@ public class RestGamificationRepositoryTest {
     @Test
     public void shouldReturnIdAchievementWhenSendCodenjoyToRemoteGamificationService() {
         //given
-        String expectedRequestBody = "{\"from\":\"Bill\",\"firstPlace\":\"Walter\",\"secondPlace\":\"Bob\",\"thirdPlace\":\"Jonh\"}";
+        String expectedRequestBody = "{\"from\":\"Bill\",\"firstPlace\":\"Walter\",\"secondPlace\":\"Bob\",\"thirdPlace\":\"John\"}";
         String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo(urlBase + urlSendCodenjoy))
                 .andExpect(method(HttpMethod.POST))
@@ -110,7 +110,7 @@ public class RestGamificationRepositoryTest {
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
                 .andRespond(withSuccess("1000", MediaType.APPLICATION_JSON));
         //when
-        String result = gamificationRepository.saveCodenjoyAchievement(new CodenjoyAchievement("Bill", "Walter", "Bob", "Jonh"));
+        String result = gamificationRepository.saveCodenjoyAchievement(new CodenjoyAchievement("Bill", "Walter", "Bob", "John"));
 
         // then
         mockServer.verify();
@@ -120,7 +120,7 @@ public class RestGamificationRepositoryTest {
     @Test
     public void shouldThrowExceptionWhenSendCodenjoyToRemoteGamificationServiceThrowException() {
         // given
-        String expectedRequestBody = "{\"from\":\"Bill\",\"firstPlace\":\"Walter\",\"secondPlace\":\"Bob\",\"thirdPlace\":\"Jonh\"}";
+        String expectedRequestBody = "{\"from\":\"Bill\",\"firstPlace\":\"Walter\",\"secondPlace\":\"Bob\",\"thirdPlace\":\"John\"}";
         String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo(urlBase + urlSendCodenjoy))
                 .andExpect(method(HttpMethod.POST))
@@ -131,7 +131,7 @@ public class RestGamificationRepositoryTest {
         thrown.expect(GamificationExchangeException.class);
         thrown.expectMessage(containsString("Gamification Exchange Error"));
         //when
-        gamificationRepository.saveCodenjoyAchievement(new CodenjoyAchievement("Bill", "Walter", "Bob", "Jonh"));
+        gamificationRepository.saveCodenjoyAchievement(new CodenjoyAchievement("Bill", "Walter", "Bob", "John"));
     }
 
     @Test
@@ -170,7 +170,7 @@ public class RestGamificationRepositoryTest {
     }
 
     @Test
-    public void shouldReturnIdAchievementWhenSendIntrviewToRemoteGamificationService() {
+    public void shouldReturnIdAchievementWhenSendInterviewToRemoteGamificationService() {
         //given
         String expectedRequestBody = "{\"from\":\"101\",\"description\":\"description\"}";
         String expectedRequestHeader = "application/json";

@@ -17,7 +17,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 /**
- * Created by Nikol on 4/30/2017.
+ * Created by Nikolay on 4/30/2017.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
