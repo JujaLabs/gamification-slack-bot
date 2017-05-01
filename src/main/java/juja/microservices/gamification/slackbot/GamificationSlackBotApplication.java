@@ -1,6 +1,5 @@
 package juja.microservices.gamification.slackbot;
 
-import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

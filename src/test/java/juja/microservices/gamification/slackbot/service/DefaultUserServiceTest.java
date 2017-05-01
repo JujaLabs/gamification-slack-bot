@@ -16,14 +16,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 /**
- * Created by Nikolay on 4/30/2017.
+ * @author Nikolay Horushko
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class DefaultUserServiceTest {
 
     @Inject
-    UserService userService;
+    private UserService userService;
 
     @MockBean
     private UserRepository userRepository;

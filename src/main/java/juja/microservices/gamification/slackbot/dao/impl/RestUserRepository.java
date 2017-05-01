@@ -63,9 +63,7 @@ public class RestUserRepository implements UserRepository {
         }
         Map<String, Object> map = jsonStringToHashMap(jsonInString);
         Integer actualValue = (Integer) map.get("internalErrorCode");
-        if (actualValue.equals(expectedValue)) {
-            return true;
-        } else return false;
+        return actualValue.equals(expectedValue);
     }
 
     private Map<String, Object> jsonStringToHashMap(String jsonInString) {

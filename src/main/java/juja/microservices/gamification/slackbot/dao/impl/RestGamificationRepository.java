@@ -21,7 +21,6 @@ import javax.inject.Inject;
 @Repository
 public class RestGamificationRepository implements GamificationRepository {
 
-    @Inject
     private final RestTemplate restTemplate;
 
     @Value("${gamification.baseURL}")
