@@ -3,6 +3,7 @@ package juja.microservices.gamification.slackbot.service.impl;
 import juja.microservices.gamification.slackbot.exceptions.UserNotFoundException;
 import juja.microservices.gamification.slackbot.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.regex.Matcher;
@@ -11,7 +12,10 @@ import java.util.regex.Pattern;
 /**
  * @author Nikolay Horushko
  */
+
+@Service
 public class SlackNameHandlerService {
+
     private UserService userService;
     @Value("${parsedUuid.startMarker}")
     private String parsedUuidStartMarker;

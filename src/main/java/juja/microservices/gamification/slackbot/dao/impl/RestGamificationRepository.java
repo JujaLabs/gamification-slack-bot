@@ -8,6 +8,7 @@ import juja.microservices.gamification.slackbot.model.InterviewAchievement;
 import juja.microservices.gamification.slackbot.model.ThanksAchievement;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,8 +18,10 @@ import javax.inject.Inject;
  * @author Danil Kuznetsov
  */
 
+@Repository
 public class RestGamificationRepository implements GamificationRepository {
 
+    @Inject
     private final RestTemplate restTemplate;
 
     @Value("${gamification.baseURL}")

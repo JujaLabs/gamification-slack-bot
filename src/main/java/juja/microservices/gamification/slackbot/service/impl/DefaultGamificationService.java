@@ -3,12 +3,15 @@ package juja.microservices.gamification.slackbot.service.impl;
 import juja.microservices.gamification.slackbot.dao.GamificationRepository;
 import juja.microservices.gamification.slackbot.model.*;
 import juja.microservices.gamification.slackbot.service.GamificationService;
+import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 
 /**
  * @author Danil Kuznetsov
  */
+
+@Service
 public class DefaultGamificationService implements GamificationService {
 
     private final GamificationRepository gamificationRepository;

@@ -5,9 +5,8 @@ import juja.microservices.gamification.slackbot.model.DailyAchievement;
 import juja.microservices.gamification.slackbot.model.InterviewAchievement;
 import juja.microservices.gamification.slackbot.model.ThanksAchievement;
 import juja.microservices.gamification.slackbot.service.GamificationService;
-
-import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import juja.microservices.gamification.slackbot.service.UserService;
+import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import me.ramswaroop.jbot.core.slack.models.RichMessage;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,9 +27,9 @@ public class GamificationSlackCommandController {
     private final String URL_RECEIVE_DAILY = "/commands/daily";
     private final String URL_RECEIVE_THANKS = "/commands/thanks";
     private final String URL_RECEIVE_INTERVIEW = "/commands/interview";
+
     private final SlackNameHandlerService slackNameHandlerService;
     private final UserService userService;
-
     private GamificationService gamificationService;
 
     @Inject

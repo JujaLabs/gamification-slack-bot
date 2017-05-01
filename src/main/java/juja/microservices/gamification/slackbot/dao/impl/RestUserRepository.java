@@ -10,6 +10,7 @@ import juja.microservices.gamification.slackbot.exceptions.UserNotFoundException
 import juja.microservices.gamification.slackbot.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,6 +23,7 @@ import java.util.Map;
  * @author Artem
  */
 
+@Repository
 public class RestUserRepository implements UserRepository {
 
     private final RestTemplate restTemplate;
