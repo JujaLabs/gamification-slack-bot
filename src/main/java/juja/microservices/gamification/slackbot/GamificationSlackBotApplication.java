@@ -32,11 +32,7 @@ public class GamificationSlackBotApplication {
     }
 
     private ClientHttpRequestFactory httpRequestFactory() {
-        return new HttpComponentsClientHttpRequestFactory(httpClient());
-    }
-
-    private HttpClient httpClient() {
-        return HttpClients.createDefault();
+        return new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
     }
 
     private List<HttpMessageConverter<?>> getHttpMessageConverters() {
