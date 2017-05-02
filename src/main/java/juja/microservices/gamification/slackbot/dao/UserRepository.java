@@ -3,7 +3,7 @@ package juja.microservices.gamification.slackbot.dao;
 import juja.microservices.gamification.slackbot.model.User;
 
 /**
- * Created by Artem
+ * @author Artem
  */
 public interface UserRepository {
 

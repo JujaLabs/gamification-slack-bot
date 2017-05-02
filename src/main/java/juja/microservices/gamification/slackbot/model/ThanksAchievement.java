@@ -11,16 +11,16 @@ import java.util.regex.Pattern;
  * @author Vitalii Viazovoi
  */
 @Getter
-@JsonIgnoreProperties({"parcedUuidPattern", "parcedUuidStartMarker",
-        "parcedUuidFinishMarker", "PARCED_UUID_PATTERN_WITH_MARKERS", "command_EXAMPLE", "ONE_UUID"})
+@JsonIgnoreProperties({"parsedUuidPattern", "parsedUuidStartMarker",
+        "parsedUuidFinishMarker", "PARSED_UUID_PATTERN_WITH_MARKERS", "command_EXAMPLE", "ONE_UUID"})
 public class ThanksAchievement {
     private String from;
     private String to;
     private String description;
 
-    private static final String parcedUuidPattern = "@#([a-zA-z0-9\\.\\_\\-]){1,21}#@";
-    private static final String parcedUuidStartMarker  = "@#";
-    private static final String parcedUuidFinishMarker = "#@";
+    private static final String parsedUuidPattern = "@#([a-zA-z0-9\\.\\_\\-]){1,21}#@";
+    private static final String parsedUuidStartMarker = "@#";
+    private static final String parsedUuidFinishMarker = "#@";
     private final String COMMAND_EXAMPLE = "/thanks Thanks to @slack_nick_name for help.";
 
     public ThanksAchievement(String from, String to, String description) {
@@ -32,7 +32,7 @@ public class ThanksAchievement {
     public ThanksAchievement(String fromUserUuid, String text) {
         this.from = fromUserUuid;
         this.to = findUuid(text);
-        this.description = text.replaceAll(parcedUuidStartMarker.concat(this.to).concat(parcedUuidFinishMarker),"").
+        this.description = text.replaceAll(parsedUuidStartMarker.concat(this.to).concat(parsedUuidFinishMarker),"").
                 replaceAll(" +"," ");
     }
 
@@ -45,7 +45,7 @@ public class ThanksAchievement {
     }
 
     private String findUuid(String text) {
-        Pattern pattern = Pattern.compile(parcedUuidPattern);
+        Pattern pattern = Pattern.compile(parsedUuidPattern);
         Matcher matcher = pattern.matcher(text);
         String uuid = "";
         if (matcher.find()) {
@@ -56,7 +56,7 @@ public class ThanksAchievement {
         } else {
             throwWrongCommandFormatException();
         }
-        return uuid.replaceAll(parcedUuidStartMarker,"").replaceAll(parcedUuidFinishMarker,"");
+        return uuid.replaceAll(parsedUuidStartMarker,"").replaceAll(parsedUuidFinishMarker,"");
     }
 
     private void throwWrongCommandFormatException() {

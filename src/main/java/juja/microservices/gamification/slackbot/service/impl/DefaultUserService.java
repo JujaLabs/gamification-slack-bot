@@ -3,13 +3,15 @@ package juja.microservices.gamification.slackbot.service.impl;
 import juja.microservices.gamification.slackbot.dao.UserRepository;
 import juja.microservices.gamification.slackbot.model.User;
 import juja.microservices.gamification.slackbot.service.UserService;
+import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 
 /**
- * Created by Artem
+ * @author Artem
  */
 
+@Service
 public class DefaultUserService implements UserService {
 
     private final UserRepository userRepository;

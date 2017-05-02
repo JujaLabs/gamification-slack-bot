@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by Nikol on 3/18/2017.
+ * @author Nikolay Horushko
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest

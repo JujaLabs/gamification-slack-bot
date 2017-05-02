@@ -11,7 +11,7 @@ import org.junit.rules.ExpectedException;
 import static org.junit.Assert.*;
 
 /**
- * Created by Nikol on 3/28/2017.
+ * @author Nikolay Horushko
  */
 public class CodenjoyAchievementTest {
     private ObjectMapper objectMapper;
@@ -32,7 +32,8 @@ public class CodenjoyAchievementTest {
         //when
         CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, text);
         //then
-        assertEquals("{\"from\":\"uuid\",\"firstPlace\":\"uuid1\",\"secondPlace\":\"uuid2\",\"thirdPlace\":\"uuid3\"}", objectMapper.writeValueAsString(codenjoy));
+        assertEquals("{\"from\":\"uuid\",\"firstPlace\":\"uuid1\",\"secondPlace\":\"uuid2\",\"thirdPlace\":\"uuid3\"}",
+                objectMapper.writeValueAsString(codenjoy));
     }
 
     @Test
@@ -43,7 +44,8 @@ public class CodenjoyAchievementTest {
         //when
         CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, text);
         //then
-        assertEquals("{\"from\":\"uuid\",\"firstPlace\":\"uuid1\",\"secondPlace\":\"uuid2\",\"thirdPlace\":\"uuid3\"}", objectMapper.writeValueAsString(codenjoy));
+        assertEquals("{\"from\":\"uuid\",\"firstPlace\":\"uuid1\",\"secondPlace\":\"uuid2\",\"thirdPlace\":\"uuid3\"}",
+                objectMapper.writeValueAsString(codenjoy));
     }
 
     @Test
@@ -54,7 +56,8 @@ public class CodenjoyAchievementTest {
         //when
         CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, text);
         //then
-        assertEquals("{\"from\":\"uuid\",\"firstPlace\":\"uuid1\",\"secondPlace\":\"uuid2\",\"thirdPlace\":\"uuid3\"}", objectMapper.writeValueAsString(codenjoy));
+        assertEquals("{\"from\":\"uuid\",\"firstPlace\":\"uuid1\",\"secondPlace\":\"uuid2\",\"thirdPlace\":\"uuid3\"}",
+                objectMapper.writeValueAsString(codenjoy));
     }
 
     @Test
@@ -65,7 +68,8 @@ public class CodenjoyAchievementTest {
         //when
         CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, text);
         //then
-        assertEquals("{\"from\":\"uuid\",\"firstPlace\":\"uuid1\",\"secondPlace\":\"uuid2\",\"thirdPlace\":\"uuid3\"}", objectMapper.writeValueAsString(codenjoy));
+        assertEquals("{\"from\":\"uuid\",\"firstPlace\":\"uuid1\",\"secondPlace\":\"uuid2\",\"thirdPlace\":\"uuid3\"}",
+                objectMapper.writeValueAsString(codenjoy));
     }
 
     @Test
@@ -76,7 +80,8 @@ public class CodenjoyAchievementTest {
         //when
         CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, text);
         //then
-        assertEquals("{\"from\":\"uuid\",\"firstPlace\":\"uuid1\",\"secondPlace\":\"uuid2\",\"thirdPlace\":\"uuid3\"}", objectMapper.writeValueAsString(codenjoy));
+        assertEquals("{\"from\":\"uuid\",\"firstPlace\":\"uuid1\",\"secondPlace\":\"uuid2\",\"thirdPlace\":\"uuid3\"}",
+                objectMapper.writeValueAsString(codenjoy));
     }
 
     @Test
@@ -87,7 +92,8 @@ public class CodenjoyAchievementTest {
         //when
         CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, text);
         //then
-        assertEquals("{\"from\":\"uuid\",\"firstPlace\":\"uuid1\",\"secondPlace\":\"uuid2\",\"thirdPlace\":\"uuid3\"}", objectMapper.writeValueAsString(codenjoy));
+        assertEquals("{\"from\":\"uuid\",\"firstPlace\":\"uuid1\",\"secondPlace\":\"uuid2\",\"thirdPlace\":\"uuid3\"}",
+                objectMapper.writeValueAsString(codenjoy));
     }
 
     @Test(expected = WrongCommandFormatException.class)

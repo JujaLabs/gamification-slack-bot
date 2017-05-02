@@ -2,12 +2,13 @@ package juja.microservices.gamification.slackbot.dao.impl;
 
 import juja.microservices.gamification.slackbot.dao.GamificationRepository;
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
-
-import juja.microservices.gamification.slackbot.model.*;
+import juja.microservices.gamification.slackbot.model.CodenjoyAchievement;
+import juja.microservices.gamification.slackbot.model.DailyAchievement;
+import juja.microservices.gamification.slackbot.model.InterviewAchievement;
+import juja.microservices.gamification.slackbot.model.ThanksAchievement;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-
 import org.springframework.http.*;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,6 +18,7 @@ import javax.inject.Inject;
  * @author Danil Kuznetsov
  */
 
+@Repository
 public class RestGamificationRepository implements GamificationRepository {
 
     private final RestTemplate restTemplate;
@@ -46,7 +48,7 @@ public class RestGamificationRepository implements GamificationRepository {
     @Override
     public String saveDailyAchievement(DailyAchievement daily) {
         HttpEntity<DailyAchievement> request = new HttpEntity<>(daily, setupBaseHttpHeaders());
-        String result = "";
+        String result;
         try {
             ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendDaily,
                     HttpMethod.POST, request, String.class);
@@ -60,7 +62,7 @@ public class RestGamificationRepository implements GamificationRepository {
     @Override
     public String saveCodenjoyAchievement(CodenjoyAchievement codenjoy) {
         HttpEntity<CodenjoyAchievement> request = new HttpEntity<>(codenjoy, setupBaseHttpHeaders());
-        String result = "";
+        String result;
         try {
             ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendCodenjoy,
                     HttpMethod.POST, request, String.class);
@@ -74,7 +76,7 @@ public class RestGamificationRepository implements GamificationRepository {
     @Override
     public String saveThanksAchievement(ThanksAchievement thanks) {
         HttpEntity<ThanksAchievement> request = new HttpEntity<>(thanks, setupBaseHttpHeaders());
-        String result = "";
+        String result;
         try {
             ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendThanks,
                     HttpMethod.POST, request, String.class);
@@ -88,7 +90,7 @@ public class RestGamificationRepository implements GamificationRepository {
     @Override
     public String saveInterviewAchievement(InterviewAchievement interview) {
         HttpEntity<InterviewAchievement> request = new HttpEntity<>(interview, setupBaseHttpHeaders());
-        String result = "";
+        String result;
         try {
             ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendInterview,
                     HttpMethod.POST, request, String.class);

@@ -1,7 +1,6 @@
 package juja.microservices.gamification.slackbot.service;
 
 import juja.microservices.gamification.slackbot.dao.UserRepository;
-import juja.microservices.gamification.slackbot.model.ThanksAchievement;
 import juja.microservices.gamification.slackbot.model.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,19 +11,19 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.inject.Inject;
 
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 /**
- * Created by Nikol on 4/30/2017.
+ * @author Nikolay Horushko
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class DefaultUserServiceTest {
 
     @Inject
-    UserService userService;
+    private UserService userService;
 
     @MockBean
     private UserRepository userRepository;

@@ -1,18 +1,10 @@
 package juja.microservices.gamification.slackbot;
 
-import juja.microservices.gamification.slackbot.controller.GamificationSlackCommandController;
-import juja.microservices.gamification.slackbot.dao.*;
-import juja.microservices.gamification.slackbot.dao.impl.RestGamificationRepository;
-import juja.microservices.gamification.slackbot.dao.impl.RestUserRepository;
-import juja.microservices.gamification.slackbot.service.*;
-import juja.microservices.gamification.slackbot.service.impl.DefaultGamificationService;
-import juja.microservices.gamification.slackbot.service.impl.DefaultUserService;
-import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
-import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -28,8 +20,8 @@ import java.util.List;
  */
 
 @SpringBootApplication
+@ComponentScan({"juja.microservices.gamification.slackbot"})
 public class GamificationSlackBotApplication {
-
 
     @Bean
     public RestTemplate restTemplate() {
@@ -38,39 +30,8 @@ public class GamificationSlackBotApplication {
         return restTemplate;
     }
 
-
-    @Bean
-    public GamificationRepository gamificationDao() {
-        return new RestGamificationRepository(restTemplate());
-    }
-
-    @Bean
-    public GamificationService gamificationService() {
-        return new DefaultGamificationService(gamificationDao());
-    }
-
-    @Bean
-    public UserRepository userDao(){return new RestUserRepository(restTemplate());}
-
-    @Bean
-    public UserService userService(){return new DefaultUserService(userDao());}
-
-    @Bean
-    public SlackNameHandlerService slackNameHandlerService(){
-        return new SlackNameHandlerService(userService());
-    }
-
-    @Bean
-    public GamificationSlackCommandController gamificationSlackCommandController (){
-        return new GamificationSlackCommandController(gamificationService(), userService(), slackNameHandlerService());
-    }
-
     private ClientHttpRequestFactory httpRequestFactory() {
-        return new HttpComponentsClientHttpRequestFactory(httpClient());
-    }
-
-    private HttpClient httpClient() {
-        return HttpClients.createDefault();
+        return new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
     }
 
     private List<HttpMessageConverter<?>> getHttpMessageConverters() {

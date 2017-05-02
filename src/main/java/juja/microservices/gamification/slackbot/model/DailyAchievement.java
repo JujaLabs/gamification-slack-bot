@@ -2,8 +2,6 @@ package juja.microservices.gamification.slackbot.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 public class DailyAchievement {

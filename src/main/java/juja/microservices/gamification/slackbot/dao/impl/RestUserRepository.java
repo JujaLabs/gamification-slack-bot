@@ -9,8 +9,8 @@ import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeE
 import juja.microservices.gamification.slackbot.exceptions.UserNotFoundException;
 import juja.microservices.gamification.slackbot.model.User;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,9 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Artem
+ * @author Artem
  */
 
+@Repository
 public class RestUserRepository implements UserRepository {
 
     private final RestTemplate restTemplate;
@@ -62,9 +63,7 @@ public class RestUserRepository implements UserRepository {
         }
         Map<String, Object> map = jsonStringToHashMap(jsonInString);
         Integer actualValue = (Integer) map.get("internalErrorCode");
-        if (actualValue.equals(expectedValue)) {
-            return true;
-        } else return false;
+        return actualValue.equals(expectedValue);
     }
 
     private Map<String, Object> jsonStringToHashMap(String jsonInString) {
@@ -74,7 +73,8 @@ public class RestUserRepository implements UserRepository {
             result = mapper.readValue(jsonInString, new TypeReference<HashMap<String, Object>>() {
             });
         } catch (JsonParseException | JsonMappingException exception){
-            throw new GamificationExchangeException(String.format("The string '%s' can't parse or mapping to Map<String, Object>", jsonInString), exception);
+            throw new GamificationExchangeException(String.format("The string '%s' can't parse or " +
+                    "mapping to Map<String, Object>", jsonInString), exception);
         } catch (IOException exception) {
             throw new GamificationExchangeException("A low-level I/O problem", exception);
         }
