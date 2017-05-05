@@ -20,7 +20,6 @@ import java.util.List;
  */
 
 @SpringBootApplication
-@ComponentScan({"juja.microservices.gamification.slackbot"})
 public class GamificationSlackBotApplication {
 
     @Bean

@@ -44,7 +44,6 @@ public class GamificationSlackCommandController {
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public RichMessage onReceiveSlashCommandCodenjoy(@RequestParam("token") String token,
                                                      @RequestParam("user_name") String fromUser,
-                                                     @RequestParam("command") String commandName,
                                                      @RequestParam("text") String text) {
         if (!token.equals(slackToken)) {
             return getRichMessageInvalidSlackCommand();
@@ -66,7 +65,6 @@ public class GamificationSlackCommandController {
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public RichMessage onReceiveSlashCommandDaily(@RequestParam("token") String token,
                                                   @RequestParam("user_name") String fromUser,
-                                                  @RequestParam("command") String commandName,
                                                   @RequestParam("text") String text) {
         if (!token.equals(slackToken)) {
             return getRichMessageInvalidSlackCommand();
@@ -87,7 +85,6 @@ public class GamificationSlackCommandController {
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public RichMessage onReceiveSlashCommandThanks(@RequestParam("token") String token,
                                                   @RequestParam("user_name") String fromUser,
-                                                  @RequestParam("command") String commandName,
                                                   @RequestParam("text") String text) {
         if (!token.equals(slackToken)) {
             return getRichMessageInvalidSlackCommand();
