@@ -17,9 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Artem
@@ -43,8 +41,10 @@ public class RestUserRepository implements UserRepository {
 
     @Override
     public String findUuidUserBySlack(String slackName) {
-        String[] slackNameRequest = {slackName};
-        HttpEntity<SlackNameRequest> request = new HttpEntity<>(new SlackNameRequest(Arrays.asList(slackNameRequest)), setupBaseHttpHeaders());
+        List slackNames = new ArrayList();
+        slackNames.add(slackName);
+        SlackNameRequest slackNameRequest = new SlackNameRequest(slackNames);
+        HttpEntity<SlackNameRequest> request = new HttpEntity<>(slackNameRequest, setupBaseHttpHeaders());
         String result;
         try {
             ResponseEntity<UserDTO[]> response = restTemplate.exchange(urlBase + urlGetUser,
