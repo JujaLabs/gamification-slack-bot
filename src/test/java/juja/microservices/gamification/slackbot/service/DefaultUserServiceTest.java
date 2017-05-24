@@ -1,7 +1,6 @@
 package juja.microservices.gamification.slackbot.service;
 
 import juja.microservices.gamification.slackbot.dao.UserRepository;
-import juja.microservices.gamification.slackbot.model.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,21 +26,6 @@ public class DefaultUserServiceTest {
 
     @MockBean
     private UserRepository userRepository;
-
-    @Test
-    public void returnUserBySlackName() {
-        //given
-        String slackName = "slack.name";
-        User user = new User("uuid", "mail@gmail.com", "slack.name", "skype", "linkedin", "facebook", "twitter");
-        given(userRepository.findUserBySlack(slackName)).willReturn(user);
-
-        //when
-        User result = userService.findUserBySlack(slackName);
-
-        //then
-        assertThat(result, equalTo(user));
-        verify(userRepository).findUserBySlack(slackName);
-    }
 
     @Test
     public void returnUuidUserBySlack() throws Exception {
