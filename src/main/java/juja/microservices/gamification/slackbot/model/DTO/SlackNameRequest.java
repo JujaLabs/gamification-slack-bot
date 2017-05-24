@@ -1,4 +1,4 @@
-package juja.microservices.gamification.slackbot.model;
+package juja.microservices.gamification.slackbot.model.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
