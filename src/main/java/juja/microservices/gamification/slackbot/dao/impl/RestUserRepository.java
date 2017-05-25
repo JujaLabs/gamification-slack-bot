@@ -7,17 +7,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import juja.microservices.gamification.slackbot.dao.UserRepository;
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
 import juja.microservices.gamification.slackbot.exceptions.UserNotFoundException;
-import juja.microservices.gamification.slackbot.model.User;
+import juja.microservices.gamification.slackbot.model.DTO.SlackNameRequest;
+import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Artem
@@ -40,17 +40,19 @@ public class RestUserRepository implements UserRepository {
     }
 
     @Override
-    public User findUserBySlack(String slackNickname) {
-        HashMap<String, String> urlVariables = new HashMap<>(1);
-        urlVariables.put("slackNickname", slackNickname);
-        String urlTemplate = urlBase + urlGetUser + "/slackNickname={slackNickname}";
-        User result;
+    public String findUuidUserBySlack(String slackName) {
+        List slackNames = new ArrayList();
+        slackNames.add(slackName);
+        SlackNameRequest slackNameRequest = new SlackNameRequest(slackNames);
+        HttpEntity<SlackNameRequest> request = new HttpEntity<>(slackNameRequest, setupBaseHttpHeaders());
+        String result;
         try {
-            ResponseEntity<User> response = this.restTemplate.getForEntity(urlTemplate, User.class, urlVariables);
-            result = response.getBody();
+            ResponseEntity<UserDTO[]> response = restTemplate.exchange(urlBase + urlGetUser,
+                    HttpMethod.POST, request, UserDTO[].class);
+            result = response.getBody()[0].getUuid();
         } catch (HttpClientErrorException ex) {
             if (ex.getRawStatusCode() == 400 && checkInternalErrorCode(ex.getResponseBodyAsString(), 0)) {
-                throw new UserNotFoundException(String.format("User with slack name '%s' not found.", slackNickname));
+                throw new UserNotFoundException(String.format("User with slack name '%s' not found.", slackName));
             }
             throw new GamificationExchangeException("User Exchange Error: ", ex);
         }
@@ -81,8 +83,9 @@ public class RestUserRepository implements UserRepository {
         return result;
     }
 
-    @Override
-    public String findUuidUserBySlack(String slackNickname) {
-        return findUserBySlack(slackNickname).getUuid();
+    private HttpHeaders setupBaseHttpHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        return headers;
     }
 }
