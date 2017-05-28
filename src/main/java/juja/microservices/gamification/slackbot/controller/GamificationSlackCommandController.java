@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 
-
 /**
  * @author Nikolay Horushko
  */
