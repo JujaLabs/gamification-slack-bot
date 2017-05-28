@@ -22,7 +22,7 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public String findUuidUserBySlack(String slackNickname) {
-        return userRepository.findUuidUserBySlack(slackNickname);
+    public String findUuidUserBySlack(String slackName) {
+        return userRepository.findUuidUserBySlack(slackName);
     }
 }

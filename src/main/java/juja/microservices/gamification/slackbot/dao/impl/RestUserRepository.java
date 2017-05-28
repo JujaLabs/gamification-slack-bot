@@ -41,7 +41,7 @@ public class RestUserRepository implements UserRepository {
 
     @Override
     public String findUuidUserBySlack(String slackName) {
-        List slackNames = new ArrayList();
+        List<String> slackNames = new ArrayList<>();
         slackNames.add(slackName);
         SlackNameRequest slackNameRequest = new SlackNameRequest(slackNames);
         HttpEntity<SlackNameRequest> request = new HttpEntity<>(slackNameRequest, setupBaseHttpHeaders());

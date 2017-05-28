@@ -1,6 +1,5 @@
 package juja.microservices.gamification.slackbot.dao;
 
-
 /**
  * @author Artem
  */
