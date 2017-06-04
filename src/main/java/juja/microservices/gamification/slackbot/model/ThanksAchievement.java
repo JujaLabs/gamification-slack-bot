@@ -18,7 +18,7 @@ public class ThanksAchievement {
     private String to;
     private String description;
 
-    private static final String parsedUuidPattern = "@#([a-zA-z0-9\\.\\_\\-]){1,21}#@";
+    private static final String parsedUuidPattern = "@#([a-zA-z0-9\\-]){1,36}#@";
     private static final String parsedUuidStartMarker = "@#";
     private static final String parsedUuidFinishMarker = "#@";
     private final String COMMAND_EXAMPLE = "/thanks Thanks to @slack_nick_name for help.";
