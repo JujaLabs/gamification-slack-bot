@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.List;
 
 /**
- * Created by Nikol on 5/24/2017.
+ * @author Nikolay Horushko
  */
 @Getter
 @AllArgsConstructor
