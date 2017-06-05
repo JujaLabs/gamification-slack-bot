@@ -54,7 +54,7 @@ public class RestUserRepository implements UserRepository {
             if (ex.getRawStatusCode() == 400 && checkInternalErrorCode(ex.getResponseBodyAsString(), 0)) {
                 throw new UserNotFoundException(String.format("User with slack name '%s' not found.", slackName));
             }
-            throw new GamificationExchangeException("User Exchange Error: ", ex);
+            throw new GamificationExchangeException("User Exchange Error: " + ex.getResponseBodyAsString(), ex);
         }
         return result;
     }
