@@ -125,4 +125,22 @@ public class RestUserRepositoryTest {
         //when
         userRepository.findUuidUserBySlack("@user");
     }
+    @Test
+    public void shouldThrowExceptionWithMessageWhenUsersMicroserviceThrowException() {
+        // given
+        mockServer.expect(requestTo(urlBase + urlGetUser))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":1," +
+                        "\"clientMessage\":\"Oops something went wrong :(\"," +
+                        "\"developerMessage\":\"General exception for this service\"," +
+                        "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
+        //then
+        thrown.expect(GamificationExchangeException.class);
+        thrown.expectMessage(containsString("{\"httpStatus\":400,\"internalErrorCode\":1," +
+                "\"clientMessage\":\"Oops something went wrong :(\"," +
+                "\"developerMessage\":\"General exception for this service\"," +
+                "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
+        //when
+        userRepository.findUuidUserBySlack("@user");
+    }
 }
