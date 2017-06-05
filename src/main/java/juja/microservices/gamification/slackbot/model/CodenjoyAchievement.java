@@ -24,7 +24,7 @@ public class CodenjoyAchievement {
     @JsonProperty
     private String thirdPlace;
 
-    private String parsedUuidPattern = "@#([a-zA-z0-9\\.\\_\\-]){1,21}#@";
+    private String parsedUuidPattern = "@#([a-zA-z0-9\\-]){1,36}#@";
     private String parsedUuidStartMarker = "@#";
     private String parsedUuidFinishMarker = "#@";
     private final String COMMAND_EXAMPLE = "/codenjoy -1th @slack_nick_name -2th @slack_nick_name2 " +
