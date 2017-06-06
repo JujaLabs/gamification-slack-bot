@@ -41,6 +41,9 @@ public class RestUserRepository implements UserRepository {
 
     @Override
     public String findUuidUserBySlack(String slackName) {
+        if(!slackName.startsWith("@")){
+            slackName = "@" + slackName;
+        }
         List<String> slackNames = new ArrayList<>();
         slackNames.add(slackName);
         SlackNameRequest slackNameRequest = new SlackNameRequest(slackNames);

@@ -71,6 +71,21 @@ public class RestUserRepositoryTest {
     }
 
     @Test
+    public void shouldAddDogToTheSlackNameIfSlackNameHasNotIt() {
+        //given
+        mockServer.expect(requestTo(urlBase + urlGetUser))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string("{\"slackNames\":[\"@bob\"]}"))
+                .andRespond(withSuccess("[{\"uuid\":\"AAAA123\",\"slack\":\"@bob\"}]", MediaType.APPLICATION_JSON_UTF8));
+        //when
+        String result = userRepository.findUuidUserBySlack("bob");
+        // then
+        mockServer.verify();
+        assertEquals(result, "AAAA123");
+    }
+
+    @Test
     public void shouldThrowExceptionWhenFindUserUuidBySlackToRemoteUserServiceThrowException() {
         // given
         mockServer.expect(requestTo(urlBase + urlGetUser))
