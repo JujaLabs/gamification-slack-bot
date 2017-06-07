@@ -68,11 +68,14 @@ public class GamificationSlackCommandController {
         if (!token.equals(slackToken)) {
             return getRichMessageInvalidSlackCommand();
         }
-        String response;
+        String response = "Что-то пошло не так и дейлик вам выставлен не был :(";
         try {
         String fromUserUuid = userService.findUuidUserBySlack(fromUser);
         DailyAchievement daily = new DailyAchievement(fromUserUuid, text);
-        response = gamificationService.sendDailyAchievement(daily);
+        String[] result = gamificationService.sendDailyAchievement(daily);
+        if (result.length == 1){
+            response = "Спасибо, ваш дейлик принят.";
+        }
         } catch (Exception ex) {
             return new RichMessage(ex.getMessage());
         }

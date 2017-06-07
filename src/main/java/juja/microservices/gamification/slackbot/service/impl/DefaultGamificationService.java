@@ -22,7 +22,7 @@ public class DefaultGamificationService implements GamificationService {
     }
 
     @Override
-    public String sendDailyAchievement(DailyAchievement daily) {
+    public String[] sendDailyAchievement(DailyAchievement daily) {
         return gamificationRepository.saveDailyAchievement(daily);
     }
 

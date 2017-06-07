@@ -20,9 +20,12 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 
+import java.util.Arrays;
+
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
@@ -73,13 +76,14 @@ public class RestGamificationRepositoryTest {
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withSuccess("1000", MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess("[\"1000\"]", MediaType.APPLICATION_JSON));
         //when
-        String result = gamificationRepository.saveDailyAchievement(new DailyAchievement("101", "description"));
+        String[] result = gamificationRepository.saveDailyAchievement(new DailyAchievement("101", "description"));
 
         // then
         mockServer.verify();
-        assertThat(result, equalTo("1000"));
+        assertEquals(result.length, 1);
+        assertEquals("[1000]", Arrays.toString(result));
     }
 
     @Test

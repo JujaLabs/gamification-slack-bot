@@ -105,15 +105,16 @@ public class GamificationSlackCommandControllerTest {
     @Test
     public void onReceiveSlashCommandDailyReturnOkRichMessage() throws Exception {
         final String DAILY_COMMAND_TEXT = "daily description text";
+        String[] response = {"1000"};
 
         when(userService.findUuidUserBySlack("@slack.name")).thenReturn("uuid");
-        when(gamificationService.sendDailyAchievement(any(DailyAchievement.class))).thenReturn("ok");
+        when(gamificationService.sendDailyAchievement(any(DailyAchievement.class))).thenReturn(response);
 
         mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/daily"),
                 getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("ok"));
+                .andExpect(jsonPath("$.text").value("Спасибо, ваш дейлик принят."));
     }
 
     @Test

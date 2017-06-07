@@ -46,12 +46,12 @@ public class RestGamificationRepository implements GamificationRepository {
     }
 
     @Override
-    public String saveDailyAchievement(DailyAchievement daily) {
+    public String[] saveDailyAchievement(DailyAchievement daily) {
         HttpEntity<DailyAchievement> request = new HttpEntity<>(daily, setupBaseHttpHeaders());
-        String result;
+        String[] result;
         try {
-            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendDaily,
-                    HttpMethod.POST, request, String.class);
+            ResponseEntity<String[]> response = restTemplate.exchange(urlBase + urlSendDaily,
+                    HttpMethod.POST, request, String[].class);
             result = response.getBody();
         } catch (HttpClientErrorException ex) {
             throw new GamificationExchangeException("Gamification Exchange Error: ", ex);

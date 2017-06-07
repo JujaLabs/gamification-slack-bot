@@ -43,12 +43,12 @@ public class DefaultGamificationServiceTest {
     public void shouldSaveNewDailyAndReturnNewAchievementId() {
 
         //given
-        String expectedAchievementId = "100";
+        String[] expectedAchievementId = {"100"};
         DailyAchievement dailyAchievement = new DailyAchievement("test", "description");
         given(gamificationRepository.saveDailyAchievement(dailyAchievement)).willReturn(expectedAchievementId);
 
         //when
-        String result = gamificationService.sendDailyAchievement(dailyAchievement);
+        String[] result = gamificationService.sendDailyAchievement(dailyAchievement);
 
         //then
         assertThat(result, equalTo(expectedAchievementId));
