@@ -53,7 +53,7 @@ public class GamificationSlackCommandController {
             String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
             CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, preparedTextWithUuid);
             String[] result = gamificationService.sendCodenjoyAchievement(codenjoy);
-            if(result.length == 3){
+            if (result.length == 3) {
                 response = String.format("Спасибо, мы поблагодарили всех участников.");
                 //todo add slacknames
             }
@@ -74,12 +74,12 @@ public class GamificationSlackCommandController {
         }
         String response = "Что-то пошло не так и дейлик вам выставлен не был :(";
         try {
-        String fromUserUuid = userService.findUuidUserBySlack(fromUser);
-        DailyAchievement daily = new DailyAchievement(fromUserUuid, text);
-        String[] result = gamificationService.sendDailyAchievement(daily);
-        if (result.length == 1){
-            response = "Спасибо, ваш дейлик принят.";
-        }
+            String fromUserUuid = userService.findUuidUserBySlack(fromUser);
+            DailyAchievement daily = new DailyAchievement(fromUserUuid, text);
+            String[] result = gamificationService.sendDailyAchievement(daily);
+            if (result.length == 1) {
+                response = "Спасибо, ваш дейлик принят.";
+            }
         } catch (Exception ex) {
             return new RichMessage(ex.getMessage());
         }
@@ -90,17 +90,23 @@ public class GamificationSlackCommandController {
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public RichMessage onReceiveSlashCommandThanks(@RequestParam("token") String token,
-                                                  @RequestParam("user_name") String fromUser,
-                                                  @RequestParam("text") String text) {
+                                                   @RequestParam("user_name") String fromUser,
+                                                   @RequestParam("text") String text) {
         if (!token.equals(slackToken)) {
             return getRichMessageInvalidSlackCommand();
         }
-        String response;
+        String response = "Что-то пошло не так и мы не смогли начислить джуджик :(";
         try {
             String fromUserUuid = userService.findUuidUserBySlack(fromUser);
             String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
             ThanksAchievement thanks = new ThanksAchievement(fromUserUuid, preparedTextWithUuid);
-            response = gamificationService.sendThanksAchievement(thanks);
+            String[] result = gamificationService.sendThanksAchievement(thanks);
+            if (result.length == 1) {
+                response = "Спасибо, ваша спасибка принята.";
+            }// todo add slackname
+            if (result.length == 2) {
+                response = "Спасибо, ваша спасибка принята. Также вам начислен +1 джудик за активность.";
+            } // todo add slackname
         } catch (Exception ex) {
             return new RichMessage(ex.getMessage());
         }

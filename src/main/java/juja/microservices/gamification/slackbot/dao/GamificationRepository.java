@@ -12,7 +12,7 @@ public interface GamificationRepository {
 
     String[] saveCodenjoyAchievement(CodenjoyAchievement codenjoy);
 
-    String saveThanksAchievement(ThanksAchievement thanks);
+    String[] saveThanksAchievement(ThanksAchievement thanks);
 
     String saveInterviewAchievement(InterviewAchievement interview);
 

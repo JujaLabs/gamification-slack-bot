@@ -32,7 +32,7 @@ public class DefaultGamificationService implements GamificationService {
     }
 
     @Override
-    public String sendThanksAchievement(ThanksAchievement thanks) {
+    public String[] sendThanksAchievement(ThanksAchievement thanks) {
         return gamificationRepository.saveThanksAchievement(thanks);
     }
 

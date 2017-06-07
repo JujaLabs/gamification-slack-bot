@@ -76,12 +76,12 @@ public class DefaultGamificationServiceTest {
     public void shouldSaveNewThanksAndReturnNewAchievementId() {
 
         //given
-        String expectedAchievementId = "100";
+        final String[] expectedAchievementId = {"1000"};
         ThanksAchievement thanksAchievement = new ThanksAchievement("Bill", "Bob", "Thanks to Bob");
         given(gamificationRepository.saveThanksAchievement(thanksAchievement)).willReturn(expectedAchievementId);
 
         //when
-        String result = gamificationService.sendThanksAchievement(thanksAchievement);
+        String[] result = gamificationService.sendThanksAchievement(thanksAchievement);
 
         //then
         assertThat(result, equalTo(expectedAchievementId));

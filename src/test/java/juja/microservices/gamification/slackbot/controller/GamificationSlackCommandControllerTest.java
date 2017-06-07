@@ -106,10 +106,10 @@ public class GamificationSlackCommandControllerTest {
     @Test
     public void onReceiveSlashCommandDailyReturnOkRichMessage() throws Exception {
         final String DAILY_COMMAND_TEXT = "daily description text";
-        String[] response = {"1000"};
+        final String[] GAMIFICATION_RESPONSE = {"1000"};
 
         when(userService.findUuidUserBySlack("@slack.name")).thenReturn("uuid");
-        when(gamificationService.sendDailyAchievement(any(DailyAchievement.class))).thenReturn(response);
+        when(gamificationService.sendDailyAchievement(any(DailyAchievement.class))).thenReturn(GAMIFICATION_RESPONSE);
 
         mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/daily"),
                 getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
@@ -148,18 +148,39 @@ public class GamificationSlackCommandControllerTest {
     public void onReceiveSlashCommandThanksReturnOkRichMessage() throws Exception {
         final String THANKS_COMMAND_TEXT = "thanks to @slack_user description text";
         final String THANKS_PREPARED_COMMAND_TEXT = "thanks to @#uuid#@ description text";
+        final String[] GAMIFICATION_RESPONSE = {"1000"};
 
         when(slackNameHandlerService.replaceSlackNamesToUuids(THANKS_COMMAND_TEXT))
                 .thenReturn(THANKS_PREPARED_COMMAND_TEXT);
         when(userService.findUuidUserBySlack("@slack.name")).thenReturn("uuid");
-        when(gamificationService.sendThanksAchievement(any(ThanksAchievement.class))).thenReturn("ok");
+        when(gamificationService.sendThanksAchievement(any(ThanksAchievement.class))).thenReturn(GAMIFICATION_RESPONSE);
 
         mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/thanks"),
                 getUriVars("slashCommandToken", "/thanks", THANKS_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 //then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("ok"));
+                .andExpect(jsonPath("$.text").value("Спасибо, ваша спасибка принята."));
+    }
+
+    @Test
+    public void onReceiveSlashCommandЫусщтвThanksReturnOkRichMessage() throws Exception {
+        final String THANKS_COMMAND_TEXT = "thanks to @slack_user description text";
+        final String THANKS_PREPARED_COMMAND_TEXT = "thanks to @#uuid#@ description text";
+        final String[] GAMIFICATION_RESPONSE = {"1000", "1001"};
+
+        when(slackNameHandlerService.replaceSlackNamesToUuids(THANKS_COMMAND_TEXT))
+                .thenReturn(THANKS_PREPARED_COMMAND_TEXT);
+        when(userService.findUuidUserBySlack("@slack.name")).thenReturn("uuid");
+        when(gamificationService.sendThanksAchievement(any(ThanksAchievement.class))).thenReturn(GAMIFICATION_RESPONSE);
+
+        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/thanks"),
+                getUriVars("slashCommandToken", "/thanks", THANKS_COMMAND_TEXT))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                //then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.text").value("Спасибо, ваша спасибка принята. " +
+                        "Также вам начислен +1 джудик за активность."));
     }
 
     @Test

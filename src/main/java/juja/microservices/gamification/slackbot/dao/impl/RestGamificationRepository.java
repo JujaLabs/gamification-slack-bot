@@ -74,12 +74,12 @@ public class RestGamificationRepository implements GamificationRepository {
     }
 
     @Override
-    public String saveThanksAchievement(ThanksAchievement thanks) {
+    public String[] saveThanksAchievement(ThanksAchievement thanks) {
         HttpEntity<ThanksAchievement> request = new HttpEntity<>(thanks, setupBaseHttpHeaders());
-        String result;
+        String[] result;
         try {
-            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendThanks,
-                    HttpMethod.POST, request, String.class);
+            ResponseEntity<String[]> response = restTemplate.exchange(urlBase + urlSendThanks,
+                    HttpMethod.POST, request, String[].class);
             result = response.getBody();
         } catch (HttpClientErrorException ex) {
             throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
