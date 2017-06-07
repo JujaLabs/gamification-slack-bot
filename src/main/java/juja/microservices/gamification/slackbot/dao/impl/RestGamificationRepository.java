@@ -88,12 +88,12 @@ public class RestGamificationRepository implements GamificationRepository {
     }
 
     @Override
-    public String saveInterviewAchievement(InterviewAchievement interview) {
+    public String[] saveInterviewAchievement(InterviewAchievement interview) {
         HttpEntity<InterviewAchievement> request = new HttpEntity<>(interview, setupBaseHttpHeaders());
-        String result;
+        String[] result;
         try {
-            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendInterview,
-                    HttpMethod.POST, request, String.class);
+            ResponseEntity<String[]> response = restTemplate.exchange(urlBase + urlSendInterview,
+                    HttpMethod.POST, request, String[].class);
             result = response.getBody();
         } catch (HttpClientErrorException ex) {
             throw new GamificationExchangeException("Gamification Exchange Error: ", ex);

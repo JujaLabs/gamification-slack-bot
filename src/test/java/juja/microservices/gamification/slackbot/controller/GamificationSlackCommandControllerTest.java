@@ -216,15 +216,16 @@ public class GamificationSlackCommandControllerTest {
     @Test
     public void onReceiveSlashCommandInterviewReturnOkRichMessage() throws Exception {
         final String INTERVIEW_COMMAND_TEXT = "interview description text";
+        final String[] GAMIFICATION_RESPONSE = {"1000"};
 
         when(userService.findUuidUserBySlack("@slack.name")).thenReturn("uuid");
-        when(gamificationService.sendInterviewAchievement(any(InterviewAchievement.class))).thenReturn("ok");
+        when(gamificationService.sendInterviewAchievement(any(InterviewAchievement.class))).thenReturn(GAMIFICATION_RESPONSE);
 
         mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/interview"),
                 getUriVars("slashCommandToken", "/interview", INTERVIEW_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("ok"));
+                .andExpect(jsonPath("$.text").value("Спасибо, вы получили джуджики за пройденное интервью."));
     }
 
     @Test

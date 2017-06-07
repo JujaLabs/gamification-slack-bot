@@ -37,7 +37,7 @@ public class DefaultGamificationService implements GamificationService {
     }
 
     @Override
-    public String sendInterviewAchievement(InterviewAchievement interview) {
+    public String[] sendInterviewAchievement(InterviewAchievement interview) {
         return gamificationRepository.saveInterviewAchievement(interview);
     }
 }

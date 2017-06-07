@@ -13,5 +13,5 @@ public interface GamificationService {
 
     String[] sendThanksAchievement(ThanksAchievement thanks);
 
-    String sendInterviewAchievement(InterviewAchievement interview);
+    String[] sendInterviewAchievement(InterviewAchievement interview);
 }

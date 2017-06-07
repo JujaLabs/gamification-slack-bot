@@ -178,20 +178,22 @@ public class RestGamificationRepositoryTest {
     @Test
     public void shouldReturnIdAchievementWhenSendInterviewToRemoteGamificationService() {
         //given
-        String expectedRequestBody = "{\"from\":\"101\",\"description\":\"description\"}";
+        String expectedRequestBody = "{\"from\":\"bill\",\"description\":\"description\"}";
         String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo(urlBase + urlSendInterview))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(),
                         containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withSuccess("1000", MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess("[\"1000\"]", MediaType.APPLICATION_JSON));
         //when
-        String result = gamificationRepository.saveInterviewAchievement(new InterviewAchievement("101", "description"));
+        String[] result = gamificationRepository.saveInterviewAchievement(new InterviewAchievement("bill", "description"));
 
         // then
         mockServer.verify();
-        assertThat(result, equalTo("1000"));
+
+        assertEquals(1, result.length);
+        assertEquals("[1000]", Arrays.toString(result));
     }
 
     @Test

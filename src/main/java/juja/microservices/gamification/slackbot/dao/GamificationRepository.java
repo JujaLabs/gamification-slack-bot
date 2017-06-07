@@ -14,6 +14,6 @@ public interface GamificationRepository {
 
     String[] saveThanksAchievement(ThanksAchievement thanks);
 
-    String saveInterviewAchievement(InterviewAchievement interview);
+    String[] saveInterviewAchievement(InterviewAchievement interview);
 
 }

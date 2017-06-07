@@ -122,12 +122,15 @@ public class GamificationSlackCommandController {
         if (!token.equals(slackToken)) {
             return getRichMessageInvalidSlackCommand();
         }
-        String response;
+        String response = "Что-то пошло не так и мы не смогли начислить джуджики :(";
         try {
             String fromUserUuid = userService.findUuidUserBySlack(fromUser);
             String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
             InterviewAchievement interview = new InterviewAchievement(fromUserUuid, preparedTextWithUuid);
-            response = gamificationService.sendInterviewAchievement(interview);
+            String[] result = gamificationService.sendInterviewAchievement(interview);
+            if(result.length == 1){
+                response = "Спасибо, вы получили джуджики за пройденное интервью.";
+            }
         } catch (Exception ex) {
             return new RichMessage(ex.getMessage());
         }

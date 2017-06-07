@@ -91,12 +91,12 @@ public class DefaultGamificationServiceTest {
     @Test
     public void shouldSaveNewInterviewAchievementAndReturnNewAchievementId() {
         //given
-        String expectedAchievementId = "100";
+        String[] expectedAchievementId = {"100"};
         InterviewAchievement interviewAchievement = new InterviewAchievement("Bill", "I got offer!");
         given(gamificationRepository.saveInterviewAchievement(interviewAchievement)).willReturn(expectedAchievementId);
 
         //when
-        String result = gamificationService.sendInterviewAchievement(interviewAchievement);
+        String[] result = gamificationService.sendInterviewAchievement(interviewAchievement);
 
         //then
         assertThat(result, equalTo(expectedAchievementId));
