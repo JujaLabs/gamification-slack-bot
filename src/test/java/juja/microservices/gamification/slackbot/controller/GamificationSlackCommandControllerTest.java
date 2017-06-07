@@ -59,17 +59,18 @@ public class GamificationSlackCommandControllerTest {
     public void onReceiveSlashCommandCodenjoyReturnOkRichMessage() throws Exception {
         final String CODENJOY_COMMAND_TEXT = "-1th @slack_nick_name -2th @slack_nick_name2 -3th @slack_nick_name3";
         final String CODENJOY_PREPARED_COMMAND_TEXT = "-1th @#uuid1#@ -2th @#uuid2#@ -3th @#uuid3#@";
+        final String[] GAMIFICATION_RESPONSE = {"1000", "1001","1002"};
 
         when(slackNameHandlerService.replaceSlackNamesToUuids(CODENJOY_COMMAND_TEXT))
                 .thenReturn(CODENJOY_PREPARED_COMMAND_TEXT);
         when(userService.findUuidUserBySlack("@slack.name")).thenReturn("uuid");
-        when(gamificationService.sendCodenjoyAchievement(any(CodenjoyAchievement.class))).thenReturn("ok");
+        when(gamificationService.sendCodenjoyAchievement(any(CodenjoyAchievement.class))).thenReturn(GAMIFICATION_RESPONSE);
 
         mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/codenjoy"),
                 getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("ok"));
+                .andExpect(jsonPath("$.text").value("Спасибо, мы поблагодарили всех участников."));
     }
 
     @Test

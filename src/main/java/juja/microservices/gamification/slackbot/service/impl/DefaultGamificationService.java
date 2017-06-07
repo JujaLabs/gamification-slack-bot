@@ -27,7 +27,7 @@ public class DefaultGamificationService implements GamificationService {
     }
 
     @Override
-    public String sendCodenjoyAchievement(CodenjoyAchievement codenjoy) {
+    public String[] sendCodenjoyAchievement(CodenjoyAchievement codenjoy) {
         return gamificationRepository.saveCodenjoyAchievement(codenjoy);
     }
 

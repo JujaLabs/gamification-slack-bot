@@ -10,7 +10,7 @@ public interface GamificationRepository {
 
     String[] saveDailyAchievement(DailyAchievement daily);
 
-    String saveCodenjoyAchievement(CodenjoyAchievement codenjoy);
+    String[] saveCodenjoyAchievement(CodenjoyAchievement codenjoy);
 
     String saveThanksAchievement(ThanksAchievement thanks);
 

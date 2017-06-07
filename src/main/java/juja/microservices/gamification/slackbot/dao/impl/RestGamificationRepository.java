@@ -60,12 +60,12 @@ public class RestGamificationRepository implements GamificationRepository {
     }
 
     @Override
-    public String saveCodenjoyAchievement(CodenjoyAchievement codenjoy) {
+    public String[] saveCodenjoyAchievement(CodenjoyAchievement codenjoy) {
         HttpEntity<CodenjoyAchievement> request = new HttpEntity<>(codenjoy, setupBaseHttpHeaders());
-        String result;
+        String[] result;
         try {
-            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendCodenjoy,
-                    HttpMethod.POST, request, String.class);
+            ResponseEntity<String[]> response = restTemplate.exchange(urlBase + urlSendCodenjoy,
+                    HttpMethod.POST, request, String[].class);
             result = response.getBody();
         } catch (HttpClientErrorException ex) {
             throw new GamificationExchangeException("Gamification Exchange Error: ", ex);

@@ -112,13 +112,14 @@ public class RestGamificationRepositoryTest {
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withSuccess("1000", MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess("[\"1000\", \"1001\", \"1002\"]", MediaType.APPLICATION_JSON));
         //when
-        String result = gamificationRepository.saveCodenjoyAchievement(new CodenjoyAchievement("Bill", "Walter", "Bob", "John"));
+        String[] result = gamificationRepository.saveCodenjoyAchievement(new CodenjoyAchievement("Bill", "Walter", "Bob", "John"));
 
         // then
         mockServer.verify();
-        assertThat(result, equalTo("1000"));
+        assertEquals(3, result.length);
+        assertEquals("[1000, 1001, 1002]", Arrays.toString(result));
     }
 
     @Test

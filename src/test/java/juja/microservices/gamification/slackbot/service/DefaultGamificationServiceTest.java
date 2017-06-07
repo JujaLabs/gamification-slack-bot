@@ -59,13 +59,13 @@ public class DefaultGamificationServiceTest {
     public void shouldSaveNewCodenjoyAndReturnNewAchievementId() {
 
         //given
-        String expectedAchievementId = "100";
+        String[] expectedAchievementId = {"100"};
         CodenjoyAchievement codenjoyAchievement = new CodenjoyAchievement("Bill", "Walter",
                                                                         "Bob", "John");
         given(gamificationRepository.saveCodenjoyAchievement(codenjoyAchievement)).willReturn(expectedAchievementId);
 
         //when
-        String result = gamificationService.sendCodenjoyAchievement(codenjoyAchievement);
+        String[] result = gamificationService.sendCodenjoyAchievement(codenjoyAchievement);
 
         //then
         assertThat(result, equalTo(expectedAchievementId));

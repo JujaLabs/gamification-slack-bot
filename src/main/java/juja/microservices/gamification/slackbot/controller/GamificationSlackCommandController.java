@@ -47,12 +47,16 @@ public class GamificationSlackCommandController {
         if (!token.equals(slackToken)) {
             return getRichMessageInvalidSlackCommand();
         }
-        String response;
+        String response = "Что-то пошло не так и мы не смогли наградить участников турнира codenjoy :(";
         try {
             String fromUserUuid = userService.findUuidUserBySlack(fromUser);
             String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
             CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, preparedTextWithUuid);
-            response = gamificationService.sendCodenjoyAchievement(codenjoy);
+            String[] result = gamificationService.sendCodenjoyAchievement(codenjoy);
+            if(result.length == 3){
+                response = String.format("Спасибо, мы поблагодарили всех участников.");
+                //todo add slacknames
+            }
         } catch (Exception ex) {
             return new RichMessage(ex.getMessage());
         }
