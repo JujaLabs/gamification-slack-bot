@@ -57,7 +57,8 @@ public class GamificationSlackCommandController {
             String fromUserUuid = userService.findUuidUserBySlack(fromUser);
             String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
             CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, preparedTextWithUuid);
-            logger.debug("Send codenjoy achievement request. fromUserUuid: {}; prepared text: {}", fromUserUuid, preparedTextWithUuid);
+            logger.debug("Send codenjoy achievement request. fromUserUuid: {}; prepared text: {}",
+                    fromUserUuid, preparedTextWithUuid);
             response = gamificationService.sendCodenjoyAchievement(codenjoy);
             logger.debug("Received response from gamification service: {}", response);
         } catch (Exception ex) {
@@ -106,7 +107,8 @@ public class GamificationSlackCommandController {
             String fromUserUuid = userService.findUuidUserBySlack(fromUser);
             String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
             ThanksAchievement thanks = new ThanksAchievement(fromUserUuid, preparedTextWithUuid);
-            logger.debug("Send thanks achivement request. fromUserUuid: {}; prepared text: {}", fromUserUuid, preparedTextWithUuid);
+            logger.debug("Send thanks achivement request. fromUserUuid: {}; prepared text: {}",
+                    fromUserUuid, preparedTextWithUuid);
             response = gamificationService.sendThanksAchievement(thanks);
             logger.debug("Received response from gamification service: {}", response);
         } catch (Exception ex) {
@@ -131,7 +133,8 @@ public class GamificationSlackCommandController {
             String fromUserUuid = userService.findUuidUserBySlack(fromUser);
             String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
             InterviewAchievement interview = new InterviewAchievement(fromUserUuid, preparedTextWithUuid);
-            logger.debug("Send interview achivement request. fromUserUuid: {}; prepared text: {}", fromUserUuid, preparedTextWithUuid);
+            logger.debug("Send interview achivement request. fromUserUuid: {}; prepared text: {}",
+                    fromUserUuid, preparedTextWithUuid);
             response = gamificationService.sendInterviewAchievement(interview);
             logger.debug("Received response from gamification service: {}", response);
         } catch (Exception ex) {
