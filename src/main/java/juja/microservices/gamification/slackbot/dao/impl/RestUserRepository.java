@@ -9,6 +9,8 @@ import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeE
 import juja.microservices.gamification.slackbot.exceptions.UserNotFoundException;
 import juja.microservices.gamification.slackbot.model.DTO.SlackNameRequest;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Repository;
@@ -27,6 +29,7 @@ import java.util.*;
 public class RestUserRepository implements UserRepository {
 
     private final RestTemplate restTemplate;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Value("${user.baseURL}")
     private String urlBase;
@@ -48,17 +51,21 @@ public class RestUserRepository implements UserRepository {
         slackNames.add(slackName);
         SlackNameRequest slackNameRequest = new SlackNameRequest(slackNames);
         HttpEntity<SlackNameRequest> request = new HttpEntity<>(slackNameRequest, setupBaseHttpHeaders());
+        logger.debug("find uuid by slack name request: {}", request.toString());
         String result;
         try {
             ResponseEntity<UserDTO[]> response = restTemplate.exchange(urlBase + urlGetUser,
                     HttpMethod.POST, request, UserDTO[].class);
+            logger.debug("User repository response: {}", response.toString());
             result = response.getBody()[0].getUuid();
         } catch (HttpClientErrorException ex) {
+            logger.warn("Exception in findUuidUserBySlack: {}", ex.getMessage());
             if (ex.getRawStatusCode() == 400 && checkInternalErrorCode(ex.getResponseBodyAsString(), 0)) {
                 throw new UserNotFoundException(String.format("User with slack name '%s' not found.", slackName));
             }
             throw new GamificationExchangeException("User Exchange Error: " + ex.getResponseBodyAsString(), ex);
         }
+        logger.info("Founded UUID:{} by user: {}", result, slackName);
         return result;
     }
 

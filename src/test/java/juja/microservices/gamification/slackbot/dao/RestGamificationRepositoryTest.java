@@ -73,13 +73,13 @@ public class RestGamificationRepositoryTest {
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withSuccess("1000", MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess("[1000]", MediaType.APPLICATION_JSON));
         //when
         String result = gamificationRepository.saveDailyAchievement(new DailyAchievement("101", "description"));
 
         // then
         mockServer.verify();
-        assertThat(result, equalTo("1000"));
+        assertThat(result, equalTo("[1000]"));
     }
 
     @Test
@@ -108,13 +108,13 @@ public class RestGamificationRepositoryTest {
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withSuccess("1000", MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess("[\"59cc8c\",\"59cc9c\",\"59ca9b\"]", MediaType.APPLICATION_JSON));
         //when
         String result = gamificationRepository.saveCodenjoyAchievement(new CodenjoyAchievement("Bill", "Walter", "Bob", "John"));
 
         // then
         mockServer.verify();
-        assertThat(result, equalTo("1000"));
+        assertThat(result, equalTo("[59cc8c, 59cc9c, 59ca9b]"));
     }
 
     @Test
@@ -143,13 +143,13 @@ public class RestGamificationRepositoryTest {
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withSuccess("1000", MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess("[1000]", MediaType.APPLICATION_JSON));
         //when
         String result = gamificationRepository.saveThanksAchievement(new ThanksAchievement("Bill", "Bob", "Thanks to Bob"));
 
         // then
         mockServer.verify();
-        assertThat(result, equalTo("1000"));
+        assertThat(result, equalTo("[1000]"));
     }
 
     @Test
@@ -179,13 +179,13 @@ public class RestGamificationRepositoryTest {
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(),
                         containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withSuccess("1000", MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess("[1000]", MediaType.APPLICATION_JSON));
         //when
         String result = gamificationRepository.saveInterviewAchievement(new InterviewAchievement("101", "description"));
 
         // then
         mockServer.verify();
-        assertThat(result, equalTo("1000"));
+        assertThat(result, equalTo("[1000]"));
     }
 
     @Test
