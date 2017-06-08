@@ -55,7 +55,7 @@ public class GamificationSlackCommandController {
             CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, preparedTextWithUuid);
             String[] result = gamificationService.sendCodenjoyAchievement(codenjoy);
             if (result.length == 3) {
-                response = String.format("Thansks, we awarded the users.");
+                response = String.format("Thanks, we awarded the users.");
                 //todo add slacknames
             }
         } catch (Exception ex) {
@@ -106,7 +106,7 @@ public class GamificationSlackCommandController {
                 response = "Thanks, your 'thanks' saved.";
             }// todo add slackname
             if (result.length == 2) {
-                response = "Thanks, your 'thanks' saved. Also you received +1 for your activity .";
+                response = "Thanks, your 'thanks' saved. Also you received +1 for your activity.";
             } // todo add slackname
         } catch (Exception ex) {
             return new RichMessage(ex.getMessage());
@@ -130,7 +130,7 @@ public class GamificationSlackCommandController {
             InterviewAchievement interview = new InterviewAchievement(fromUserUuid, preparedTextWithUuid);
             String[] result = gamificationService.sendInterviewAchievement(interview);
             if(result.length == 1){
-                response = "Thanks. Your interview saved";
+                response = "Thanks. Your interview saved.";
             }
         } catch (Exception ex) {
             return new RichMessage(ex.getMessage());

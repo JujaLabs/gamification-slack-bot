@@ -70,7 +70,7 @@ public class GamificationSlackCommandControllerTest {
                 getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("Спасибо, мы поблагодарили всех участников."));
+                .andExpect(jsonPath("$.text").value("Thanks, we awarded the users."));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class GamificationSlackCommandControllerTest {
                 getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("Спасибо, ваш дейлик принят."));
+                .andExpect(jsonPath("$.text").value("Thanks, your daily report saved."));
     }
 
     @Test
@@ -160,7 +160,7 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 //then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("Спасибо, ваша спасибка принята."));
+                .andExpect(jsonPath("$.text").value("Thanks, your 'thanks' saved."));
     }
 
     @Test
@@ -179,8 +179,7 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 //then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("Спасибо, ваша спасибка принята. " +
-                        "Также вам начислен +1 джудик за активность."));
+                .andExpect(jsonPath("$.text").value("Thanks, your 'thanks' saved. Also you received +1 for your activity."));
     }
 
     @Test
@@ -225,7 +224,7 @@ public class GamificationSlackCommandControllerTest {
                 getUriVars("slashCommandToken", "/interview", INTERVIEW_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("Спасибо, вы получили джуджики за пройденное интервью."));
+                .andExpect(jsonPath("$.text").value("Thanks. Your interview saved."));
     }
 
     @Test
