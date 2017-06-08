@@ -3,7 +3,6 @@ package juja.microservices.gamification.slackbot.dao.impl;
 import juja.microservices.gamification.slackbot.dao.GamificationRepository;
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
 import juja.microservices.gamification.slackbot.model.CodenjoyAchievement;
-import juja.microservices.gamification.slackbot.model.DTO.GamificationDTO;
 import juja.microservices.gamification.slackbot.model.DailyAchievement;
 import juja.microservices.gamification.slackbot.model.InterviewAchievement;
 import juja.microservices.gamification.slackbot.model.ThanksAchievement;
@@ -16,7 +15,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
-import java.util.Arrays;
 
 /**
  * @author Danil Kuznetsov
@@ -56,10 +54,10 @@ public class RestGamificationRepository implements GamificationRepository {
         logger.debug("Daily achievement request: {}", request.toString());
         String result;
         try {
-            ResponseEntity<GamificationDTO> response = restTemplate.exchange(urlBase + urlSendDaily,
-                    HttpMethod.POST, request, GamificationDTO.class);
+            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendDaily,
+                    HttpMethod.POST, request, String.class);
             logger.debug("Received response from gamification: {}", response.toString());
-            result = Arrays.toString(response.getBody().getIds());
+            result = response.getBody();
         } catch (HttpClientErrorException ex) {
             logger.warn("Exception in <saveDailyAchievement()>: {}", ex.getMessage());
             throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
@@ -74,10 +72,10 @@ public class RestGamificationRepository implements GamificationRepository {
         logger.debug("Codenjoy achievement request: {}", request.toString());
         String result;
         try {
-            ResponseEntity<GamificationDTO> response = restTemplate.exchange(urlBase + urlSendCodenjoy,
-                    HttpMethod.POST, request, GamificationDTO.class);
+            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendCodenjoy,
+                    HttpMethod.POST, request, String.class);
             logger.debug("Received response from gamification: {}", response.toString());
-            result = Arrays.toString(response.getBody().getIds());
+            result = response.getBody();
 
         } catch (HttpClientErrorException ex) {
             logger.warn("Exception in <saveDailyAchievement()>: {}", ex.getMessage());
@@ -93,10 +91,10 @@ public class RestGamificationRepository implements GamificationRepository {
         logger.debug("Thanks achivement request: {}", request.toString());
         String result;
         try {
-            ResponseEntity<GamificationDTO> response = restTemplate.exchange(urlBase + urlSendThanks,
-                    HttpMethod.POST, request, GamificationDTO.class);
+            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendThanks,
+                    HttpMethod.POST, request, String.class);
             logger.debug("Received response from gamification: {}", response.toString());
-            result = Arrays.toString(response.getBody().getIds());
+            result = response.getBody();
         } catch (HttpClientErrorException ex) {
             logger.warn("Exception in <saveDailyAchievement()>: {}", ex.getMessage());
             throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
@@ -111,10 +109,10 @@ public class RestGamificationRepository implements GamificationRepository {
         logger.debug("Interview achivement request: {}", request.toString());
         String result;
         try {
-            ResponseEntity<GamificationDTO> response = restTemplate.exchange(urlBase + urlSendInterview,
-                    HttpMethod.POST, request, GamificationDTO.class);
+            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendInterview,
+                    HttpMethod.POST, request, String.class);
             logger.debug("Received response from gamification: {}", response.toString());
-            result = Arrays.toString(response.getBody().getIds());
+            result = response.getBody();
         } catch (HttpClientErrorException ex) {
             logger.warn("Exception in <saveDailyAchievement()>: {}", ex.getMessage());
             throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
