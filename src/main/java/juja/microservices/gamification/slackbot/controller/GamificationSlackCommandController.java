@@ -47,14 +47,15 @@ public class GamificationSlackCommandController {
         if (!token.equals(slackToken)) {
             return getRichMessageInvalidSlackCommand();
         }
-        String response = "Что-то пошло не так и мы не смогли наградить участников турнира codenjoy :(";
+        String response = "ERROR. Something went wrong and we didn't award the users :(";
+
         try {
             String fromUserUuid = userService.findUuidUserBySlack(fromUser);
             String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
             CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, preparedTextWithUuid);
             String[] result = gamificationService.sendCodenjoyAchievement(codenjoy);
             if (result.length == 3) {
-                response = String.format("Спасибо, мы поблагодарили всех участников.");
+                response = String.format("Thansks, we awarded the users.");
                 //todo add slacknames
             }
         } catch (Exception ex) {
@@ -72,13 +73,13 @@ public class GamificationSlackCommandController {
         if (!token.equals(slackToken)) {
             return getRichMessageInvalidSlackCommand();
         }
-        String response = "Что-то пошло не так и дейлик вам выставлен не был :(";
+        String response = "ERROR. Something went wrong and daily report didn't save.";
         try {
             String fromUserUuid = userService.findUuidUserBySlack(fromUser);
             DailyAchievement daily = new DailyAchievement(fromUserUuid, text);
             String[] result = gamificationService.sendDailyAchievement(daily);
             if (result.length == 1) {
-                response = "Спасибо, ваш дейлик принят.";
+                response = "Thanks, your daily report saved.";
             }
         } catch (Exception ex) {
             return new RichMessage(ex.getMessage());
@@ -95,17 +96,17 @@ public class GamificationSlackCommandController {
         if (!token.equals(slackToken)) {
             return getRichMessageInvalidSlackCommand();
         }
-        String response = "Что-то пошло не так и мы не смогли начислить джуджик :(";
+        String response = "Error. Something went wrong and we didn't save the thanks.";
         try {
             String fromUserUuid = userService.findUuidUserBySlack(fromUser);
             String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
             ThanksAchievement thanks = new ThanksAchievement(fromUserUuid, preparedTextWithUuid);
             String[] result = gamificationService.sendThanksAchievement(thanks);
             if (result.length == 1) {
-                response = "Спасибо, ваша спасибка принята.";
+                response = "Thanks, your 'thanks' saved.";
             }// todo add slackname
             if (result.length == 2) {
-                response = "Спасибо, ваша спасибка принята. Также вам начислен +1 джудик за активность.";
+                response = "Thanks, your 'thanks' saved. Also you received +1 for your activity .";
             } // todo add slackname
         } catch (Exception ex) {
             return new RichMessage(ex.getMessage());
@@ -122,14 +123,14 @@ public class GamificationSlackCommandController {
         if (!token.equals(slackToken)) {
             return getRichMessageInvalidSlackCommand();
         }
-        String response = "Что-то пошло не так и мы не смогли начислить джуджики :(";
+        String response = "ERROR. Something went wrong and we didn't save your interview";
         try {
             String fromUserUuid = userService.findUuidUserBySlack(fromUser);
             String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
             InterviewAchievement interview = new InterviewAchievement(fromUserUuid, preparedTextWithUuid);
             String[] result = gamificationService.sendInterviewAchievement(interview);
             if(result.length == 1){
-                response = "Спасибо, вы получили джуджики за пройденное интервью.";
+                response = "Thanks. Your interview saved";
             }
         } catch (Exception ex) {
             return new RichMessage(ex.getMessage());
