@@ -49,9 +49,11 @@ public class RestUserRepository implements UserRepository {
         }
         List<String> slackNames = new ArrayList<>();
         slackNames.add(slackName);
+
         SlackNameRequest slackNameRequest = new SlackNameRequest(slackNames);
         HttpEntity<SlackNameRequest> request = new HttpEntity<>(slackNameRequest, setupBaseHttpHeaders());
         logger.debug("find uuid by slack name request: {}", request.toString());
+
         String result;
         try {
             ResponseEntity<UserDTO[]> response = restTemplate.exchange(urlBase + urlGetUser,
