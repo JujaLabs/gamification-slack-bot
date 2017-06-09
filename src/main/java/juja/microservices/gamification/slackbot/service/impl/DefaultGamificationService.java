@@ -22,22 +22,22 @@ public class DefaultGamificationService implements GamificationService {
     }
 
     @Override
-    public String sendDailyAchievement(DailyAchievement daily) {
+    public String[] sendDailyAchievement(DailyAchievement daily) {
         return gamificationRepository.saveDailyAchievement(daily);
     }
 
     @Override
-    public String sendCodenjoyAchievement(CodenjoyAchievement codenjoy) {
+    public String[] sendCodenjoyAchievement(CodenjoyAchievement codenjoy) {
         return gamificationRepository.saveCodenjoyAchievement(codenjoy);
     }
 
     @Override
-    public String sendThanksAchievement(ThanksAchievement thanks) {
+    public String[] sendThanksAchievement(ThanksAchievement thanks) {
         return gamificationRepository.saveThanksAchievement(thanks);
     }
 
     @Override
-    public String sendInterviewAchievement(InterviewAchievement interview) {
+    public String[] sendInterviewAchievement(InterviewAchievement interview) {
         return gamificationRepository.saveInterviewAchievement(interview);
     }
 }

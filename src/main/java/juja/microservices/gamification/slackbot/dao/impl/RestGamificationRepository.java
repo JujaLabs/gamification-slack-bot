@@ -15,6 +15,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 
 /**
  * @author Danil Kuznetsov
@@ -49,75 +50,75 @@ public class RestGamificationRepository implements GamificationRepository {
     }
 
     @Override
-    public String saveDailyAchievement(DailyAchievement daily) {
+    public String[] saveDailyAchievement(DailyAchievement daily) {
         HttpEntity<DailyAchievement> request = new HttpEntity<>(daily, setupBaseHttpHeaders());
         logger.debug("Daily achievement request: {}", request.toString());
-        String result;
+        String[] result;
         try {
-            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendDaily,
-                    HttpMethod.POST, request, String.class);
+            ResponseEntity<String[]> response = restTemplate.exchange(urlBase + urlSendDaily,
+                    HttpMethod.POST, request, String[].class);
             logger.debug("Received response from gamification: {}", response.toString());
             result = response.getBody();
         } catch (HttpClientErrorException ex) {
             logger.warn("Exception in <saveDailyAchievement()>: {}", ex.getMessage());
             throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
         }
-        logger.info("Saved daily achievement, id's={}", result);
+        logger.info("Saved daily achievement, id's={}", Arrays.toString(result));
         return result;
     }
 
     @Override
-    public String saveCodenjoyAchievement(CodenjoyAchievement codenjoy) {
+    public String[] saveCodenjoyAchievement(CodenjoyAchievement codenjoy) {
         HttpEntity<CodenjoyAchievement> request = new HttpEntity<>(codenjoy, setupBaseHttpHeaders());
         logger.debug("Codenjoy achievement request: {}", request.toString());
-        String result;
+        String[] result;
         try {
-            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendCodenjoy,
-                    HttpMethod.POST, request, String.class);
+            ResponseEntity<String[]> response = restTemplate.exchange(urlBase + urlSendCodenjoy,
+                    HttpMethod.POST, request, String[].class);
             logger.debug("Received response from gamification: {}", response.toString());
             result = response.getBody();
 
         } catch (HttpClientErrorException ex) {
-            logger.warn("Exception in <saveDailyAchievement()>: {}", ex.getMessage());
+            logger.warn("Exception in <saveCodenjoyAchievement()>: {}", ex.getMessage());
             throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
         }
-        logger.info("Saved codenjoy achievements, id's={}", result);
+        logger.info("Saved codenjoy achievements, id's={}", Arrays.toString(result));
         return result;
     }
 
     @Override
-    public String saveThanksAchievement(ThanksAchievement thanks) {
+    public String[] saveThanksAchievement(ThanksAchievement thanks) {
         HttpEntity<ThanksAchievement> request = new HttpEntity<>(thanks, setupBaseHttpHeaders());
         logger.debug("Thanks achivement request: {}", request.toString());
-        String result;
+        String[] result;
         try {
-            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendThanks,
-                    HttpMethod.POST, request, String.class);
+            ResponseEntity<String[]> response = restTemplate.exchange(urlBase + urlSendThanks,
+                    HttpMethod.POST, request, String[].class);
             logger.debug("Received response from gamification: {}", response.toString());
             result = response.getBody();
         } catch (HttpClientErrorException ex) {
-            logger.warn("Exception in <saveDailyAchievement()>: {}", ex.getMessage());
+            logger.warn("Exception in <saveThanksAchievement()>: {}", ex.getMessage());
             throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
         }
-        logger.info("Saved thanks achievements, id's={}", result);
+        logger.info("Saved thanks achievements, id's={}", Arrays.toString(result));
         return result;
     }
 
     @Override
-    public String saveInterviewAchievement(InterviewAchievement interview) {
+    public String[] saveInterviewAchievement(InterviewAchievement interview) {
         HttpEntity<InterviewAchievement> request = new HttpEntity<>(interview, setupBaseHttpHeaders());
         logger.debug("Interview achivement request: {}", request.toString());
-        String result;
+        String[] result;
         try {
-            ResponseEntity<String> response = restTemplate.exchange(urlBase + urlSendInterview,
-                    HttpMethod.POST, request, String.class);
+            ResponseEntity<String[]> response = restTemplate.exchange(urlBase + urlSendInterview,
+                    HttpMethod.POST, request, String[].class);
             logger.debug("Received response from gamification: {}", response.toString());
             result = response.getBody();
         } catch (HttpClientErrorException ex) {
-            logger.warn("Exception in <saveDailyAchievement()>: {}", ex.getMessage());
+            logger.warn("Exception in <saveInterviewAchievement()>: {}", ex.getMessage());
             throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
         }
-        logger.info("Saved interview achievements, id's={}", result);
+        logger.info("Saved interview achievements, id's={}", Arrays.toString(result));
         return result;
     }
 }
