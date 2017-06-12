@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -41,12 +40,6 @@ public class GamificationSlackBotIntegrationTest {
 
     private final String SORRY_MESSAGE = "Sorry! You're not lucky enough to use our slack command.";
 
-    @Inject
-    private GamificationService gamificationService;
-    @Inject
-    private UserService userService;
-    @Inject
-    private SlackNameHandlerService slackNameHandlerService;
     @Inject
     private RestTemplate restTemplate;
 
