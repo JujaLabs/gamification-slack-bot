@@ -2,9 +2,6 @@ package juja.microservices.gamification.integration;
 
 import juja.microservices.gamification.slackbot.controller.GamificationSlackCommandController;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
-import juja.microservices.gamification.slackbot.service.GamificationService;
-import juja.microservices.gamification.slackbot.service.UserService;
-import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,8 +34,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(GamificationSlackCommandController.class)
 public class GamificationSlackBotIntegrationTest {
-
-    private final String SORRY_MESSAGE = "Sorry! You're not lucky enough to use our slack command.";
 
     @Inject
     private RestTemplate restTemplate;
