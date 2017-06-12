@@ -95,7 +95,7 @@ public class GamificationSlackBotIntegrationTest {
 
         final String EXPECTED_RESPONSE_FROM_GAMIFICATION = "[\"101\", \"102\", \"103\"]";
 
-        mockGamificationService(USERS, urlBaseGamification + urlSendCodenjoy, EXPECTED_REQUEST_TO_GAMIFICATION, EXPECTED_RESPONSE_FROM_GAMIFICATION);
+        mockGamificationService( urlBaseGamification + urlSendCodenjoy, EXPECTED_REQUEST_TO_GAMIFICATION, EXPECTED_RESPONSE_FROM_GAMIFICATION);
 
         final String EXPECTED_RESPONSE_TO_SLACK = "Thanks, we awarded the users.";
 
@@ -116,7 +116,7 @@ public class GamificationSlackBotIntegrationTest {
 
         final String EXPECTED_RESPONSE_FROM_GAMIFICATION = "[\"101\"]";
 
-        mockGamificationService(USERS, urlBaseGamification + urlSendDaily, EXPECTED_REQUEST_TO_GAMIFICATION, EXPECTED_RESPONSE_FROM_GAMIFICATION);
+        mockGamificationService(urlBaseGamification + urlSendDaily, EXPECTED_REQUEST_TO_GAMIFICATION, EXPECTED_RESPONSE_FROM_GAMIFICATION);
 
         final String EXPECTED_RESPONSE_TO_SLACK = "Thanks, your daily report saved.";
 
@@ -137,7 +137,7 @@ public class GamificationSlackBotIntegrationTest {
 
         final String EXPECTED_RESPONSE_FROM_GAMIFICATION = "[\"101\"]";
 
-        mockGamificationService(USERS, urlBaseGamification + urlSendInterview, EXPECTED_REQUEST_TO_GAMIFICATION, EXPECTED_RESPONSE_FROM_GAMIFICATION);
+        mockGamificationService(urlBaseGamification + urlSendInterview, EXPECTED_REQUEST_TO_GAMIFICATION, EXPECTED_RESPONSE_FROM_GAMIFICATION);
 
         final String EXPECTED_RESPONSE_TO_SLACK = "Thanks. Your interview saved.";
 
@@ -160,7 +160,7 @@ public class GamificationSlackBotIntegrationTest {
         }
     }
 
-    private void mockGamificationService(List<UserDTO> users, String expectedURI, String expectedRequestBody, String response){
+    private void mockGamificationService(String expectedURI, String expectedRequestBody, String response){
         mockServer.expect(requestTo(expectedURI))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString("application/json")))
