@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -19,19 +20,14 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
-
-
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -91,7 +87,7 @@ public class GamificationSlackBotIntegrationTest {
     @Test
     public void onReceiveSlashCommandCodenjoyReturnOkRichMessage() throws Exception {
         final String CODENJOY_COMMAND_FROM_SLACK = "-1th @slack1 -2th @slack2 -3th @slack3";
-        mockUsersService(USERS);
+        mockUsersService(USERS.get(0), USERS.get(1), USERS.get(2), USERS.get(3));
 
         final String EXPECTED_REQUEST_TO_GAMIFICATION = String.format("{\"from\":\"%s\",\"firstPlace\":\"%s\"," +
                         "\"secondPlace\":\"%s\",\"thirdPlace\":\"%s\"}",
@@ -99,7 +95,7 @@ public class GamificationSlackBotIntegrationTest {
 
         final String EXPECTED_RESPONSE_FROM_GAMIFICATION = "[\"101\", \"102\", \"103\"]";
 
-        mockGamificationService(USERS, EXPECTED_REQUEST_TO_GAMIFICATION, EXPECTED_RESPONSE_FROM_GAMIFICATION);
+        mockGamificationService(USERS, urlBaseGamification + urlSendCodenjoy, EXPECTED_REQUEST_TO_GAMIFICATION, EXPECTED_RESPONSE_FROM_GAMIFICATION);
 
         final String EXPECTED_RESPONSE_TO_SLACK = "Thanks, we awarded the users.";
 
@@ -110,7 +106,28 @@ public class GamificationSlackBotIntegrationTest {
                 .andExpect(jsonPath("$.text").value(EXPECTED_RESPONSE_TO_SLACK));
     }
 
-    private void mockUsersService(List<UserDTO> users) {
+    @Test
+    public void onReceiveSlashCommandDailyReturnOkRichMessage() throws Exception {
+        final String DAILY_COMMAND_TEXT_FROM_SLACK = "I did smth today";
+        mockUsersService(USERS.get(0));
+
+        final String EXPECTED_REQUEST_TO_GAMIFICATION = String.format("{\"from\":\"%s\",\"description\":\"%s\"}",
+                USERS.get(0).getUuid(), DAILY_COMMAND_TEXT_FROM_SLACK);
+
+        final String EXPECTED_RESPONSE_FROM_GAMIFICATION = "[\"101\"]";
+
+        mockGamificationService(USERS, urlBaseGamification + urlSendDaily, EXPECTED_REQUEST_TO_GAMIFICATION, EXPECTED_RESPONSE_FROM_GAMIFICATION);
+
+        final String EXPECTED_RESPONSE_TO_SLACK = "Thanks, your daily report saved.";
+
+        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/daily"),
+                getUriVars("slashCommandToken", "/codenjoy", DAILY_COMMAND_TEXT_FROM_SLACK))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.text").value(EXPECTED_RESPONSE_TO_SLACK));
+    }
+
+    private void mockUsersService(UserDTO ... users) {
         for (UserDTO user : users) {
             mockServer.expect(requestTo(urlBaseUser + urlGetUser))
                     .andExpect(method(HttpMethod.POST))
@@ -121,8 +138,8 @@ public class GamificationSlackBotIntegrationTest {
         }
     }
 
-    private void mockGamificationService(List<UserDTO> users, String expectedRequestBody, String response){
-        mockServer.expect(requestTo(urlBaseGamification + urlSendCodenjoy))
+    private void mockGamificationService(List<UserDTO> users, String expectedURI, String expectedRequestBody, String response){
+        mockServer.expect(requestTo(expectedURI))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString("application/json")))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
