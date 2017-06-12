@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
  */
 
 @SpringBootConfiguration
-public class SlackBotTestConfig {
+public class SlackBotIntegrationTestConfig {
 
     @Bean
     public GamificationSlackCommandController gamificationSlackCommandController(){
@@ -41,7 +41,6 @@ public class SlackBotTestConfig {
     }
 
     @Bean
-
     public RestTemplate restTemplate(){
         return new RestTemplate();
     }
