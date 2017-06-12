@@ -127,6 +127,28 @@ public class GamificationSlackBotIntegrationTest {
                 .andExpect(jsonPath("$.text").value(EXPECTED_RESPONSE_TO_SLACK));
     }
 
+    @Test
+    public void onReceiveSlashCommandInterviewReturnOkRichMessage() throws Exception {
+        final String INTERVIEW_COMMAND_TEXT_FROM_SLACK = "I went to an interview yesterday and got offer";
+        mockUsersService(USERS.get(0));
+
+        final String EXPECTED_REQUEST_TO_GAMIFICATION = String.format("{\"from\":\"%s\",\"description\":\"%s\"}",
+                USERS.get(0).getUuid(), INTERVIEW_COMMAND_TEXT_FROM_SLACK);
+
+        final String EXPECTED_RESPONSE_FROM_GAMIFICATION = "[\"101\"]";
+
+        mockGamificationService(USERS, urlBaseGamification + urlSendInterview, EXPECTED_REQUEST_TO_GAMIFICATION, EXPECTED_RESPONSE_FROM_GAMIFICATION);
+
+        final String EXPECTED_RESPONSE_TO_SLACK = "Thanks. Your interview saved.";
+
+        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/interview"),
+                getUriVars("slashCommandToken", "/interview", INTERVIEW_COMMAND_TEXT_FROM_SLACK))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.text").value(EXPECTED_RESPONSE_TO_SLACK));
+    }
+
+
     private void mockUsersService(UserDTO ... users) {
         for (UserDTO user : users) {
             mockServer.expect(requestTo(urlBaseUser + urlGetUser))
