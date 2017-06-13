@@ -94,6 +94,66 @@ public class GamificationSlackBotIntegrationTest {
     }
 
     @Test
+    public void ReturnOkMessageIfTokensWithoutSpaces() throws Exception {
+        final String CODENJOY_COMMAND_FROM_SLACK = "-1th@slack1 -2th@slack2 -3th @slack3";
+        mockUsersService(USERS.get(0), USERS.get(1), USERS.get(2), USERS.get(3));
+
+        final String EXPECTED_REQUEST_TO_GAMIFICATION = String.format("{\"from\":\"%s\",\"firstPlace\":\"%s\"," +
+                        "\"secondPlace\":\"%s\",\"thirdPlace\":\"%s\"}",
+                USERS.get(0).getUuid(), USERS.get(1).getUuid(), USERS.get(2).getUuid(), USERS.get(3).getUuid());
+        final String EXPECTED_RESPONSE_FROM_GAMIFICATION = "[\"101\", \"102\", \"103\"]";
+
+        mockGamificationService(urlBaseGamification + urlSendCodenjoy, EXPECTED_REQUEST_TO_GAMIFICATION,
+                EXPECTED_RESPONSE_FROM_GAMIFICATION);
+
+        final String EXPECTED_RESPONSE_TO_SLACK = "Thanks, we awarded the users.";
+
+        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/codenjoy"),
+                getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_FROM_SLACK))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.text").value(EXPECTED_RESPONSE_TO_SLACK));
+    }
+
+    @Test
+    public void ReturnOkMessageIfTokensInWrongOrder() throws Exception {
+        final String CODENJOY_COMMAND_FROM_SLACK = "-2th @slack2 -1th @slack1 -3th @slack3";
+        mockUsersService(USERS.get(0), USERS.get(2), USERS.get(1), USERS.get(3));
+
+        final String EXPECTED_REQUEST_TO_GAMIFICATION = String.format("{\"from\":\"%s\",\"firstPlace\":\"%s\"," +
+                        "\"secondPlace\":\"%s\",\"thirdPlace\":\"%s\"}",
+                USERS.get(0).getUuid(), USERS.get(1).getUuid(), USERS.get(2).getUuid(), USERS.get(3).getUuid());
+        final String EXPECTED_RESPONSE_FROM_GAMIFICATION = "[\"101\", \"102\", \"103\"]";
+
+        mockGamificationService(urlBaseGamification + urlSendCodenjoy, EXPECTED_REQUEST_TO_GAMIFICATION,
+                EXPECTED_RESPONSE_FROM_GAMIFICATION);
+
+        final String EXPECTED_RESPONSE_TO_SLACK = "Thanks, we awarded the users.";
+
+        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/codenjoy"),
+                getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_FROM_SLACK))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.text").value(EXPECTED_RESPONSE_TO_SLACK));
+    }
+
+    @Test
+    public void ReturnErrorMessageToSlackIfCommandWithout2thToken() throws Exception {
+        final String CODENJOY_COMMAND_FROM_SLACK = "-1th @slack1 @slack2 -3th @slack3";
+        mockUsersService(USERS.get(0), USERS.get(1), USERS.get(2), USERS.get(3));
+
+        final String EXPECTED_RESPONSE_TO_SLACK = "token '-2th' not found. Example for this command \"" +
+                "/codenjoy -1th @slack_nick_name -2th @slack_nick_name2 -3th @slack_nick_name3\"";
+
+        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/codenjoy"),
+                getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_FROM_SLACK))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.text").value(EXPECTED_RESPONSE_TO_SLACK));
+    }
+
+
+    @Test
     public void onReceiveSlashCommandDailyReturnOkRichMessage() throws Exception {
         final String DAILY_COMMAND_TEXT_FROM_SLACK = "I did smth today";
         mockUsersService(USERS.get(0));
