@@ -62,6 +62,7 @@ public class GamificationSlackCommandController {
         logger.debug("Send codenjoy achievement request. fromUserUuid: {}; prepared text: {}",
                 fromUserUuid, preparedTextWithUuid);
         String[] result = gamificationService.sendCodenjoyAchievement(codenjoy);
+
         logger.debug("Received response from gamification service: {}", Arrays.toString(result));
 
         if (result.length == 3) {
@@ -118,6 +119,7 @@ public class GamificationSlackCommandController {
         logger.debug("Send thanks achivement request. fromUserUuid: {}; prepared text: {}",
                 fromUserUuid, preparedTextWithUuid);
         String[] result = gamificationService.sendThanksAchievement(thanks);
+
         logger.debug("Received response from gamification service: {}", Arrays.toString(result));
 
         if (result.length == 1) {
@@ -150,7 +152,8 @@ public class GamificationSlackCommandController {
         logger.debug("Send interview achivement request. fromUserUuid: {}; prepared text: {}",
                 fromUserUuid, preparedTextWithUuid);
         String[] result = gamificationService.sendInterviewAchievement(interview);
-        logger.debug("Received response from gamification service: {}", response);
+
+        logger.debug("Received response from gamification service: {}", Arrays.toString(result));
 
         if (result.length == 1) {
             response = "Thanks. Your interview saved.";
