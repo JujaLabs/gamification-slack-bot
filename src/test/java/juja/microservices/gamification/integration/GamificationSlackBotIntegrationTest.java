@@ -216,6 +216,21 @@ public class GamificationSlackBotIntegrationTest {
                 .andExpect(jsonPath("$.text").value(EXPECTED_RESPONSE_TO_SLACK));
     }
 
+    @Test
+    public void returnErrorMessageIfThanksConsistTwoOrMoreSlackNames() throws Exception {
+        final String THANKS_COMMAND_TEXT_FROM_SLACK = "@slack1 thanks @slack2 for your help!";
+        mockUsersService(USERS.get(0), USERS.get(1), USERS.get(2));
+
+        final String EXPECTED_RESPONSE_TO_SLACK = "Wrong command. Example for this command " +
+                "/thanks Thanks to @slack_nick_name for help.";
+
+        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/thanks"),
+                getUriVars("slashCommandToken", "/thanks", THANKS_COMMAND_TEXT_FROM_SLACK))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.text").value(EXPECTED_RESPONSE_TO_SLACK));
+    }
+
 
     private void mockUsersService(UserDTO... users) {
         for (UserDTO user : users) {
