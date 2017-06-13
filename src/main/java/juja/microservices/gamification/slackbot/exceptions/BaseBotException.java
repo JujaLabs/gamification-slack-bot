@@ -12,16 +12,12 @@ public class BaseBotException extends RuntimeException {
         this.error = error;
     }
 
-    public String clientMessage() {
-        return error.getClientMessage();
-    }
-
     public String detailMessage() {
         return error.toString();
     }
 
     @Override
     public String getMessage() {
-        return error.toString();
+        return error.getClientMessage();
     }
 }

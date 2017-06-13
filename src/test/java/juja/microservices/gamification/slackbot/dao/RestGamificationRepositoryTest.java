@@ -101,10 +101,7 @@ public class RestGamificationRepositoryTest {
                         "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
         //then
         thrown.expect(GamificationExchangeException.class);
-        thrown.expectMessage(containsString("ApiError(httpStatus=400, internalErrorCode=1, " +
-                "clientMessage=Oops something went wrong :(, " +
-                "developerMessage=General exception for this service, exceptionMessage=very big and scare error, " +
-                "detailErrors=[])"));
+        thrown.expectMessage(containsString("Oops something went wrong :("));
         //when
         gamificationRepository.saveDailyAchievement(new DailyAchievement("101", "description"));
     }
@@ -143,10 +140,7 @@ public class RestGamificationRepositoryTest {
                         "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
         //then
         thrown.expect(GamificationExchangeException.class);
-        thrown.expectMessage(containsString("ApiError(httpStatus=400, internalErrorCode=1, " +
-                "clientMessage=Oops something went wrong :(, " +
-                "developerMessage=General exception for this service, exceptionMessage=very big and scare error, " +
-                "detailErrors=[])"));
+        thrown.expectMessage(containsString("Oops something went wrong :("));
         //when
         gamificationRepository.saveCodenjoyAchievement(new CodenjoyAchievement("Bill", "Walter", "Bob", "John"));
     }
@@ -185,10 +179,7 @@ public class RestGamificationRepositoryTest {
                         "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
         //then
         thrown.expect(GamificationExchangeException.class);
-        thrown.expectMessage(containsString("ApiError(httpStatus=400, internalErrorCode=1, " +
-                "clientMessage=Oops something went wrong :(, " +
-                "developerMessage=General exception for this service, exceptionMessage=very big and scare error, " +
-                "detailErrors=[])"));
+        thrown.expectMessage(containsString("Oops something went wrong :("));
         //when
         gamificationRepository.saveThanksAchievement(new ThanksAchievement("Bill", "Bob", "Thanks to Bob"));
     }
@@ -230,10 +221,7 @@ public class RestGamificationRepositoryTest {
                         "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
         //then
         thrown.expect(GamificationExchangeException.class);
-        thrown.expectMessage(containsString("ApiError(httpStatus=400, internalErrorCode=1, " +
-                "clientMessage=Oops something went wrong :(, " +
-                "developerMessage=General exception for this service, exceptionMessage=very big and scare error, " +
-                "detailErrors=[])"));
+        thrown.expectMessage(containsString("Oops something went wrong :("));
         //when
         gamificationRepository.saveInterviewAchievement(new InterviewAchievement("101", "description"));
     }

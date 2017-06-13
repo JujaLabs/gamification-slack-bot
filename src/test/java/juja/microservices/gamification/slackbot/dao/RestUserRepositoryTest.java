@@ -93,10 +93,7 @@ public class RestUserRepositoryTest {
                         "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
         //then
         thrown.expect(UserExchangeException.class);
-        thrown.expectMessage(containsString("ApiError(httpStatus=400, internalErrorCode=1, " +
-                "clientMessage=Oops something went wrong :(, " +
-                "developerMessage=General exception for this service, exceptionMessage=very big and scare error, " +
-                "detailErrors=[])"));
+        thrown.expectMessage(containsString("Oops something went wrong :("));
         //when
         userRepository.findUuidUserBySlack("@user");
     }

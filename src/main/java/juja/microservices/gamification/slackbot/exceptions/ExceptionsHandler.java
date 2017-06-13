@@ -28,14 +28,14 @@ public class ExceptionsHandler {
 
     @ExceptionHandler(UserExchangeException.class)
     public RichMessage handleUserExchangeException(UserExchangeException ex){
-        logger.warn("UserExchangeException: {}", ex.getMessage());
-        return new RichMessage(ex.clientMessage());
+        logger.warn("UserExchangeException: {}", ex.detailMessage());
+        return new RichMessage(ex.getMessage());
     }
 
     @ExceptionHandler(GamificationExchangeException.class)
     public RichMessage handleGamificationExchangeException(GamificationExchangeException ex){
-        logger.warn("GamificationExchangeException : {}", ex.getMessage());
-        return new RichMessage(ex.clientMessage());
+        logger.warn("GamificationExchangeException : {}", ex.detailMessage());
+        return new RichMessage(ex.getMessage());
     }
 
 }
