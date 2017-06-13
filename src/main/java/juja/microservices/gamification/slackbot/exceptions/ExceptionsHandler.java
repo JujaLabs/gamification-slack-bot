@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * @author Danil Kuznetsov
  */
 @RestControllerAdvice
-public class SlackBotExceptionsHandler {
+public class ExceptionsHandler {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @ExceptionHandler(Exception.class)
-    public RichMessage handleAll(Exception ex) {
+    public RichMessage handleAllOtherExceptions(Exception ex) {
         logger.warn("Other Exception': {}", ex.getMessage());
         return new RichMessage(ex.getMessage());
     }
@@ -27,15 +27,15 @@ public class SlackBotExceptionsHandler {
     }
 
     @ExceptionHandler(UserExchangeException.class)
-    public RichMessage handleUserNotFoundException(Exception ex){
+    public RichMessage handleUserExchangeException(UserExchangeException ex){
         logger.warn("UserExchangeException: {}", ex.getMessage());
-        return new RichMessage(ex.getMessage());
+        return new RichMessage(ex.clientMessage());
     }
 
     @ExceptionHandler(GamificationExchangeException.class)
-    public RichMessage handleGamificationException(Exception ex){
+    public RichMessage handleGamificationExchangeException(GamificationExchangeException ex){
         logger.warn("GamificationExchangeException : {}", ex.getMessage());
-        return new RichMessage(ex.getMessage());
+        return new RichMessage(ex.clientMessage());
     }
 
 }

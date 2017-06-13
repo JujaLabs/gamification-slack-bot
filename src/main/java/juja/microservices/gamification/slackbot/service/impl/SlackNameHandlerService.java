@@ -1,6 +1,6 @@
 package juja.microservices.gamification.slackbot.service.impl;
 
-import juja.microservices.gamification.slackbot.exceptions.UserNotFoundException;
+import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
 import juja.microservices.gamification.slackbot.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class SlackNameHandlerService {
                 String slackName = matcher.group();
                 String uuid = userService.findUuidUserBySlack(slackName.toLowerCase());
                 text = text.replaceAll(slackName, parsedUuidStartMarker + uuid + parsedUuidFinishMarker);
-            } catch (UserNotFoundException ex) {
+            } catch (UserExchangeException ex) {
                 //
             }
         }

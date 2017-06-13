@@ -1,6 +1,6 @@
 package juja.microservices.gamification.slackbot.service;
 
-import juja.microservices.gamification.slackbot.exceptions.UserNotFoundException;
+import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
 import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import org.junit.Before;
 import org.junit.Test;
@@ -130,7 +130,7 @@ public class SlackNameHandlerServiceTest {
         //given
         String text = "text @SLACK.NAME TexT @notSlackName text.";
         when(userService.findUuidUserBySlack("@slack.name")).thenReturn(defaultUuid);
-        when(userService.findUuidUserBySlack("@notslackname")).thenThrow(UserNotFoundException.class);
+        when(userService.findUuidUserBySlack("@notslackname")).thenThrow(UserExchangeException.class);
         //when
         String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
         //then
