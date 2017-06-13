@@ -94,7 +94,7 @@ public class GamificationSlackBotIntegrationTest {
     }
 
     @Test
-    public void ReturnOkMessageIfTokensWithoutSpaces() throws Exception {
+    public void returnOkMessageIfTokensWithoutSpaces() throws Exception {
         final String CODENJOY_COMMAND_FROM_SLACK = "-1th@slack1 -2th@slack2 -3th @slack3";
         mockUsersService(USERS.get(0), USERS.get(1), USERS.get(2), USERS.get(3));
 
@@ -116,7 +116,7 @@ public class GamificationSlackBotIntegrationTest {
     }
 
     @Test
-    public void ReturnOkMessageIfTokensInWrongOrder() throws Exception {
+    public void returnOkMessageIfTokensInWrongOrder() throws Exception {
         final String CODENJOY_COMMAND_FROM_SLACK = "-2th @slack2 -1th @slack1 -3th @slack3";
         mockUsersService(USERS.get(0), USERS.get(2), USERS.get(1), USERS.get(3));
 
@@ -138,7 +138,7 @@ public class GamificationSlackBotIntegrationTest {
     }
 
     @Test
-    public void ReturnErrorMessageToSlackIfCommandWithout2thToken() throws Exception {
+    public void returnErrorMessageToSlackIfCommandWithout2thToken() throws Exception {
         final String CODENJOY_COMMAND_FROM_SLACK = "-1th @slack1 @slack2 -3th @slack3";
         mockUsersService(USERS.get(0), USERS.get(1), USERS.get(2), USERS.get(3));
 
