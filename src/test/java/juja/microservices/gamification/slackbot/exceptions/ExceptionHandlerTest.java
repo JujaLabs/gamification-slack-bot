@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.inject.Inject;
-
 import java.util.Collections;
 
 import static org.mockito.Matchers.any;
@@ -48,7 +47,7 @@ public class ExceptionHandlerTest {
         final String DAILY_COMMAND_TEXT = "daily description text";
 
         ApiError apiError = new ApiError(
-                400,"GMF-F5-D2",
+                400, "GMF-F5-D2",
                 "You cannot give more than one thanks for day to one person",
                 "The reason of the exception is 'Thanks' achievement",
                 "Something went wrong",
@@ -73,7 +72,7 @@ public class ExceptionHandlerTest {
         final String DAILY_COMMAND_TEXT = "daily description text";
 
         ApiError apiError = new ApiError(
-                400,"USF-F1-D1",
+                400, "USF-F1-D1",
                 "User not found",
                 "User not found",
                 "Something went wrong",
@@ -95,19 +94,33 @@ public class ExceptionHandlerTest {
     @Test
     public void shouldHandleWrongCommandException() throws Exception {
 
-        final String DAILY_COMMAND_TEXT = "@#uuid1#@ -2th @#uuid2#@ -3th @#uuid3#@";
+        final String COMMAND_TEXT = "@#uuid1#@ -2th @#uuid2#@ -3th @#uuid3#@";
 
         when(userService.findUuidUserBySlack(any(String.class))).
                 thenThrow(new WrongCommandFormatException("Wrong command exception"));
 
-
         mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/codenjoy"),
-                getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
+                getUriVars("slashCommandToken", "/daily", COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value("Wrong command exception"));
     }
 
+
+    @Test
+    public void shouldHandleAllOtherException() throws Exception {
+
+        final String COMMAND_TEXT = "@#uuid1#@ -2th @#uuid2#@ -3th @#uuid3#@";
+
+        when(userService.findUuidUserBySlack(any(String.class))).
+                thenThrow(new RuntimeException("Runtime exception"));
+
+        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/codenjoy"),
+                getUriVars("slashCommandToken", "/daily", COMMAND_TEXT))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.text").value("Runtime exception"));
+    }
 
     private String getUrlTemplate(String endpoint) {
         return endpoint + "?" +
