@@ -75,7 +75,6 @@ public class RestUserRepository implements UserRepository {
 
     private ApiError convertToApiError(HttpClientErrorException ex) {
         ObjectMapper mapper = new ObjectMapper();
-
         try {
             return mapper.readValue(ex.getResponseBodyAsString(), ApiError.class);
         } catch (IOException e) {

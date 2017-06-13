@@ -21,21 +21,20 @@ public class ExceptionsHandler {
     }
 
     @ExceptionHandler(WrongCommandFormatException.class)
-    public RichMessage handleWrongCommandFormatException(Exception ex){
+    public RichMessage handleWrongCommandFormatException(Exception ex) {
         logger.warn("WrongCommandFormatException: {}", ex.getMessage());
         return new RichMessage(ex.getMessage());
     }
 
     @ExceptionHandler(UserExchangeException.class)
-    public RichMessage handleUserExchangeException(UserExchangeException ex){
+    public RichMessage handleUserExchangeException(UserExchangeException ex) {
         logger.warn("UserExchangeException: {}", ex.detailMessage());
         return new RichMessage(ex.getMessage());
     }
 
     @ExceptionHandler(GamificationExchangeException.class)
-    public RichMessage handleGamificationExchangeException(GamificationExchangeException ex){
+    public RichMessage handleGamificationExchangeException(GamificationExchangeException ex) {
         logger.warn("GamificationExchangeException : {}", ex.detailMessage());
         return new RichMessage(ex.getMessage());
     }
-
 }

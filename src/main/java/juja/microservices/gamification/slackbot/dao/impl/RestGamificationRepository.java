@@ -71,7 +71,6 @@ public class RestGamificationRepository implements GamificationRepository {
         return result;
     }
 
-
     @Override
     public String[] saveCodenjoyAchievement(CodenjoyAchievement codenjoy) {
         HttpEntity<CodenjoyAchievement> request = new HttpEntity<>(codenjoy, setupBaseHttpHeaders());
@@ -127,13 +126,10 @@ public class RestGamificationRepository implements GamificationRepository {
         return result;
     }
 
-
     private ApiError convertToApiError(HttpClientErrorException ex) {
         ObjectMapper mapper = new ObjectMapper();
-
         try {
             return mapper.readValue(ex.getResponseBodyAsString(), ApiError.class);
-
         } catch (IOException e) {
             return new ApiError(
                     500, "BotError",
@@ -142,8 +138,6 @@ public class RestGamificationRepository implements GamificationRepository {
                     e.getMessage(),
                     Collections.EMPTY_LIST
             );
-
         }
     }
-
 }
