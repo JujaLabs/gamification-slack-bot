@@ -151,7 +151,6 @@ public class GamificationSlackBotIntegrationTest {
                 .andExpect(jsonPath("$.text").value(EXPECTED_RESPONSE_TO_SLACK));
     }
 
-
     @Test
     public void onReceiveSlashCommandDailyReturnOkRichMessage() throws Exception {
         final String DAILY_COMMAND_TEXT_FROM_SLACK = "I did smth today";
@@ -230,7 +229,6 @@ public class GamificationSlackBotIntegrationTest {
                 .andExpect(jsonPath("$.text").value(EXPECTED_RESPONSE_TO_SLACK));
     }
 
-
     private void mockUsersService(UserDTO... users) {
         for (UserDTO user : users) {
             mockServer.expect(requestTo(urlBaseUser + urlGetUser))
@@ -250,7 +248,6 @@ public class GamificationSlackBotIntegrationTest {
                 .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
 
     }
-
 
     private String getUrlTemplate(String endpoint) {
         return endpoint + "?" +
