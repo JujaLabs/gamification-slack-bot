@@ -14,3 +14,4 @@ before_script:
     - ./gradlew assemble
 script:
     - ./gradlew check
+    - ./gradlew test --tests "juja.microservices.integration.*"

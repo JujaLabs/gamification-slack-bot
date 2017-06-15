@@ -1,7 +1,6 @@
 package juja.microservices.gamification.slackbot.dao;
 
-import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
-import juja.microservices.gamification.slackbot.exceptions.UserNotFoundException;
+import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,9 +19,7 @@ import javax.inject.Inject;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -90,71 +87,13 @@ public class RestUserRepositoryTest {
         // given
         mockServer.expect(requestTo(urlBase + urlGetUser))
                 .andExpect(method(HttpMethod.POST))
-                .andRespond(withBadRequest().body("bad request"));
-        //then
-        thrown.expect(GamificationExchangeException.class);
-        thrown.expectMessage(containsString("User Exchange Error"));
-        //when
-        userRepository.findUuidUserBySlack("@user");
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenUuidNotFoundAndInternalErrorCode0() {
-        // given
-        mockServer.expect(requestTo(urlBase + urlGetUser))
-                .andExpect(method(HttpMethod.POST))
-                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":0," +
-                        "\"clientMessage\":\"Oops something went wrong :(\"," +
-                        "\"developerMessage\":\"General exception for this service\"," +
-                        "\"exceptionMessage\":\"No users found by your request!\",\"detailErrors\":[]}"));
-        //then
-        thrown.expect(UserNotFoundException.class);
-        //when
-        userRepository.findUuidUserBySlack("@user");
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenUuidNotFoundAndInternalErrorCodeNot0() {
-        // given
-        mockServer.expect(requestTo(urlBase + urlGetUser))
-                .andExpect(method(HttpMethod.POST))
-                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":9," +
-                        "\"clientMessage\":\"Oops something went wrong :(\"," +
-                        "\"developerMessage\":\"General exception for this service\"," +
-                        "\"exceptionMessage\":\"unknown Error\",\"detailErrors\":[]}"));
-        //then
-        thrown.expect(GamificationExchangeException.class);
-        //when
-        userRepository.findUuidUserBySlack("@user");
-    }
-
-    @Test
-    public void shouldThrowExceptionIfStringCanNotConvertToString() {
-        // given
-        mockServer.expect(requestTo(urlBase + urlGetUser))
-                .andExpect(method(HttpMethod.POST))
-                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":0, bad json string"));
-        //then
-        thrown.expect(GamificationExchangeException.class);
-        thrown.expectMessage(containsString("can't parse or mapping"));
-        //when
-        userRepository.findUuidUserBySlack("@user");
-    }
-    @Test
-    public void shouldThrowExceptionWithMessageWhenUsersMicroserviceThrowException() {
-        // given
-        mockServer.expect(requestTo(urlBase + urlGetUser))
-                .andExpect(method(HttpMethod.POST))
                 .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":1," +
                         "\"clientMessage\":\"Oops something went wrong :(\"," +
                         "\"developerMessage\":\"General exception for this service\"," +
                         "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
         //then
-        thrown.expect(GamificationExchangeException.class);
-        thrown.expectMessage(containsString("{\"httpStatus\":400,\"internalErrorCode\":1," +
-                "\"clientMessage\":\"Oops something went wrong :(\"," +
-                "\"developerMessage\":\"General exception for this service\"," +
-                "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
+        thrown.expect(UserExchangeException.class);
+        thrown.expectMessage(containsString("Oops something went wrong :("));
         //when
         userRepository.findUuidUserBySlack("@user");
     }

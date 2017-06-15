@@ -1,12 +1,9 @@
 package juja.microservices.gamification.slackbot.dao.impl;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import juja.microservices.gamification.slackbot.dao.UserRepository;
-import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
-import juja.microservices.gamification.slackbot.exceptions.UserNotFoundException;
+import juja.microservices.gamification.slackbot.exceptions.ApiError;
+import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
 import juja.microservices.gamification.slackbot.model.DTO.SlackNameRequest;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import org.slf4j.Logger;
@@ -19,7 +16,9 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Artem
@@ -44,7 +43,7 @@ public class RestUserRepository implements UserRepository {
 
     @Override
     public String findUuidUserBySlack(String slackName) {
-        if(!slackName.startsWith("@")){
+        if (!slackName.startsWith("@")) {
             slackName = "@" + slackName;
         }
         List<String> slackNames = new ArrayList<>();
@@ -62,36 +61,9 @@ public class RestUserRepository implements UserRepository {
             result = response.getBody()[0].getUuid();
         } catch (HttpClientErrorException ex) {
             logger.warn("Exception in findUuidUserBySlack: {}", ex.getMessage());
-            if (ex.getRawStatusCode() == 400 && checkInternalErrorCode(ex.getResponseBodyAsString(), 0)) {
-                throw new UserNotFoundException(String.format("User with slack name '%s' not found.", slackName));
-            }
-            throw new GamificationExchangeException("User Exchange Error: " + ex.getResponseBodyAsString(), ex);
+            throw new UserExchangeException(convertToApiError(ex), ex);
         }
         logger.info("Founded UUID:{} by user: {}", result, slackName);
-        return result;
-    }
-
-    private boolean checkInternalErrorCode(String jsonInString, int expectedValue) {
-        if (!jsonInString.contains("internalErrorCode")) {
-            return false;
-        }
-        Map<String, Object> map = jsonStringToHashMap(jsonInString);
-        Integer actualValue = (Integer) map.get("internalErrorCode");
-        return actualValue.equals(expectedValue);
-    }
-
-    private Map<String, Object> jsonStringToHashMap(String jsonInString) {
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> result;
-        try {
-            result = mapper.readValue(jsonInString, new TypeReference<HashMap<String, Object>>() {
-            });
-        } catch (JsonParseException | JsonMappingException exception){
-            throw new GamificationExchangeException(String.format("The string '%s' can't parse or " +
-                    "mapping to Map<String, Object>", jsonInString), exception);
-        } catch (IOException exception) {
-            throw new GamificationExchangeException("A low-level I/O problem", exception);
-        }
         return result;
     }
 
@@ -99,5 +71,20 @@ public class RestUserRepository implements UserRepository {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
         return headers;
+    }
+
+    private ApiError convertToApiError(HttpClientErrorException ex) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readValue(ex.getResponseBodyAsString(), ApiError.class);
+        } catch (IOException e) {
+            return new ApiError(
+                    500, "BotError",
+                    "Cannot parse api error message",
+                    "Cannot parse api error message",
+                    e.getMessage(),
+                    Collections.EMPTY_LIST
+            );
+        }
     }
 }

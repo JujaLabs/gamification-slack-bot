@@ -1,7 +1,9 @@
 package juja.microservices.gamification.slackbot.service.impl;
 
-import juja.microservices.gamification.slackbot.exceptions.UserNotFoundException;
+import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
 import juja.microservices.gamification.slackbot.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,8 @@ public class SlackNameHandlerService {
      */
     private final String SLACK_NAME_PATTERN = "@([a-zA-z0-9\\.\\_\\-]){1,21}";
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Inject
     public SlackNameHandlerService(UserService userService) {
         this.userService = userService;
@@ -41,12 +45,13 @@ public class SlackNameHandlerService {
         Pattern pattern = Pattern.compile(SLACK_NAME_PATTERN);
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
+            String slackName = matcher.group();
             try {
-                String slackName = matcher.group();
                 String uuid = userService.findUuidUserBySlack(slackName.toLowerCase());
                 text = text.replaceAll(slackName, parsedUuidStartMarker + uuid + parsedUuidFinishMarker);
-            } catch (UserNotFoundException ex) {
-                //
+            } catch (UserExchangeException ex) {
+                logger.warn("SlackName : '{}' is not convert to uuid and not be replace. Detail message: {}",
+                        slackName, ex.detailMessage());
             }
         }
         return text;

@@ -1,6 +1,8 @@
 package juja.microservices.gamification.slackbot.dao.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import juja.microservices.gamification.slackbot.dao.GamificationRepository;
+import juja.microservices.gamification.slackbot.exceptions.ApiError;
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
 import juja.microservices.gamification.slackbot.model.CodenjoyAchievement;
 import juja.microservices.gamification.slackbot.model.DailyAchievement;
@@ -15,7 +17,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * @author Danil Kuznetsov
@@ -61,7 +65,7 @@ public class RestGamificationRepository implements GamificationRepository {
             result = response.getBody();
         } catch (HttpClientErrorException ex) {
             logger.warn("Exception in <saveDailyAchievement()>: {}", ex.getMessage());
-            throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
+            throw new GamificationExchangeException(convertToApiError(ex), ex);
         }
         logger.info("Saved daily achievement, id's={}", Arrays.toString(result));
         return result;
@@ -80,7 +84,7 @@ public class RestGamificationRepository implements GamificationRepository {
 
         } catch (HttpClientErrorException ex) {
             logger.warn("Exception in <saveCodenjoyAchievement()>: {}", ex.getMessage());
-            throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
+            throw new GamificationExchangeException(convertToApiError(ex), ex);
         }
         logger.info("Saved codenjoy achievements, id's={}", Arrays.toString(result));
         return result;
@@ -98,7 +102,7 @@ public class RestGamificationRepository implements GamificationRepository {
             result = response.getBody();
         } catch (HttpClientErrorException ex) {
             logger.warn("Exception in <saveThanksAchievement()>: {}", ex.getMessage());
-            throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
+            throw new GamificationExchangeException(convertToApiError(ex), ex);
         }
         logger.info("Saved thanks achievements, id's={}", Arrays.toString(result));
         return result;
@@ -116,9 +120,24 @@ public class RestGamificationRepository implements GamificationRepository {
             result = response.getBody();
         } catch (HttpClientErrorException ex) {
             logger.warn("Exception in <saveInterviewAchievement()>: {}", ex.getMessage());
-            throw new GamificationExchangeException("Gamification Exchange Error: ", ex);
+            throw new GamificationExchangeException(convertToApiError(ex), ex);
         }
         logger.info("Saved interview achievements, id's={}", Arrays.toString(result));
         return result;
+    }
+
+    private ApiError convertToApiError(HttpClientErrorException ex) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readValue(ex.getResponseBodyAsString(), ApiError.class);
+        } catch (IOException e) {
+            return new ApiError(
+                    500, "BotError",
+                    "Cannot parse api error message",
+                    "Cannot parse api error message",
+                    e.getMessage(),
+                    Collections.EMPTY_LIST
+            );
+        }
     }
 }
