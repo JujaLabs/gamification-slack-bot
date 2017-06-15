@@ -50,7 +50,8 @@ public class SlackNameHandlerService {
                 String uuid = userService.findUuidUserBySlack(slackName.toLowerCase());
                 text = text.replaceAll(slackName, parsedUuidStartMarker + uuid + parsedUuidFinishMarker);
             } catch (UserExchangeException ex) {
-                logger.warn("SlackName : '{}' is not convert to uuid and not be replace. Detail message: {}", slackName, ex.detailMessage());
+                logger.warn("SlackName : '{}' is not convert to uuid and not be replace. Detail message: {}",
+                        slackName, ex.detailMessage());
             }
         }
         return text;
