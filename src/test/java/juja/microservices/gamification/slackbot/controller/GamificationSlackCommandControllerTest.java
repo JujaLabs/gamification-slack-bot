@@ -7,6 +7,7 @@ import juja.microservices.gamification.slackbot.model.ThanksAchievement;
 import juja.microservices.gamification.slackbot.service.GamificationService;
 import juja.microservices.gamification.slackbot.service.UserService;
 import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
+import juja.microservices.utils.SlackUrlUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -48,8 +49,8 @@ public class GamificationSlackCommandControllerTest {
     public void onReceiveSlashCommandCodenjoyWhenIncorrectTokenShouldReturnSorryRichMessage() throws Exception {
         final String CODENJOY_COMMAND_TEXT = "-1th @slack_nick_name -2th @slack_nick_name2 -3th @slack_nick_name3";
 
-        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/codenjoy"),
-                getUriVars("wrongSlackToken", "/command", CODENJOY_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/codenjoy"),
+                SlackUrlUtils.getUriVars("wrongSlackToken", "/command", CODENJOY_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value(SORRY_MESSAGE));
@@ -66,8 +67,8 @@ public class GamificationSlackCommandControllerTest {
         when(userService.findUuidUserBySlack("@slack.name")).thenReturn("uuid");
         when(gamificationService.sendCodenjoyAchievement(any(CodenjoyAchievement.class))).thenReturn(GAMIFICATION_RESPONSE);
 
-        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/codenjoy"),
-                getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/codenjoy"),
+                SlackUrlUtils.getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value("Thanks, we awarded the users."));
@@ -84,8 +85,8 @@ public class GamificationSlackCommandControllerTest {
         when(gamificationService.sendCodenjoyAchievement(any(CodenjoyAchievement.class)))
                 .thenThrow(new RuntimeException("something went wrong"));
 
-        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/codenjoy"),
-                getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/codenjoy"),
+                SlackUrlUtils.getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value("something went wrong"));
@@ -96,8 +97,8 @@ public class GamificationSlackCommandControllerTest {
     public void onReceiveSlashCommandDailyWhenIncorrectTokenShouldReturnSorryRichMessage() throws Exception {
         final String DAILY_COMMAND_TEXT = "daily description text";
 
-        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/daily"),
-                getUriVars("wrongSlackToken", "/command", DAILY_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/daily"),
+                SlackUrlUtils.getUriVars("wrongSlackToken", "/command", DAILY_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value(SORRY_MESSAGE));
@@ -111,8 +112,8 @@ public class GamificationSlackCommandControllerTest {
         when(userService.findUuidUserBySlack("@slack.name")).thenReturn("uuid");
         when(gamificationService.sendDailyAchievement(any(DailyAchievement.class))).thenReturn(GAMIFICATION_RESPONSE);
 
-        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/daily"),
-                getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/daily"),
+                SlackUrlUtils.getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value("Thanks, your daily report saved."));
@@ -126,8 +127,8 @@ public class GamificationSlackCommandControllerTest {
         when(gamificationService.sendDailyAchievement(any(DailyAchievement.class)))
                 .thenThrow(new RuntimeException("something went wrong"));
 
-        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/daily"),
-                getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/daily"),
+                SlackUrlUtils.getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value("something went wrong"));
@@ -137,8 +138,8 @@ public class GamificationSlackCommandControllerTest {
     public void onReceiveSlashCommandThanksWhenIncorrectTokenShouldReturnSorryRichMessage() throws Exception {
         final String THANKS_COMMAND_TEXT = "thanks to @slack_user description text";
 
-        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/thanks"),
-                getUriVars("wrongSlackToken", "/command", THANKS_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/thanks"),
+                SlackUrlUtils.getUriVars("wrongSlackToken", "/command", THANKS_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value(SORRY_MESSAGE));
@@ -155,8 +156,8 @@ public class GamificationSlackCommandControllerTest {
         when(userService.findUuidUserBySlack("@slack.name")).thenReturn("uuid");
         when(gamificationService.sendThanksAchievement(any(ThanksAchievement.class))).thenReturn(GAMIFICATION_RESPONSE);
 
-        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/thanks"),
-                getUriVars("slashCommandToken", "/thanks", THANKS_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/thanks"),
+                SlackUrlUtils.getUriVars("slashCommandToken", "/thanks", THANKS_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 //then
                 .andExpect(status().isOk())
@@ -174,8 +175,8 @@ public class GamificationSlackCommandControllerTest {
         when(userService.findUuidUserBySlack("@slack.name")).thenReturn("uuid");
         when(gamificationService.sendThanksAchievement(any(ThanksAchievement.class))).thenReturn(GAMIFICATION_RESPONSE);
 
-        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/thanks"),
-                getUriVars("slashCommandToken", "/thanks", THANKS_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/thanks"),
+                SlackUrlUtils.getUriVars("slashCommandToken", "/thanks", THANKS_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 //then
                 .andExpect(status().isOk())
@@ -193,8 +194,8 @@ public class GamificationSlackCommandControllerTest {
         when(gamificationService.sendThanksAchievement(any(ThanksAchievement.class)))
                 .thenThrow(new RuntimeException("something went wrong"));
 
-        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/thanks"),
-                getUriVars("slashCommandToken", "/thanks", THANKS_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/thanks"),
+                SlackUrlUtils.getUriVars("slashCommandToken", "/thanks", THANKS_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value("something went wrong"));
@@ -204,8 +205,8 @@ public class GamificationSlackCommandControllerTest {
     public void onReceiveSlashCommandInterviewWhenIncorrectTokenShouldReturnSorryRichMessage() throws Exception {
         final String INTERVIEW_COMMAND_TEXT = "interview description text";
 
-        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/interview"),
-                getUriVars("wrongSlashCommandToken", "/interview", INTERVIEW_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/interview"),
+                SlackUrlUtils.getUriVars("wrongSlashCommandToken", "/interview", INTERVIEW_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text")
@@ -220,8 +221,8 @@ public class GamificationSlackCommandControllerTest {
         when(userService.findUuidUserBySlack("@slack.name")).thenReturn("uuid");
         when(gamificationService.sendInterviewAchievement(any(InterviewAchievement.class))).thenReturn(GAMIFICATION_RESPONSE);
 
-        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/interview"),
-                getUriVars("slashCommandToken", "/interview", INTERVIEW_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/interview"),
+                SlackUrlUtils.getUriVars("slashCommandToken", "/interview", INTERVIEW_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value("Thanks. Your interview saved."));
@@ -235,37 +236,12 @@ public class GamificationSlackCommandControllerTest {
         when(gamificationService.sendInterviewAchievement(any(InterviewAchievement.class)))
                 .thenThrow(new RuntimeException("something went wrong"));
 
-        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/interview"),
-                getUriVars("slashCommandToken", "/interview", INTERVIEW_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/interview"),
+                SlackUrlUtils.getUriVars("slashCommandToken", "/interview", INTERVIEW_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value("something went wrong"));
     }
 
-    private String getUrlTemplate(String endpoint) {
-        return endpoint + "?" +
-                "token={slashCommandToken}&" +
-                "team_id={team_id}&" +
-                "team_domain={team_domain}&" +
-                "channel_id={channel_id}&" +
-                "channel_name={channel_name}&" +
-                "user_id={user_id}&" +
-                "user_name={user_name}&" +
-                "command={command}&" +
-                "text={text}&" +
-                "response_url={response_url}&";
-    }
 
-    private Object[] getUriVars(String slackToken, String command, String description) {
-        return new Object[]{slackToken,
-                "any_team_id",
-                "any_domain",
-                "UHASHB8JB",
-                "test-channel",
-                "UNJSD9OKM",
-                "@uname",
-                command,
-                description,
-                "http://example.com"};
-    }
 }

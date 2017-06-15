@@ -5,6 +5,7 @@ import juja.microservices.gamification.slackbot.model.DailyAchievement;
 import juja.microservices.gamification.slackbot.service.GamificationService;
 import juja.microservices.gamification.slackbot.service.UserService;
 import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
+import juja.microservices.utils.SlackUrlUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -58,8 +59,8 @@ public class ExceptionHandlerTest {
         when(gamificationService.sendDailyAchievement(any(DailyAchievement.class)))
                 .thenThrow(new GamificationExchangeException(apiError, new RuntimeException("exception")));
 
-        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/daily"),
-                getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/daily"),
+                SlackUrlUtils.getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value("You cannot give more than one thanks for day to one person"));
@@ -83,8 +84,8 @@ public class ExceptionHandlerTest {
                 thenThrow(new UserExchangeException(apiError, new RuntimeException("exception")));
 
 
-        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/daily"),
-                getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/daily"),
+                SlackUrlUtils.getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value("User not found"));
@@ -99,8 +100,8 @@ public class ExceptionHandlerTest {
         when(userService.findUuidUserBySlack(any(String.class))).
                 thenThrow(new WrongCommandFormatException("Wrong command exception"));
 
-        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/codenjoy"),
-                getUriVars("slashCommandToken", "/daily", COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/codenjoy"),
+                SlackUrlUtils.getUriVars("slashCommandToken", "/daily", COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value("Wrong command exception"));
@@ -115,37 +116,10 @@ public class ExceptionHandlerTest {
         when(userService.findUuidUserBySlack(any(String.class))).
                 thenThrow(new RuntimeException("Runtime exception"));
 
-        mvc.perform(MockMvcRequestBuilders.post(getUrlTemplate("/commands/codenjoy"),
-                getUriVars("slashCommandToken", "/daily", COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/codenjoy"),
+                SlackUrlUtils.getUriVars("slashCommandToken", "/daily", COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value("Runtime exception"));
-    }
-
-    private String getUrlTemplate(String endpoint) {
-        return endpoint + "?" +
-                "token={slashCommandToken}&" +
-                "team_id={team_id}&" +
-                "team_domain={team_domain}&" +
-                "channel_id={channel_id}&" +
-                "channel_name={channel_name}&" +
-                "user_id={user_id}&" +
-                "user_name={user_name}&" +
-                "command={command}&" +
-                "text={text}&" +
-                "response_url={response_url}&";
-    }
-
-    private Object[] getUriVars(String slackToken, String command, String description) {
-        return new Object[]{slackToken,
-                "any_team_id",
-                "any_domain",
-                "UHASHB8JB",
-                "test-channel",
-                "UNJSD9OKM",
-                "@uname",
-                command,
-                description,
-                "http://example.com"};
     }
 }
