@@ -66,7 +66,6 @@ public class ExceptionHandlerTest {
                 .andExpect(jsonPath("$.text").value("You cannot give more than one thanks for day to one person"));
     }
 
-
     @Test
     public void shouldHandleUserAPIError() throws Exception {
 
@@ -91,7 +90,6 @@ public class ExceptionHandlerTest {
                 .andExpect(jsonPath("$.text").value("User not found"));
     }
 
-
     @Test
     public void shouldHandleWrongCommandException() throws Exception {
 
@@ -106,7 +104,6 @@ public class ExceptionHandlerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value("Wrong command exception"));
     }
-
 
     @Test
     public void shouldHandleAllOtherException() throws Exception {
