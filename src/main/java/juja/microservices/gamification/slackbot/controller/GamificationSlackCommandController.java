@@ -157,11 +157,10 @@ public class GamificationSlackCommandController {
         String response = "ERROR. Something went wrong and we didn't save your interview";
         try {
             String fromUserUuid = userService.findUuidUserBySlack(fromUser);
-            String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
-            InterviewAchievement interview = new InterviewAchievement(fromUserUuid, preparedTextWithUuid);
+            InterviewAchievement interview = new InterviewAchievement(fromUserUuid, text);
 
-            logger.debug("Send interview achivement request. fromUserUuid: {}; prepared text: {}",
-                    fromUserUuid, preparedTextWithUuid);
+            logger.debug("Send interview achivement request. fromUserUuid: {}; text: {}",
+                    fromUserUuid, text);
             String[] result = gamificationService.sendInterviewAchievement(interview);
             logger.debug("Received response from gamification service: {}", response);
 
