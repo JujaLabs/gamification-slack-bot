@@ -10,12 +10,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by Nikol on 3/4/2017.
+ * @author Nikolay Horushko
  */
 @Getter
 @ToString
-@JsonIgnoreProperties({"parcedUuidPattern", "parcedUuidStartMarker",
-        "parcedUuidFinishMarker", "command_EXAMPLE"})
+@JsonIgnoreProperties({"parsedUuidPattern", "parsedUuidStartMarker",
+        "parsedUuidFinishMarker", "command_EXAMPLE"})
 public class CodenjoyAchievement {
     @JsonProperty
     private String from;
@@ -26,10 +26,11 @@ public class CodenjoyAchievement {
     @JsonProperty
     private String thirdPlace;
 
-    private String parcedUuidPattern = "@#([a-zA-z0-9\\.\\_\\-]){1,21}#@";
-    private String parcedUuidStartMarker = "@#";
-    private String parcedUuidFinishMarker = "#@";
-    private final String COMMAND_EXAMPLE = "/codenjoy -1th @slack_nick_name -2th @slack_nick_name2 -3th @slack_nick_name3";
+    private String parsedUuidPattern = "@#([a-zA-z0-9\\-]){1,36}#@";
+    private String parsedUuidStartMarker = "@#";
+    private String parsedUuidFinishMarker = "#@";
+    private final String COMMAND_EXAMPLE = "/codenjoy -1th @slack_nick_name -2th @slack_nick_name2 " +
+                                            "-3th @slack_nick_name3";
 
     public CodenjoyAchievement(String from,
                                String firstPlace,
@@ -50,8 +51,8 @@ public class CodenjoyAchievement {
 
     private String findUuidForToken(String token, String text) {
         checkText(text, token);
-        String[] splitedText = text.split("(?=-[123]th)");
-        String uuid = findUuid(token, splitedText);
+        String[] splittedText = text.split("(?=-[123]th)");
+        String uuid = findUuid(token, splittedText);
         return cleanTheUuidOfMarkers(uuid);
     }
 
@@ -65,10 +66,10 @@ public class CodenjoyAchievement {
         }
     }
 
-    private String findUuid(String token, String[] splitedText) {
-        for (String s : splitedText) {
+    private String findUuid(String token, String[] splittedText) {
+        for (String s : splittedText) {
             if (s.contains(token)) {
-                Pattern uuidPattern = Pattern.compile(parcedUuidPattern);
+                Pattern uuidPattern = Pattern.compile(parsedUuidPattern);
                 Matcher matcher = uuidPattern.matcher(s.substring(s.indexOf(token)));
                 if (matcher.find()) {
                     return cleanTheUuidOfMarkers(matcher.group());
@@ -79,7 +80,7 @@ public class CodenjoyAchievement {
     }
 
     private String cleanTheUuidOfMarkers(String uuidWithMarkers) {
-        return uuidWithMarkers.replaceAll(parcedUuidStartMarker, "")
-                .replaceAll(parcedUuidFinishMarker, "");
+        return uuidWithMarkers.replaceAll(parsedUuidStartMarker, "")
+                .replaceAll(parsedUuidFinishMarker, "");
     }
 }

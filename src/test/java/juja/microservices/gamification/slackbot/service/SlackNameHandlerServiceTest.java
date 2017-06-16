@@ -1,5 +1,8 @@
 package juja.microservices.gamification.slackbot.service;
 
+import juja.microservices.gamification.slackbot.exceptions.ApiError;
+import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
+import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,12 +11,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.inject.Inject;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by Nikol on 3/18/2017.
+ * @author Nikolay Horushko
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -123,5 +127,26 @@ public class SlackNameHandlerServiceTest {
         assertEquals("", preparedText);
     }
 
-//    todo add tests if userService not found uuid
+    @Test
+    public void ifTextContainsTextSeemsLikeSlackName() throws Exception {
+        //given
+        String text = "text @SLACK.NAME TexT @notSlackName text.";
+
+        ApiError apiError = new ApiError(
+                500, "BotError",
+                "test exception",
+                "test exception",
+                "bad request",
+                Collections.EMPTY_LIST
+        );
+
+        when(userService.findUuidUserBySlack("@slack.name")).thenReturn(defaultUuid);
+        when(userService.findUuidUserBySlack("@notslackname")).thenThrow(new UserExchangeException(
+                apiError, new RuntimeException()
+        ));
+        //when
+        String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
+        //then
+        assertEquals("text @#uuid#@ TexT @notSlackName text.", preparedText);
+    }
 }

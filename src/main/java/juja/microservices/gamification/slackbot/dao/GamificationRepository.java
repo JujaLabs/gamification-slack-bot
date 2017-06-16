@@ -8,12 +8,12 @@ import juja.microservices.gamification.slackbot.model.*;
 
 public interface GamificationRepository {
 
-    String saveDailyAchievement(DailyAchievement daily);
+    String[] saveDailyAchievement(DailyAchievement daily);
 
-    String saveCodenjoyAchievement(CodenjoyAchievement codenjoy);
+    String[] saveCodenjoyAchievement(CodenjoyAchievement codenjoy);
 
-    String saveThanksAchievement(ThanksAchievement thanks);
+    String[] saveThanksAchievement(ThanksAchievement thanks);
 
-    String saveInterviewAchievement(InterviewAchievement interview);
+    String[] saveInterviewAchievement(InterviewAchievement interview);
 
 }
