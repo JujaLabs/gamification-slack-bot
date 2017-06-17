@@ -39,6 +39,8 @@ public class SlackNameHandlerService {
     }
 
     public String replaceSlackNamesToUuids(String text) {
+        logger.debug("Received text for processing: [{}]", text);
+
         if (text == null) {
             return "";
         }
@@ -47,13 +49,18 @@ public class SlackNameHandlerService {
         while (matcher.find()) {
             String slackName = matcher.group();
             try {
+                logger.debug("Started conversion SlackName: [{}] to UUID", slackName);
                 String uuid = userService.findUuidUserBySlack(slackName.toLowerCase());
                 text = text.replaceAll(slackName, parsedUuidStartMarker + uuid + parsedUuidFinishMarker);
+                logger.debug("Replaced SlackName: [{}] in text : [{}]", slackName, text);
+                logger.debug("Finished conversion SlackName: [{}] to UUID : [{}]", slackName, uuid);
             } catch (UserExchangeException ex) {
-                logger.warn("SlackName : '{}' is not convert to uuid and not be replace. Detail message: {}",
+                logger.warn("SlackName: [{}] is not convert to UUID and not be replace. Detail message: [{}]",
                         slackName, ex.detailMessage());
             }
         }
+
+        logger.info("Replaced all finding SlackName to UUID. Result text: [{}]",text);
         return text;
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,6 +13,7 @@ import java.util.regex.Pattern;
  * @author Nikolay Horushko
  */
 @Getter
+@ToString
 @JsonIgnoreProperties({"parsedUuidPattern", "parsedUuidStartMarker",
         "parsedUuidFinishMarker", "command_EXAMPLE"})
 public class CodenjoyAchievement {
