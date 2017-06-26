@@ -1,6 +1,7 @@
 package juja.microservices.gamification.slackbot.model;
 
 import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
+import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
 import org.junit.Before;
 import org.junit.Test;
 

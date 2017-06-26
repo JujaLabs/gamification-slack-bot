@@ -1,7 +1,7 @@
 package juja.microservices.gamification.slackbot.exceptions;
 
 import juja.microservices.gamification.slackbot.controller.GamificationSlackCommandController;
-import juja.microservices.gamification.slackbot.model.DailyAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
 import juja.microservices.gamification.slackbot.service.GamificationService;
 import juja.microservices.gamification.slackbot.service.UserService;
 import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;

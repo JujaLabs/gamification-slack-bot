@@ -3,6 +3,7 @@ package juja.microservices.gamification.slackbot.model;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
+import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
