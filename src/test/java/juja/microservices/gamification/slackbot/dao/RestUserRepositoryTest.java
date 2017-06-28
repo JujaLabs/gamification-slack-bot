@@ -1,6 +1,7 @@
 package juja.microservices.gamification.slackbot.dao;
 
 import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
+import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,6 +16,9 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
@@ -96,5 +100,23 @@ public class RestUserRepositoryTest {
         thrown.expectMessage(containsString("Oops something went wrong :("));
         //when
         userRepository.findUuidUserBySlack("@user");
+    }
+
+    @Test
+    public void shouldReturnListUserDTOWhenSendSlackNameList() {
+        //given
+        List<String> slackNames = new ArrayList<>();
+        slackNames.add("@bob.slack");
+        slackNames.add("@john.slack");
+        mockServer.expect(requestTo(urlBase + urlGetUser))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string("{\"slackNames\":[\"@bob.slack\",\"@john.slack\"]}"))
+                .andRespond(withSuccess("[{\"uuid\":\"AAAA123\",\"slack\":\"@bob.slack\"}, {\"uuid\":\"AAAA321\",\"slack\":\"@john.slack\"}]", MediaType.APPLICATION_JSON_UTF8));
+        //when
+        List<UserDTO> result = userRepository.findUsersBySlackNames(slackNames);
+        // then
+        mockServer.verify();
+        assertEquals("", result);
     }
 }
