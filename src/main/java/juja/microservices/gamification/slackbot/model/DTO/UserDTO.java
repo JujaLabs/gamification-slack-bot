@@ -9,6 +9,7 @@ import lombok.ToString;
  */
 @Getter
 @AllArgsConstructor
+@ToString
 public class UserDTO {
     String uuid;
     String slack;
