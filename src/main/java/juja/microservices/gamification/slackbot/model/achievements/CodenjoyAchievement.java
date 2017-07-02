@@ -2,6 +2,7 @@ package juja.microservices.gamification.slackbot.model.achievements;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
 import lombok.Getter;
@@ -14,8 +15,9 @@ import java.util.Map;
  */
 @Getter
 @ToString
-@JsonIgnoreProperties({"tokens"})
-public class CodenjoyAchievement {
+@JsonIgnoreProperties({"tokens", "okSlackResponse", "firstPlaceUser",
+        "secondPlaceUser", "thirdPlaceUser"})
+public class CodenjoyAchievement implements ResponseWithSlackName {
     @JsonProperty
     private String from;
     @JsonProperty
@@ -24,6 +26,10 @@ public class CodenjoyAchievement {
     private String secondPlace;
     @JsonProperty
     private String thirdPlace;
+
+    private UserDTO firstPlaceUser;
+    private UserDTO secondPlaceUser;
+    private UserDTO thirdPlaceUser;
 
     private String[] tokens = new String[]{"-1th", "-2th", "-3th"};
 
@@ -37,12 +43,23 @@ public class CodenjoyAchievement {
     public CodenjoyAchievement(SlackParsedCommand parsedCommand) {
         this.from = parsedCommand.getFromUser().getUuid();
         Map<String, UserDTO> usersWithTokens = getUsersForTokens(parsedCommand, tokens);
-        this.firstPlace = usersWithTokens.get(tokens[0]).getUuid();
-        this.secondPlace = usersWithTokens.get(tokens[1]).getUuid();
-        this.thirdPlace = usersWithTokens.get(tokens[2]).getUuid();
+        this.firstPlaceUser = usersWithTokens.get(tokens[0]);
+        this.firstPlace = firstPlaceUser.getUuid();
+
+        this.secondPlaceUser = usersWithTokens.get(tokens[1]);
+        this.secondPlace = secondPlaceUser.getUuid();
+
+        this.thirdPlaceUser = usersWithTokens.get(tokens[2]);
+        this.thirdPlace = thirdPlaceUser.getUuid();
     }
 
     private Map<String, UserDTO> getUsersForTokens(SlackParsedCommand parsedCommand, String[] tokens){
         return parsedCommand.getUsersWithTokens(tokens);
+    }
+
+    @Override
+    public String injectSlackNames(String messageFormat) {
+        return String.format(messageFormat, firstPlaceUser.getSlack(),
+                secondPlaceUser.getSlack(), thirdPlaceUser.getSlack());
     }
 }

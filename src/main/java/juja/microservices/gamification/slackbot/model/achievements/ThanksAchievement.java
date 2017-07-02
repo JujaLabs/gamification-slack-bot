@@ -1,10 +1,13 @@
 package juja.microservices.gamification.slackbot.model.achievements;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author Vitalii Viazovoi
@@ -12,10 +15,15 @@ import lombok.ToString;
  */
 @Getter
 @ToString
-public class ThanksAchievement {
+public class ThanksAchievement implements ResponseWithSlackName{
+    @JsonProperty
     private String from;
+    @JsonProperty
     private String to;
+    @JsonProperty
     private String description;
+    @JsonIgnore
+    private UserDTO toUser;
 
     public ThanksAchievement(String from, String to, String description) {
         this.from = from;
@@ -25,7 +33,8 @@ public class ThanksAchievement {
 
     public ThanksAchievement(SlackParsedCommand slackParsedCommand) {
         this.from = slackParsedCommand.getFromUser().getUuid();
-        this.to = receiveToUser(slackParsedCommand).getUuid();
+        this.toUser = receiveToUser(slackParsedCommand);
+        this.to = toUser.getUuid();
         this.description = slackParsedCommand.getText();
     }
 
@@ -40,5 +49,10 @@ public class ThanksAchievement {
                     " You must write user's slack name for 'thanks'.", slackParsedCommand.getText()));
         }
         return slackParsedCommand.getFirstUser();
+    }
+
+    @Override
+    public String injectSlackNames(String messageFormat) {
+        return String.format(messageFormat, toUser.getSlack());
     }
 }

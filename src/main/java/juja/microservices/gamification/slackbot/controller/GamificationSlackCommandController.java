@@ -6,7 +6,6 @@ import juja.microservices.gamification.slackbot.model.achievements.DailyAchievem
 import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
 import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
 import juja.microservices.gamification.slackbot.service.GamificationService;
-import juja.microservices.gamification.slackbot.service.UserService;
 import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import me.ramswaroop.jbot.core.slack.models.RichMessage;
 import org.slf4j.Logger;
@@ -69,8 +68,8 @@ public class GamificationSlackCommandController {
         logger.debug("Received response from Gamification service: [{}]", Arrays.toString(result));
 
         if (result.length == 3) {
-            response = "Thanks, we awarded the users.";
-            //todo add slacknames
+            response = codenjoy.injectSlackNames("Thanks, we awarded the users. " +
+                    "First place: %s, Second place: %s, Third place: %s");
         }
 
         logger.info("Codenjoy command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
@@ -140,11 +139,12 @@ public class GamificationSlackCommandController {
         logger.debug("Received response from Gamification service: [{}]", Arrays.toString(result));
 
         if (result.length == 1) {
-            response = "Thanks, your 'thanks' saved.";
-        }// todo add slackname
+            response = thanks.injectSlackNames("Thanks, your 'thanks' for %s saved.");
+        }
         if (result.length == 2) {
-            response = "Thanks, your 'thanks' saved. Also you received +1 for your activity.";
-        } // todo add slackname
+            response = thanks.injectSlackNames("Thanks, your 'thanks' for %s saved. " +
+                    "Also you received +1 for your activity.");
+        }
 
         logger.info("Thanks command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
                 fromUser, text, response);
