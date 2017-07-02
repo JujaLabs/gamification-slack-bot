@@ -22,19 +22,13 @@ public class DefaultUserService implements UserService {
     @Inject
     public DefaultUserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-
-    }
-
-    @Override
-    public String findUuidUserBySlack(String slackName) {
-        logger.debug("Received SlackName: [{}] for conversion", slackName);
-        String uuid = userRepository.findUuidUserBySlack(slackName);
-        logger.info("Found uuid: [{}] by SlackName: [{}]", uuid,slackName);
-        return uuid;
     }
 
     @Override
     public List<UserDTO> findUsersBySlackNames(List<String> slackNames) {
-        return userRepository.findUsersBySlackNames(slackNames);
+        logger.debug("Received SlackName: [{}] for conversion", slackNames.toString());
+        List<UserDTO> users = userRepository.findUsersBySlackNames(slackNames);
+        logger.info("Found users: [{}] by SlackName: [{}]", users.toString(), slackNames.toString());
+        return users;
     }
 }

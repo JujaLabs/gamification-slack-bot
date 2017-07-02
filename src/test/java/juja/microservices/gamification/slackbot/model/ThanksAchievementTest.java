@@ -1,52 +1,82 @@
 package juja.microservices.gamification.slackbot.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
+import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class ThanksAchievementTest {
+    private ObjectMapper objectMapper;
+    private Map<String, UserDTO> users;
+    private String from;
 
-    private ThanksAchievement expectedAchievement;
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Before
-    public void setup(){
-        expectedAchievement = new ThanksAchievement("max", "bob", "Thanks for help");
+    public void setup() {
+        objectMapper = new ObjectMapper();
+        users = new HashMap<>();
+        users.put("@from", new UserDTO("uuid0", "@from"));
+        users.put("@slack1", new UserDTO("uuid1", "@slack1"));
+        from = "@from";
     }
 
     @Test
     public void createAchievement() throws Exception {
         //given
-        String fromUserUuid = "max";
-        String text = "Thanks @#bob#@ for help";
+        String text = "Thanks @slack1 for help";
         //when
-        ThanksAchievement actualAchievement = new ThanksAchievement(fromUserUuid, text);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(from, text, users);
+        ThanksAchievement thanks = new ThanksAchievement(slackParsedCommand);
         //then
-        assertEquals(expectedAchievement.toString(), actualAchievement.toString());
+        assertEquals("{\"from\":\"uuid0\",\"to\":\"uuid1\",\"description\":\"Thanks @slack1 for help\"}", objectMapper.writeValueAsString(thanks));
     }
 
-    @Test(expected = WrongCommandFormatException.class)
-    public void createAchievementWrongCommand() throws Exception {
+    @Test
+    public void createAchievementThrowExceptionIfWithoutSlackName() throws Exception {
         //given
-        String fromUserUuid = "max";
-        String text = "Thanks @#bob#@ @#max#@ for help";
-        //when
-        ThanksAchievement actualAchievement = new ThanksAchievement(fromUserUuid, text);
+        users = new HashMap<>();
+        users.put("@from", new UserDTO("uuid0", "@from"));
+        String text = "Thanks without slack name";
         //then
-        fail();
+        thrown.expect(WrongCommandFormatException.class);
+        thrown.expectMessage(containsString("We didn't find slack name in your command. 'Thanks without slack name'" +
+                " You must write user's slack name for 'thanks'."));
+        //when
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(from, text, users);
+        new ThanksAchievement(slackParsedCommand);
     }
 
-    @Test(expected = WrongCommandFormatException.class)
-    public void createAchievementWithoutUserTo() throws Exception {
+    @Test
+    public void createAchievementThrowExceptionIfMoreThanOneSlackName() throws Exception {
         //given
-        String fromUserUuid = "max";
-        String text = "Thanks for help";
-        //when
-        ThanksAchievement actualAchievement = new ThanksAchievement(fromUserUuid, text);
+        users = new HashMap<>();
+        users.put("@from", new UserDTO("uuid0", "@from"));
+        users.put("@slack1", new UserDTO("uuid1", "@slack1"));
+        users.put("@slack2", new UserDTO("uuid2", "@slack2"));
+        String text = "Thanks @slack1 text @slack2";
         //then
-        fail();
+        thrown.expect(WrongCommandFormatException.class);
+        thrown.expectMessage(containsString("We found 2 slack names in your command: 'Thanks @slack1 text @slack2'" +
+                "  You can't send thanks more than one user."));
+        //when
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(from, text, users);
+        new ThanksAchievement(slackParsedCommand);
     }
+
+
 }

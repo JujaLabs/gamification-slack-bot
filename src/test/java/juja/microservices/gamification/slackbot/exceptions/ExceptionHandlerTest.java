@@ -1,11 +1,14 @@
 package juja.microservices.gamification.slackbot.exceptions;
 
 import juja.microservices.gamification.slackbot.controller.GamificationSlackCommandController;
+import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
 import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
 import juja.microservices.gamification.slackbot.service.GamificationService;
 import juja.microservices.gamification.slackbot.service.UserService;
 import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import juja.microservices.utils.SlackUrlUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,7 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.inject.Inject;
-import java.util.Collections;
+import java.util.*;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -25,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * @author Danil Kuznetsov
+ * @author Nikolay Horushko
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(GamificationSlackCommandController.class)
@@ -37,15 +41,24 @@ public class ExceptionHandlerTest {
     private GamificationService gamificationService;
 
     @MockBean
-    private UserService userService;
-
-    @MockBean
     private SlackNameHandlerService slackNameHandlerService;
+
+    private UserDTO userFrom;
+
+    @Before
+    public void setup() {
+        userFrom = new UserDTO("AAA000","@from-user" );
+    }
 
     @Test
     public void shouldHandleGamificationAPIError() throws Exception {
 
         final String DAILY_COMMAND_TEXT = "daily description text";
+
+        Map<String, UserDTO> users = new HashMap<>();
+        users.put(userFrom.getSlack(), userFrom);
+
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(userFrom.getSlack(), DAILY_COMMAND_TEXT, users);
 
         ApiError apiError = new ApiError(
                 400, "GMF-F5-D2",
@@ -55,7 +68,8 @@ public class ExceptionHandlerTest {
                 Collections.EMPTY_LIST
         );
 
-        when(userService.findUuidUserBySlack("@slack.name")).thenReturn("uuid");
+        when(slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), DAILY_COMMAND_TEXT))
+                .thenReturn(slackParsedCommand);
         when(gamificationService.sendDailyAchievement(any(DailyAchievement.class)))
                 .thenThrow(new GamificationExchangeException(apiError, new RuntimeException("exception")));
 
@@ -71,6 +85,9 @@ public class ExceptionHandlerTest {
 
         final String DAILY_COMMAND_TEXT = "daily description text";
 
+        Map<String, UserDTO> users = new HashMap<>();
+        users.put(userFrom.getSlack(), userFrom);
+
         ApiError apiError = new ApiError(
                 400, "USF-F1-D1",
                 "User not found",
@@ -79,9 +96,8 @@ public class ExceptionHandlerTest {
                 Collections.EMPTY_LIST
         );
 
-        when(userService.findUuidUserBySlack(any(String.class))).
+        when(slackNameHandlerService.createSlackParsedCommand(any(), any())).
                 thenThrow(new UserExchangeException(apiError, new RuntimeException("exception")));
-
 
         mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/daily"),
                 SlackUrlUtils.getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
@@ -93,9 +109,9 @@ public class ExceptionHandlerTest {
     @Test
     public void shouldHandleWrongCommandException() throws Exception {
 
-        final String COMMAND_TEXT = "@#uuid1#@ -2th @#uuid2#@ -3th @#uuid3#@";
+        final String COMMAND_TEXT = "@slack1 -2th @slack2 -3th @slack3";
 
-        when(userService.findUuidUserBySlack(any(String.class))).
+        when(slackNameHandlerService.createSlackParsedCommand(any(String.class), any(String.class))).
                 thenThrow(new WrongCommandFormatException("Wrong command exception"));
 
         mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/codenjoy"),
@@ -108,9 +124,9 @@ public class ExceptionHandlerTest {
     @Test
     public void shouldHandleAllOtherException() throws Exception {
 
-        final String COMMAND_TEXT = "@#uuid1#@ -2th @#uuid2#@ -3th @#uuid3#@";
+        final String COMMAND_TEXT = "@slack1 -2th @slack2 -3th @slack3";
 
-        when(userService.findUuidUserBySlack(any(String.class))).
+        when(slackNameHandlerService.createSlackParsedCommand(any(String.class), any(String.class))).
                 thenThrow(new RuntimeException("Runtime exception"));
 
         mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/codenjoy"),

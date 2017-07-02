@@ -42,36 +42,6 @@ public class RestUserRepository extends AbstractRestRepository implements UserRe
     }
 
     @Override
-    public String findUuidUserBySlack(String slackName) {
-        logger.debug("Received SlackName : [{}]", slackName);
-
-        if (!slackName.startsWith("@")) {
-            slackName = "@" + slackName;
-        }
-
-        List<String> slackNames = new ArrayList<>();
-        slackNames.add(slackName);
-
-        SlackNameRequest slackNameRequest = new SlackNameRequest(slackNames);
-        HttpEntity<SlackNameRequest> request = new HttpEntity<>(slackNameRequest, setupBaseHttpHeaders());
-
-        String result;
-        try {
-            logger.debug("Started request to Users service. Request is : [{}]", request.toString());
-            ResponseEntity<UserDTO[]> response = restTemplate.exchange(urlBase + urlGetUser,
-                    HttpMethod.POST, request, UserDTO[].class);
-            result = response.getBody()[0].getUuid();
-            logger.debug("Finished request to Users service. Response is: [{}]", response.toString());
-        } catch (HttpClientErrorException ex) {
-            ApiError error = convertToApiError(ex);
-            logger.warn("Users service returned an error: [{}]", error);
-            throw new UserExchangeException(error, ex);
-        }
-        logger.info("Got UUID:{} by user: {}", result, slackName);
-        return result;
-    }
-
-    @Override
     public List<UserDTO> findUsersBySlackNames(List<String> slackNames) {
         logger.debug("Received SlackNames : [{}]", slackNames);
 

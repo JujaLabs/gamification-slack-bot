@@ -1,12 +1,10 @@
 package juja.microservices.gamification.slackbot.service.impl;
 
-import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
 import juja.microservices.gamification.slackbot.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -25,10 +23,7 @@ import java.util.stream.Collectors;
 public class SlackNameHandlerService {
 
     private UserService userService;
-    @Value("${parsedUuid.startMarker}")
-    private String parsedUuidStartMarker;
-    @Value("${parsedUuid.finishMarker}")
-    private String parsedUuidFinishMarker;
+
     /**
      * Slack name cannot be longer than 21 characters and
      * can only contain letters, numbers, periods, hyphens, and underscores.
@@ -48,10 +43,10 @@ public class SlackNameHandlerService {
         if(!from.startsWith("@")){
             from = "@" + from;
         }
-        return new SlackParsedCommand(from, text, receiveAllSlackNames(text), getUsersMap(from, text));
+        return new SlackParsedCommand(from, text, receiveUsersMap(from, text));
     }
 
-    private Map<String, UserDTO> getUsersMap(String from, String text){
+    private Map<String, UserDTO> receiveUsersMap(String from, String text){
         List<String> slackNames = receiveAllSlackNames(text);
         slackNames.add(from);
         List<UserDTO> users = userService.findUsersBySlackNames(slackNames);
@@ -67,49 +62,6 @@ public class SlackNameHandlerService {
             result.add(matcher.group());
         }
         return result;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public String replaceSlackNamesToUuids(String text) {
-        logger.debug("Received text for processing: [{}]", text);
-
-        if (text == null) {
-            return "";
-        }
-        Pattern pattern = Pattern.compile(SLACK_NAME_PATTERN);
-        Matcher matcher = pattern.matcher(text);
-        while (matcher.find()) {
-            String slackName = matcher.group();
-            try {
-                logger.debug("Started conversion SlackName: [{}] to UUID", slackName);
-                String uuid = userService.findUuidUserBySlack(slackName.toLowerCase());
-                text = text.replaceAll(slackName, parsedUuidStartMarker + uuid + parsedUuidFinishMarker);
-                logger.debug("Replaced SlackName: [{}] in text : [{}]", slackName, text);
-                logger.debug("Finished conversion SlackName: [{}] to UUID : [{}]", slackName, uuid);
-            } catch (UserExchangeException ex) {
-                logger.warn("SlackName: [{}] is not convert to UUID and not be replace. Detail message: [{}]",
-                        slackName, ex.detailMessage());
-            }
-        }
-
-        logger.info("Replaced all finding SlackName to UUID. Result text: [{}]",text);
-        return text;
     }
 }
 

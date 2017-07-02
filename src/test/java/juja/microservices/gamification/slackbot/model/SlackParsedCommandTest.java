@@ -1,13 +1,10 @@
 package juja.microservices.gamification.slackbot.model;
 
-import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
 import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.springframework.boot.test.context.TestConfiguration;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Nikolay Horushko
@@ -33,10 +30,9 @@ public class SlackParsedCommandTest {
         users.put("@slack1", new UserDTO("uuid1","@slack1"));
         users.put("@slack2", new UserDTO("uuid2","@slack2"));
 
-        List<String> slackNames = Arrays.asList(new String[] {"slack1", "slack2"});
         String[] tokens = new String[]{"-t1", "-t2"};
         String text = "-t1 @slack1 -t2 @slack2";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, slackNames, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //when
         Map<String, UserDTO> result = slackParsedCommand.getUsersWithTokens(tokens);
         //then
@@ -52,10 +48,9 @@ public class SlackParsedCommandTest {
         users.put("@slack1", new UserDTO("uuid1","@slack1"));
         users.put("@slack2", new UserDTO("uuid2","@slack2"));
 
-        List<String> slackNames = Arrays.asList(new String[] {"slack1", "slack2"});
         String[] tokens = new String[]{"-t1", "-t2"};
         String text = "-t2 @slack2 -t1 @slack1";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, slackNames, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //when
         Map<String, UserDTO> result = slackParsedCommand.getUsersWithTokens(tokens);
         //then
@@ -71,10 +66,9 @@ public class SlackParsedCommandTest {
         users.put("@slack1", new UserDTO("uuid1","@slack1"));
         users.put("@slack2", new UserDTO("uuid2","@slack2"));
 
-        List<String> slackNames = Arrays.asList(new String[] {"slack1", "slack2"});
         String[] tokens = new String[]{"-t1", "-t2"};
         String text = "text -t2 @slack2 text -t1 @slack1 text";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, slackNames, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //when
         Map<String, UserDTO> result = slackParsedCommand.getUsersWithTokens(tokens);
         //then
@@ -90,10 +84,9 @@ public class SlackParsedCommandTest {
         users.put("@slack1", new UserDTO("uuid1","@slack1"));
         users.put("@slack2", new UserDTO("uuid2","@slack2"));
 
-        List<String> slackNames = Arrays.asList(new String[] {"slack1", "slack2"});
         String[] tokens = new String[]{"-t1", "-t2"};
         String text = "text-t2@slack2 text-t1@slack1 text";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, slackNames, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //when
         Map<String, UserDTO> result = slackParsedCommand.getUsersWithTokens(tokens);
         //then
@@ -109,10 +102,9 @@ public class SlackParsedCommandTest {
         users.put("@slack1", new UserDTO("uuid1","@slack1"));
         users.put("@slack2", new UserDTO("uuid2","@slack2"));
 
-        List<String> slackNames = Arrays.asList(new String[] {"slack1", "slack2"});
         String[] tokens = new String[]{"-t1", "-t2"};
         String text = "text-t2@slack2 -t1text@slack1 text";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, slackNames, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //when
         Map<String, UserDTO> result = slackParsedCommand.getUsersWithTokens(tokens);
         //then
@@ -129,10 +121,9 @@ public class SlackParsedCommandTest {
         users.put("@slack2", new UserDTO("uuid2","@slack2"));
         users.put("@slack3", new UserDTO("uuid3","@slack3"));
 
-        List<String> slackNames = Arrays.asList(new String[] {"slack1", "slack2", "slack3"});
         String[] tokens = new String[]{"-t1", "-t2", "-t3"};
         String text = "text-t2@slack2 -t1text@slack1 text-t3@slack3";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, slackNames, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //when
         Map<String, UserDTO> result = slackParsedCommand.getUsersWithTokens(tokens);
         //then
@@ -148,10 +139,9 @@ public class SlackParsedCommandTest {
         users.put("@slack1", new UserDTO("uuid1","@slack1"));
         users.put("@slack2", new UserDTO("uuid2","@slack2"));
 
-        List<String> slackNames = Arrays.asList(new String[] {"slack1", "slack2"});
         String[] tokens = new String[]{"-t1", "-t2"};
         String text = "text-t2@slack2 text@slack1 text";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, slackNames, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //then
         thrown.expect(WrongCommandFormatException.class);
         thrown.expectMessage(containsString("Token '-t1' didn't find in the string 'text-t2@slack2 text@slack1 text'"));
@@ -167,10 +157,9 @@ public class SlackParsedCommandTest {
         users.put("@slack1", new UserDTO("uuid1","@slack1"));
         users.put("@slack2", new UserDTO("uuid2","@slack2"));
 
-        List<String> slackNames = Arrays.asList(new String[] {"slack1", "slack2"});
         String[] tokens = new String[]{"-t1", "-t2"};
         String text = "text-t2@slack2 text-t1 text";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, slackNames, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //then
         thrown.expect(WrongCommandFormatException.class);
         thrown.expectMessage(containsString("The text 'text-t2@slack2 text-t1 text' doesn't " +
@@ -187,10 +176,9 @@ public class SlackParsedCommandTest {
         users.put("@slack1", new UserDTO("uuid1","@slack1"));
         users.put("@slack2", new UserDTO("uuid2","@slack2"));
 
-        List<String> slackNames = Arrays.asList(new String[] {"slack1", "slack2"});
         String[] tokens = new String[]{"-t1", "-t2"};
         String text = "text-t2 -t1@slack2 text text";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, slackNames, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //then
         thrown.expect(WrongCommandFormatException.class);
         thrown.expectMessage(containsString("The text 'text-t2 -t1@slack2 text text' doesn't contain " +
@@ -207,10 +195,9 @@ public class SlackParsedCommandTest {
         users.put("@slack1", new UserDTO("uuid1","@slack1"));
         users.put("@slack2", new UserDTO("uuid2","@slack2"));
 
-        List<String> slackNames = Arrays.asList(new String[] {"slack1", "slack2"});
         String[] tokens = new String[]{"-t1", "-t2"};
         String text = "text-t2 -t1@slack2 text -t1 text";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, slackNames, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //then
         thrown.expect(WrongCommandFormatException.class);
         thrown.expectMessage(containsString("The text 'text-t2 -t1@slack2 text -t1 text' contains 2 tokens '-t1'," +
@@ -228,7 +215,7 @@ public class SlackParsedCommandTest {
 
         List<String> slackNames = Arrays.asList(new String[] {"@slack1"});
         String text = "text text @slack1 text";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, slackNames, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //when
         UserDTO result = slackParsedCommand.getFirstUser();
         //then
@@ -241,9 +228,8 @@ public class SlackParsedCommandTest {
         Map<String, UserDTO> users = new HashMap<>();
         users.put("@from", new UserDTO("uuid0","@from"));
 
-        List<String> slackNames = Arrays.asList(new String[] {});
         String text = "text text text";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, slackNames, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //then
         thrown.expect(WrongCommandFormatException.class);
         thrown.expectMessage(containsString("The text 'text text text' doesn't contains slackName"));
@@ -260,10 +246,8 @@ public class SlackParsedCommandTest {
         users.put("@slack2", new UserDTO("uuid2","@slack2"));
         users.put("@slack3", new UserDTO("uuid3","@slack3"));
 
-
-        List<String> slackNames = Arrays.asList(new String[] {"slack1", "slack2", "slack3"});
         String text = "text @slack2 text@slack1 text @slack3";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, slackNames, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //when
         List<UserDTO> result = slackParsedCommand.getAllUsers();
         //then
@@ -277,9 +261,8 @@ public class SlackParsedCommandTest {
         Map<String, UserDTO> users = new HashMap<>();
         users.put("@from", new UserDTO("uuid0","@from"));
 
-        List<String> slackNames = Arrays.asList(new String[] {});
         String text = "text";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, slackNames, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //when
         String result = slackParsedCommand.getText();
         //then
@@ -292,9 +275,8 @@ public class SlackParsedCommandTest {
         Map<String, UserDTO> users = new HashMap<>();
         users.put("@from", new UserDTO("uuid0","@from"));
 
-        List<String> slackNames = Arrays.asList(new String[] {});
         String text = "text";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("from", text, slackNames, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand("from", text, users);
         //when
         UserDTO result = slackParsedCommand.getFromUser();
         //then

@@ -4,6 +4,7 @@ import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatExc
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -12,24 +13,28 @@ import java.util.regex.Pattern;
 /**
  * @author Nikolay Horushko
  */
+@ToString(exclude="SLACK_NAME_PATTERN")
 public class SlackParsedCommand {
     private final String SLACK_NAME_PATTERN = "@([a-zA-z0-9\\.\\_\\-]){1,21}";
     private String from;
     private String text;
-    private List<String> slackNamesFromText;
+    private List<String> slackNamesInText;
     private int userCountInText;
     private Map<String, UserDTO> users;
 
-
-    public SlackParsedCommand(String from, String text, List<String> slackNamesFromText, Map<String, UserDTO> users) {
+    public SlackParsedCommand(String from, String text, Map<String, UserDTO> users) {
         if (!from.startsWith("@")) {
             from = "@" + from;
         }
         this.from = from;
         this.text = text;
-        this.slackNamesFromText = slackNamesFromText;
+        this.slackNamesInText = receiveAllSlackNames(text);
         this.users = users;
-        this.userCountInText = slackNamesFromText.size();
+        this.userCountInText = slackNamesInText.size();
+    }
+
+    public List<String> getSlackNamesInText() {
+        return slackNamesInText;
     }
 
     public String getText() {
@@ -42,7 +47,21 @@ public class SlackParsedCommand {
 
     public UserDTO getFirstUser() {
         checkIsTextContainsSlackName();
-        return users.get(slackNamesFromText.get(0));
+        return users.get(slackNamesInText.get(0));
+    }
+
+    public int getUserCountInText() {
+        return userCountInText;
+    }
+
+    private List<String> receiveAllSlackNames(String text){
+        List<String> result = new ArrayList<>();
+        Pattern pattern = Pattern.compile(SLACK_NAME_PATTERN);
+        Matcher matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            result.add(matcher.group());
+        }
+        return result;
     }
 
     public List<UserDTO> getAllUsers() {

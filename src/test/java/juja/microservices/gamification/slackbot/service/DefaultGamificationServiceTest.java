@@ -22,6 +22,7 @@ import static org.mockito.Mockito.verify;
 
 /**
  * @author Danil Kuznetsov
+ * @author Nikolay Horushko
  */
 
 @RunWith(SpringRunner.class)

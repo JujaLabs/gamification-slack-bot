@@ -57,52 +57,6 @@ public class RestUserRepositoryTest {
     }
 
     @Test
-    public void shouldReturnUserWhenSendUserDataToRemoteUserService2() {
-        //given
-        mockServer.expect(requestTo(urlBase + urlGetUser))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                .andExpect(content().string("{\"slackNames\":[\"@bob\"]}"))
-                .andRespond(withSuccess("[{\"uuid\":\"AAAA123\",\"slack\":\"@bob\"}]", MediaType.APPLICATION_JSON_UTF8));
-        //when
-        String result = userRepository.findUuidUserBySlack("@bob");
-        // then
-        mockServer.verify();
-        assertEquals(result, "AAAA123");
-    }
-
-    @Test
-    public void shouldAddDogToTheSlackNameIfSlackNameHasNotIt() {
-        //given
-        mockServer.expect(requestTo(urlBase + urlGetUser))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                .andExpect(content().string("{\"slackNames\":[\"@bob\"]}"))
-                .andRespond(withSuccess("[{\"uuid\":\"AAAA123\",\"slack\":\"@bob\"}]", MediaType.APPLICATION_JSON_UTF8));
-        //when
-        String result = userRepository.findUuidUserBySlack("bob");
-        // then
-        mockServer.verify();
-        assertEquals(result, "AAAA123");
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenFindUserUuidBySlackToRemoteUserServiceThrowException() {
-        // given
-        mockServer.expect(requestTo(urlBase + urlGetUser))
-                .andExpect(method(HttpMethod.POST))
-                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":1," +
-                        "\"clientMessage\":\"Oops something went wrong :(\"," +
-                        "\"developerMessage\":\"General exception for this service\"," +
-                        "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
-        //then
-        thrown.expect(UserExchangeException.class);
-        thrown.expectMessage(containsString("Oops something went wrong :("));
-        //when
-        userRepository.findUuidUserBySlack("@user");
-    }
-
-    @Test
     public void shouldReturnListUserDTOWhenSendSlackNameList() {
         //given
         List<String> slackNames = new ArrayList<>();
@@ -112,11 +66,13 @@ public class RestUserRepositoryTest {
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string("{\"slackNames\":[\"@bob.slack\",\"@john.slack\"]}"))
-                .andRespond(withSuccess("[{\"uuid\":\"AAAA123\",\"slack\":\"@bob.slack\"}, {\"uuid\":\"AAAA321\",\"slack\":\"@john.slack\"}]", MediaType.APPLICATION_JSON_UTF8));
+                .andRespond(withSuccess("[{\"uuid\":\"AAAA123\",\"slack\":\"@bob.slack\"}, " +
+                        "{\"uuid\":\"AAAA321\",\"slack\":\"@john.slack\"}]", MediaType.APPLICATION_JSON_UTF8));
         //when
         List<UserDTO> result = userRepository.findUsersBySlackNames(slackNames);
         // then
         mockServer.verify();
-        assertEquals("", result);
+        assertEquals("[UserDTO(uuid=AAAA123, slack=@bob.slack), UserDTO(uuid=AAAA321, slack=@john.slack)]",
+                result.toString());
     }
 }

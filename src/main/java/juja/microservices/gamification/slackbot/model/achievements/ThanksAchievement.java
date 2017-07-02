@@ -1,29 +1,21 @@
 package juja.microservices.gamification.slackbot.model.achievements;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
+import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * @author Vitalii Viazovoi
+ * @author Nikolay Horushko
  */
 @Getter
 @ToString
-@JsonIgnoreProperties({"parsedUuidPattern", "parsedUuidStartMarker",
-        "parsedUuidFinishMarker", "PARSED_UUID_PATTERN_WITH_MARKERS", "command_EXAMPLE", "ONE_UUID"})
 public class ThanksAchievement {
     private String from;
     private String to;
     private String description;
-
-    private static final String parsedUuidPattern = "@#([a-zA-z0-9\\-]){1,36}#@";
-    private static final String parsedUuidStartMarker = "@#";
-    private static final String parsedUuidFinishMarker = "#@";
-    private final String COMMAND_EXAMPLE = "/thanks Thanks to @slack_nick_name for help.";
 
     public ThanksAchievement(String from, String to, String description) {
         this.from = from;
@@ -31,38 +23,22 @@ public class ThanksAchievement {
         this.description = description;
     }
 
-    public ThanksAchievement(String fromUserUuid, String text) {
-        this.from = fromUserUuid;
-        this.to = findUuid(text);
-        this.description = text.replaceAll(parsedUuidStartMarker.concat(this.to).concat(parsedUuidFinishMarker),"").
-                replaceAll(" +"," ");
+    public ThanksAchievement(SlackParsedCommand slackParsedCommand) {
+        this.from = slackParsedCommand.getFromUser().getUuid();
+        this.to = receiveToUser(slackParsedCommand).getUuid();
+        this.description = slackParsedCommand.getText();
     }
 
-    @Override
-    public String toString() {
-        return "ThanksAchievement{" +
-                "from='" + from + '\'' +
-                ", to='" + to + '\'' +
-                ", description='" + description + "'}";
-    }
-
-    private String findUuid(String text) {
-        Pattern pattern = Pattern.compile(parsedUuidPattern);
-        Matcher matcher = pattern.matcher(text);
-        String uuid = "";
-        if (matcher.find()) {
-            uuid = matcher.group();
-            if (matcher.find()) {
-                throwWrongCommandFormatException();
-            }
-        } else {
-            throwWrongCommandFormatException();
+    private UserDTO receiveToUser(SlackParsedCommand slackParsedCommand){
+        if(slackParsedCommand.getUserCountInText() > 1){
+            throw new WrongCommandFormatException(String.format("We found %d slack names in your command: '%s' " +
+                    " You can't send thanks more than one user.", slackParsedCommand.getUserCountInText(),
+                    slackParsedCommand.getText()));
         }
-        return uuid.replaceAll(parsedUuidStartMarker,"").replaceAll(parsedUuidFinishMarker,"");
-    }
-
-    private void throwWrongCommandFormatException() {
-        throw new WrongCommandFormatException(String.format("Wrong command. Example for this command %s",
-                COMMAND_EXAMPLE));
+        if (slackParsedCommand.getUserCountInText() == 0){
+            throw new WrongCommandFormatException(String.format("We didn't find slack name in your command. '%s'" +
+                    " You must write user's slack name for 'thanks'.", slackParsedCommand.getText()));
+        }
+        return slackParsedCommand.getFirstUser();
     }
 }

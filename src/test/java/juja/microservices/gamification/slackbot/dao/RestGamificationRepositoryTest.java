@@ -33,6 +33,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 /**
  * @author Danil Kuznetsov
+ * @author Nikolay Horushko
  */
 
 @RunWith(SpringRunner.class)

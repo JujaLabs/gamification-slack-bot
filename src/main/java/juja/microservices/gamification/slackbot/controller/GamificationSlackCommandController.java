@@ -1,5 +1,6 @@
 package juja.microservices.gamification.slackbot.controller;
 
+import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
 import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
 import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
 import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
@@ -29,18 +30,15 @@ public class GamificationSlackCommandController {
     private String slackToken;
 
     private final SlackNameHandlerService slackNameHandlerService;
-    private final UserService userService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private GamificationService gamificationService;
 
     @Inject
     public GamificationSlackCommandController(GamificationService gamificationService,
-                                              UserService userService,
                                               SlackNameHandlerService slackNameHandlerService) {
         this.gamificationService = gamificationService;
         this.slackNameHandlerService = slackNameHandlerService;
-        this.userService = userService;
     }
 
     @RequestMapping(value = "/commands/codenjoy",
@@ -60,10 +58,9 @@ public class GamificationSlackCommandController {
 
         String response = "ERROR. Something went wrong and we didn't award the users :(";
 
-        logger.debug("Started convert slackname to uuid and create achievement request");
-        String fromUserUuid = userService.findUuidUserBySlack(fromUser);
-        String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
-        CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, preparedTextWithUuid);
+        logger.debug("Started create slackParsedCommand and create achievement request");
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(fromUser, text);
+        CodenjoyAchievement codenjoy = new CodenjoyAchievement(slackParsedCommand);
         logger.debug("Finished convert slackname to uuid and create achievement request");
 
         logger.debug("Sent codenjoy achievement request to Gamifcation service. Achievement: [{}]",
@@ -100,8 +97,8 @@ public class GamificationSlackCommandController {
         String response = "ERROR. Something went wrong and daily report didn't save.";
 
         logger.debug("Started convert slackname to uuid and create achievement request");
-        String fromUserUuid = userService.findUuidUserBySlack(fromUser);
-        DailyAchievement daily = new DailyAchievement(fromUserUuid, text);
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(fromUser, text);
+        DailyAchievement daily = new DailyAchievement(slackParsedCommand);
         logger.debug("Finished convert slackname to uuid and create achievement request");
 
         logger.debug("Send daily achievement request to Gamifcation service. Achievement: [{}]", daily.toString());
@@ -134,9 +131,8 @@ public class GamificationSlackCommandController {
         String response = "Error. Something went wrong and we didn't save the thanks.";
 
         logger.debug("Started convert slackname to uuid and create achievement request");
-        String fromUserUuid = userService.findUuidUserBySlack(fromUser);
-        String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
-        ThanksAchievement thanks = new ThanksAchievement(fromUserUuid, preparedTextWithUuid);
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(fromUser,text);
+        ThanksAchievement thanks = new ThanksAchievement(slackParsedCommand);
         logger.debug("Finished convert slackname to uuid and create achievement request");
 
         logger.debug("Sent thanks achievement request to Gamifcation service. Achievement: [{}]", thanks.toString());
@@ -173,8 +169,8 @@ public class GamificationSlackCommandController {
         String response = "ERROR. Something went wrong and we didn't save your interview";
 
         logger.debug("Started convert slackname to uuid and create achievement request");
-        String fromUserUuid = userService.findUuidUserBySlack(fromUser);
-        InterviewAchievement interview = new InterviewAchievement(fromUserUuid, text);
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(fromUser, text);
+        InterviewAchievement interview = new InterviewAchievement(slackParsedCommand);
         logger.debug("Finished convert slackname to uuid and create achievement request");
 
         logger.debug("Send interview achivement request  to Gamifcation service. Achievement: [{}]", interview.toString());
