@@ -92,7 +92,8 @@ public class GamificationSlackCommandControllerTest {
                 SlackUrlUtils.getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("Thanks, we awarded the users."));
+                .andExpect(jsonPath("$.text").value("Thanks, we awarded the users. " +
+                        "First place: @slack1, Second place: @slack2, Third place: @slack3"));
     }
 
     @Test
@@ -204,7 +205,7 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 //then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("Thanks, your 'thanks' saved."));
+                .andExpect(jsonPath("$.text").value("Thanks, your 'thanks' for @slack1 saved."));
     }
 
     @Test
@@ -227,7 +228,7 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 //then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("Thanks, your 'thanks' saved. " +
+                .andExpect(jsonPath("$.text").value("Thanks, your 'thanks' for @slack1 saved. " +
                         "Also you received +1 for your activity."));
     }
 

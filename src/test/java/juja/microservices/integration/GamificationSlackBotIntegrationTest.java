@@ -1,81 +1,81 @@
-package juja.microservices.integration;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import juja.microservices.gamification.slackbot.GamificationSlackBotApplication;
-import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
-import juja.microservices.utils.SlackUrlUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.client.RestTemplate;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-/**
- * @author Nikolay Horushko
- */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {GamificationSlackBotApplication.class})
-@AutoConfigureMockMvc
-public class GamificationSlackBotIntegrationTest {
-
-    @Inject
-    private RestTemplate restTemplate;
-
-    @Inject
-    private MockMvc mvc;
-    private MockRestServiceServer mockServer;
-
-    @Value("${gamification.baseURL}")
-    private String urlBaseGamification;
-    @Value("${endpoint.daily}")
-    private String urlSendDaily;
-    @Value("${endpoint.codenjoy}")
-    private String urlSendCodenjoy;
-    @Value("${endpoint.thanks}")
-    private String urlSendThanks;
-    @Value("${endpoint.interview}")
-    private String urlSendInterview;
-
-    @Value("${user.baseURL}")
-    private String urlBaseUser;
-    @Value("${endpoint.userSearch}")
-    private String urlGetUser;
-
-    private final List<UserDTO> USERS = new ArrayList<>();
-
-    @Before
-    public void setup() {
-        mockServer = MockRestServiceServer.bindTo(restTemplate).build();
-
-        USERS.add(new UserDTO("f2034f22-562b-4e02-bfcf-ec615c1ba62b", "@slack1"));
-        USERS.add(new UserDTO("f2034f33-563c-4e03-bfcf-ec615c1ba63c", "@slack2"));
-        USERS.add(new UserDTO("f2034f44-563d-4e04-bfcf-ec615c1ba64d", "@slack3"));
-        USERS.add(new UserDTO("f2034f11-561a-4e01-bfcf-ec615c1ba61a", "@from-user"));
-    }
+//package juja.microservices.integration;
+//
+//import com.fasterxml.jackson.core.JsonProcessingException;
+//import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.databind.node.ObjectNode;
+//import juja.microservices.gamification.slackbot.GamificationSlackBotApplication;
+//import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+//import juja.microservices.utils.SlackUrlUtils;
+//import org.junit.Before;
+//import org.junit.Test;
+//import org.junit.runner.RunWith;
+//import org.springframework.beans.factory.annotation.Value;
+//import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+//import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.http.HttpMethod;
+//import org.springframework.http.MediaType;
+//import org.springframework.test.context.junit4.SpringRunner;
+//import org.springframework.test.web.client.MockRestServiceServer;
+//import org.springframework.test.web.servlet.MockMvc;
+//import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+//import org.springframework.web.client.RestTemplate;
+//
+//import javax.inject.Inject;
+//import java.util.ArrayList;
+//import java.util.List;
+//
+//import static org.hamcrest.CoreMatchers.containsString;
+//import static org.hamcrest.CoreMatchers.equalTo;
+//import static org.hamcrest.MatcherAssert.assertThat;
+//import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+//import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+//import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
+//import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+//
+///**
+// * @author Nikolay Horushko
+// */
+//@RunWith(SpringRunner.class)
+//@SpringBootTest(classes = {GamificationSlackBotApplication.class})
+//@AutoConfigureMockMvc
+//public class GamificationSlackBotIntegrationTest {
+//
+//    @Inject
+//    private RestTemplate restTemplate;
+//
+//    @Inject
+//    private MockMvc mvc;
+//    private MockRestServiceServer mockServer;
+//
+//    @Value("${gamification.baseURL}")
+//    private String urlBaseGamification;
+//    @Value("${endpoint.daily}")
+//    private String urlSendDaily;
+//    @Value("${endpoint.codenjoy}")
+//    private String urlSendCodenjoy;
+//    @Value("${endpoint.thanks}")
+//    private String urlSendThanks;
+//    @Value("${endpoint.interview}")
+//    private String urlSendInterview;
+//
+//    @Value("${user.baseURL}")
+//    private String urlBaseUser;
+//    @Value("${endpoint.userSearch}")
+//    private String urlGetUser;
+//
+//    private final List<UserDTO> USERS = new ArrayList<>();
+//
+//    @Before
+//    public void setup() {
+//        mockServer = MockRestServiceServer.bindTo(restTemplate).build();
+//
+//        USERS.add(new UserDTO("f2034f22-562b-4e02-bfcf-ec615c1ba62b", "@slack1"));
+//        USERS.add(new UserDTO("f2034f33-563c-4e03-bfcf-ec615c1ba63c", "@slack2"));
+//        USERS.add(new UserDTO("f2034f44-563d-4e04-bfcf-ec615c1ba64d", "@slack3"));
+//        USERS.add(new UserDTO("f2034f11-561a-4e01-bfcf-ec615c1ba61a", "@from-user"));
+//    }
 
 //    @Test
 //    public void onReceiveSlashCommandCodenjoyReturnOkRichMessage() throws Exception {
@@ -273,56 +273,56 @@ public class GamificationSlackBotIntegrationTest {
 //                .andExpect(jsonPath("$.text").value(EXPECTED_RESPONSE_TO_SLACK));
 //    }
 
-
-    private void mockFailUsersService(UserDTO... users) {
-        for (UserDTO user : users) {
-            mockServer.expect(requestTo(urlBaseUser + urlGetUser))
-                    .andExpect(method(HttpMethod.POST))
-                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                    .andExpect(content().string(String.format("{\"slackNames\":[\"%s\"]}", user.getSlack())))
-                    .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":1," +
-                            "\"clientMessage\":\"Oops something went wrong :(\"," +
-                            "\"developerMessage\":\"General exception for this service\"," +
-                            "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
-        }
-    }
-
-
-    private void mockFailGamificationService(String expectedURI, String expectedRequestBody) {
-        mockServer.expect(requestTo(expectedURI))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString("application/json")))
-                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":1," +
-                        "\"clientMessage\":\"Oops something went wrong :(\"," +
-                        "\"developerMessage\":\"General exception for this service\"," +
-                        "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
-
-    }
-
-    private void mockSuccessUsersService(List<UserDTO> users) throws JsonProcessingException {
-        String expectedSlackNameRequest = new String();
-        for (int i = 0; i < users.size(); i++) {
-            if (i == 0) {
-                expectedSlackNameRequest = expectedSlackNameRequest + String.format("\"%s\"", users.get(i).getSlack());
-            } else {
-                expectedSlackNameRequest = expectedSlackNameRequest + String.format(",\"%s\"", users.get(i).getSlack());
-            }
-        }
-        ObjectMapper mapper = new ObjectMapper();
-        mockServer.expect(requestTo(urlBaseUser + urlGetUser))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                .andExpect(content().string(String.format("{\"slackNames\":[%s]}", expectedSlackNameRequest)))
-                .andRespond(withSuccess(mapper.writeValueAsString(users), MediaType.APPLICATION_JSON_UTF8));
-    }
-
-    private void mockSuccessGamificationService(String expectedURI, String expectedRequestBody, String response) {
-        mockServer.expect(requestTo(expectedURI))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString("application/json")))
-                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
-
-    }
-}
+//
+//    private void mockFailUsersService(UserDTO... users) {
+//        for (UserDTO user : users) {
+//            mockServer.expect(requestTo(urlBaseUser + urlGetUser))
+//                    .andExpect(method(HttpMethod.POST))
+//                    .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+//                    .andExpect(content().string(String.format("{\"slackNames\":[\"%s\"]}", user.getSlack())))
+//                    .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":1," +
+//                            "\"clientMessage\":\"Oops something went wrong :(\"," +
+//                            "\"developerMessage\":\"General exception for this service\"," +
+//                            "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
+//        }
+//    }
+//
+//
+//    private void mockFailGamificationService(String expectedURI, String expectedRequestBody) {
+//        mockServer.expect(requestTo(expectedURI))
+//                .andExpect(method(HttpMethod.POST))
+//                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString("application/json")))
+//                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
+//                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":1," +
+//                        "\"clientMessage\":\"Oops something went wrong :(\"," +
+//                        "\"developerMessage\":\"General exception for this service\"," +
+//                        "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
+//
+//    }
+//
+//    private void mockSuccessUsersService(List<UserDTO> users) throws JsonProcessingException {
+//        String expectedSlackNameRequest = new String();
+//        for (int i = 0; i < users.size(); i++) {
+//            if (i == 0) {
+//                expectedSlackNameRequest = expectedSlackNameRequest + String.format("\"%s\"", users.get(i).getSlack());
+//            } else {
+//                expectedSlackNameRequest = expectedSlackNameRequest + String.format(",\"%s\"", users.get(i).getSlack());
+//            }
+//        }
+//        ObjectMapper mapper = new ObjectMapper();
+//        mockServer.expect(requestTo(urlBaseUser + urlGetUser))
+//                .andExpect(method(HttpMethod.POST))
+//                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+//                .andExpect(content().string(String.format("{\"slackNames\":[%s]}", expectedSlackNameRequest)))
+//                .andRespond(withSuccess(mapper.writeValueAsString(users), MediaType.APPLICATION_JSON_UTF8));
+//    }
+//
+//    private void mockSuccessGamificationService(String expectedURI, String expectedRequestBody, String response) {
+//        mockServer.expect(requestTo(expectedURI))
+//                .andExpect(method(HttpMethod.POST))
+//                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString("application/json")))
+//                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
+//                .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
+//
+//    }
+//}
