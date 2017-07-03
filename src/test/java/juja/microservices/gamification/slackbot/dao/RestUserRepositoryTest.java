@@ -1,6 +1,5 @@
 package juja.microservices.gamification.slackbot.dao;
 
-import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import org.junit.Before;
 import org.junit.Rule;
@@ -16,15 +15,12 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**

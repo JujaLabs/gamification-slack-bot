@@ -2,7 +2,6 @@ package juja.microservices.gamification.slackbot.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
 import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
@@ -11,13 +10,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Nikolay Horushko
@@ -34,10 +31,10 @@ public class CodenjoyAchievementTest {
     public void setup() {
         objectMapper = new ObjectMapper();
         users = new HashMap<>();
-        users.put("@from", new UserDTO("uuid0","@from"));
-        users.put("@slack1", new UserDTO("uuid1","@slack1"));
-        users.put("@slack2", new UserDTO("uuid2","@slack2"));
-        users.put("@slack3", new UserDTO("uuid3","@slack3"));
+        users.put("@from", new UserDTO("uuid0", "@from"));
+        users.put("@slack1", new UserDTO("uuid1", "@slack1"));
+        users.put("@slack2", new UserDTO("uuid2", "@slack2"));
+        users.put("@slack3", new UserDTO("uuid3", "@slack3"));
         from = "from";
     }
 
@@ -64,7 +61,6 @@ public class CodenjoyAchievementTest {
         assertEquals("{\"from\":\"uuid0\",\"firstPlace\":\"uuid1\",\"secondPlace\":\"uuid2\",\"thirdPlace\":\"uuid3\"}",
                 objectMapper.writeValueAsString(codenjoy));
     }
-
 
 
     @Test

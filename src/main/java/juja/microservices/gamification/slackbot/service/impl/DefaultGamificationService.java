@@ -47,7 +47,7 @@ public class DefaultGamificationService implements GamificationService {
     @Override
     public String[] sendThanksAchievement(ThanksAchievement thanks) {
         logger.debug("Received Thanks achievement: [{}]", thanks.toString());
-        String [] ids = gamificationRepository.saveThanksAchievement(thanks);
+        String[] ids = gamificationRepository.saveThanksAchievement(thanks);
         logger.info("Added Thanks achievement id: [{}]", Arrays.toString(ids));
         return ids;
     }

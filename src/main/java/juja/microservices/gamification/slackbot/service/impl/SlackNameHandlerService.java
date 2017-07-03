@@ -39,15 +39,15 @@ public class SlackNameHandlerService {
         this.userService = userService;
     }
 
-    public SlackParsedCommand createSlackParsedCommand(String from, String text){
-        if(!from.startsWith("@")){
+    public SlackParsedCommand createSlackParsedCommand(String from, String text) {
+        if (!from.startsWith("@")) {
             logger.debug("add '@' to slack name: [{}]", from);
             from = "@" + from;
         }
         return new SlackParsedCommand(from, text, receiveUsersMap(from, text));
     }
 
-    private Map<String, UserDTO> receiveUsersMap(String from, String text){
+    private Map<String, UserDTO> receiveUsersMap(String from, String text) {
         List<String> slackNames = receiveAllSlackNames(text);
         slackNames.add(from);
         logger.debug("added \"from\" slack name to request: [{}]", from);
@@ -57,7 +57,7 @@ public class SlackNameHandlerService {
                 .collect(Collectors.toMap(user -> user.getSlack(), user -> user));
     }
 
-    private List<String> receiveAllSlackNames(String text){
+    private List<String> receiveAllSlackNames(String text) {
         List<String> result = new ArrayList<>();
         Pattern pattern = Pattern.compile(SLACK_NAME_PATTERN);
         Matcher matcher = pattern.matcher(text);

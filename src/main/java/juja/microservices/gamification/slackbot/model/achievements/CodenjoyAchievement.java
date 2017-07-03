@@ -2,7 +2,6 @@ package juja.microservices.gamification.slackbot.model.achievements;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
 import lombok.Getter;
@@ -53,7 +52,7 @@ public class CodenjoyAchievement implements ResponseWithSlackName {
         this.thirdPlace = thirdPlaceUser.getUuid();
     }
 
-    private Map<String, UserDTO> getUsersForTokens(SlackParsedCommand parsedCommand, String[] tokens){
+    private Map<String, UserDTO> getUsersForTokens(SlackParsedCommand parsedCommand, String[] tokens) {
         return parsedCommand.getUsersWithTokens(tokens);
     }
 

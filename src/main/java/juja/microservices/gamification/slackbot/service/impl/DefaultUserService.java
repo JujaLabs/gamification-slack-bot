@@ -19,6 +19,7 @@ public class DefaultUserService implements UserService {
 
     private final UserRepository userRepository;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Inject
     public DefaultUserService(UserRepository userRepository) {
         this.userRepository = userRepository;

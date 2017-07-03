@@ -21,7 +21,7 @@ public class DailyAchievement {
         this.description = description;
     }
 
-    public DailyAchievement (SlackParsedCommand slackParsedCommand) {
+    public DailyAchievement(SlackParsedCommand slackParsedCommand) {
         this.from = slackParsedCommand.getFromUser().getUuid();
         this.description = slackParsedCommand.getText();
     }

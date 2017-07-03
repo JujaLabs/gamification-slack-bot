@@ -5,7 +5,6 @@ import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
 import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
 import juja.microservices.gamification.slackbot.service.GamificationService;
-import juja.microservices.gamification.slackbot.service.UserService;
 import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import juja.microservices.utils.SlackUrlUtils;
 import org.junit.Before;
@@ -19,7 +18,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -47,7 +48,7 @@ public class ExceptionHandlerTest {
 
     @Before
     public void setup() {
-        userFrom = new UserDTO("AAA000","@from-user" );
+        userFrom = new UserDTO("AAA000", "@from-user");
     }
 
     @Test

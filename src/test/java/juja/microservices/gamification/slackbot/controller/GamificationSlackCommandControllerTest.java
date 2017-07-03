@@ -53,10 +53,10 @@ public class GamificationSlackCommandControllerTest {
 
     @Before
     public void setup() {
-        userFrom = new UserDTO("AAA000","@from-user" );
-        user1 = new UserDTO("AAA111","@slack1" );
-        user2 = new UserDTO("AAA222","@slack2" );
-        user3 = new UserDTO("AAA333","@slack3");
+        userFrom = new UserDTO("AAA000", "@from-user");
+        user1 = new UserDTO("AAA111", "@slack1");
+        user2 = new UserDTO("AAA222", "@slack2");
+        user3 = new UserDTO("AAA333", "@slack3");
     }
 
     @Test
