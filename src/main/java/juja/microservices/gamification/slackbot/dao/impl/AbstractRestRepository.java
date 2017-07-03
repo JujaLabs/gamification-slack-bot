@@ -13,7 +13,7 @@ import java.util.Arrays;
  * @author Danil Kuznetsov
  */
 
-public abstract class AbstractRestRepository  {
+public abstract class AbstractRestRepository {
 
     protected HttpHeaders setupBaseHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();

@@ -5,6 +5,8 @@ import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -13,8 +15,9 @@ import java.util.regex.Pattern;
 /**
  * @author Nikolay Horushko
  */
-@ToString(exclude="SLACK_NAME_PATTERN")
+@ToString(exclude={"SLACK_NAME_PATTERN","logger"})
 public class SlackParsedCommand {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final String SLACK_NAME_PATTERN = "@([a-zA-z0-9\\.\\_\\-]){1,21}";
     private String from;
     private String text;
@@ -23,7 +26,9 @@ public class SlackParsedCommand {
     private Map<String, UserDTO> users;
 
     public SlackParsedCommand(String from, String text, Map<String, UserDTO> users) {
+
         if (!from.startsWith("@")) {
+            logger.debug("add '@' to slack name [{}]", from);
             from = "@" + from;
         }
         this.from = from;
@@ -47,7 +52,9 @@ public class SlackParsedCommand {
 
     public UserDTO getFirstUser() {
         checkIsTextContainsSlackName();
-        return users.get(slackNamesInText.get(0));
+        UserDTO result = users.get(slackNamesInText.get(0));
+        logger.debug("Found the user: {} in the text: [{}]", result.toString(), text);
+        return result;
     }
 
     public int getUserCountInText() {
@@ -68,16 +75,19 @@ public class SlackParsedCommand {
         checkIsTextContainsSlackName();
         List<UserDTO> result = new LinkedList(users.values());
         result.remove(result.stream().filter(res -> res.getSlack().equals(from)).findFirst().get());
+        logger.debug("Found {} users in the text: [{}]", result.size(), text);
         return result;
     }
 
     public void checkIsTextContainsSlackName() {
         if (userCountInText == 0) {
+            logger.warn("The text: [{}] doesn't contain slack name.");
             throw new WrongCommandFormatException(String.format("The text '%s' doesn't contains slackName", text));
         }
     }
 
     public Map<String, UserDTO> getUsersWithTokens(String[] tokens) {
+        logger.debug("Recieve tokens: [{}] for searching. in the text: [{}]", tokens, text);
         List<Token> sortedTokenList = receiveTokensWithPositionInText(tokens);
         Map<String, UserDTO> result = new HashMap<>();
         for (int i = 0; i < sortedTokenList.size(); i++) {
@@ -89,12 +99,17 @@ public class SlackParsedCommand {
                 int indexFoundedSlackName = text.indexOf(foundedSlackName);
                 for (int j = i + 1; j < sortedTokenList.size(); j++) {
                     if (indexFoundedSlackName > sortedTokenList.get(j).getPositionInText()) {
+                        logger.warn("The text: [{}] doesn't contain slack name for token: [{}]",
+                                text, currentToken.getToken());
                         throw new WrongCommandFormatException(String.format("The text '%s' doesn't contain slackName " +
                                 "for token '%s'", text, currentToken.getToken()));
                     }
                 }
+                logger.debug("Found user: {} for token:", users.get(foundedSlackName), currentToken.getToken());
                 result.put(currentToken.getToken(), users.get(foundedSlackName));
             } else {
+                logger.warn("The text: [{}] doesn't contain slack name for token: [{}]",
+                        text, sortedTokenList.get(i).getToken());
                 throw new WrongCommandFormatException(String.format("The text '%s' " +
                         "doesn't contain slackName for token '%s'", text, sortedTokenList.get(i).getToken()));
             }

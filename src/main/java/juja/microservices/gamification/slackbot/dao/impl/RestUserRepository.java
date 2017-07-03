@@ -47,6 +47,7 @@ public class RestUserRepository extends AbstractRestRepository implements UserRe
 
         for (int i = 0; i < slackNames.size(); i++) {
             if (!slackNames.get(i).startsWith("@")) {
+                logger.debug("add '@' to SlackName : [{}]", slackNames.get(i));
                 String slackName = slackNames.get(i);
                 slackNames.set(i, "@" + slackName);
             }

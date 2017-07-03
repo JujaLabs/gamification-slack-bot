@@ -41,6 +41,7 @@ public class SlackNameHandlerService {
 
     public SlackParsedCommand createSlackParsedCommand(String from, String text){
         if(!from.startsWith("@")){
+            logger.debug("add '@' to slack name: [{}]", from);
             from = "@" + from;
         }
         return new SlackParsedCommand(from, text, receiveUsersMap(from, text));
@@ -49,6 +50,8 @@ public class SlackNameHandlerService {
     private Map<String, UserDTO> receiveUsersMap(String from, String text){
         List<String> slackNames = receiveAllSlackNames(text);
         slackNames.add(from);
+        logger.debug("added \"from\" slack name to request: [{}]", from);
+        logger.debug("send slack names: {} to user service", slackNames);
         List<UserDTO> users = userService.findUsersBySlackNames(slackNames);
         return users.stream()
                 .collect(Collectors.toMap(user -> user.getSlack(), user -> user));
@@ -61,6 +64,7 @@ public class SlackNameHandlerService {
         while (matcher.find()) {
             result.add(matcher.group());
         }
+        logger.debug("Recieved slack names: {} from text:", result.toString(), text);
         return result;
     }
 }
