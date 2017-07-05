@@ -1,7 +1,9 @@
 package juja.microservices.gamification.slackbot.service.impl;
 
-import juja.microservices.gamification.slackbot.exceptions.UserNotFoundException;
+import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
 import juja.microservices.gamification.slackbot.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -29,26 +31,36 @@ public class SlackNameHandlerService {
      */
     private final String SLACK_NAME_PATTERN = "@([a-zA-z0-9\\.\\_\\-]){1,21}";
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Inject
     public SlackNameHandlerService(UserService userService) {
         this.userService = userService;
     }
 
     public String replaceSlackNamesToUuids(String text) {
+        logger.debug("Received text for processing: [{}]", text);
+
         if (text == null) {
             return "";
         }
         Pattern pattern = Pattern.compile(SLACK_NAME_PATTERN);
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
+            String slackName = matcher.group();
             try {
-                String slackName = matcher.group();
+                logger.debug("Started conversion SlackName: [{}] to UUID", slackName);
                 String uuid = userService.findUuidUserBySlack(slackName.toLowerCase());
                 text = text.replaceAll(slackName, parsedUuidStartMarker + uuid + parsedUuidFinishMarker);
-            } catch (UserNotFoundException ex) {
-                //
+                logger.debug("Replaced SlackName: [{}] in text : [{}]", slackName, text);
+                logger.debug("Finished conversion SlackName: [{}] to UUID : [{}]", slackName, uuid);
+            } catch (UserExchangeException ex) {
+                logger.warn("SlackName: [{}] is not convert to UUID and not be replace. Detail message: [{}]",
+                        slackName, ex.detailMessage());
             }
         }
+
+        logger.info("Replaced all finding SlackName to UUID. Result text: [{}]",text);
         return text;
     }
 }
