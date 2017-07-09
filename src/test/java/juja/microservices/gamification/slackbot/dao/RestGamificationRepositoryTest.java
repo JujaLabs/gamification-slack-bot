@@ -1,10 +1,10 @@
 package juja.microservices.gamification.slackbot.dao;
 
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
-import juja.microservices.gamification.slackbot.model.CodenjoyAchievement;
-import juja.microservices.gamification.slackbot.model.DailyAchievement;
-import juja.microservices.gamification.slackbot.model.InterviewAchievement;
-import juja.microservices.gamification.slackbot.model.ThanksAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,6 +33,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 /**
  * @author Danil Kuznetsov
+ * @author Nikolay Horushko
  */
 
 @RunWith(SpringRunner.class)
@@ -70,7 +71,7 @@ public class RestGamificationRepositoryTest {
     @Test
     public void shouldReturnIdAchievementWhenSendDailyToRemoteGamificationService() {
         //given
-        String expectedRequestBody = "{\"from\":\"101\",\"description\":\"description\"}";
+        String expectedRequestBody = "{\"description\":\"description\",\"from\":\"101\"}";
         String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo(urlBase + urlSendDaily))
                 .andExpect(method(HttpMethod.POST))
@@ -89,7 +90,7 @@ public class RestGamificationRepositoryTest {
     @Test
     public void shouldThrowExceptionWhenSendDailyToRemoteGamificationServiceThrowException() {
         // given
-        String expectedRequestBody = "{\"from\":\"101\",\"description\":\"description\"}";
+        String expectedRequestBody = "{\"description\":\"description\",\"from\":\"101\"}";
         String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo(urlBase + urlSendDaily))
                 .andExpect(method(HttpMethod.POST))
@@ -148,7 +149,7 @@ public class RestGamificationRepositoryTest {
     @Test
     public void shouldReturnIdAchievementWhenSendThanksToRemoteGamificationService() {
         //given
-        String expectedRequestBody = "{\"from\":\"Bill\",\"to\":\"Bob\",\"description\":\"Thanks to Bob\"}";
+        String expectedRequestBody = "{\"description\":\"Thanks to Bob\",\"from\":\"Bill\",\"to\":\"Bob\"}";
         String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo(urlBase + urlSendThanks))
                 .andExpect(method(HttpMethod.POST))
@@ -167,7 +168,7 @@ public class RestGamificationRepositoryTest {
     @Test
     public void shouldThrowExceptionWhenSendThanksToRemoteGamificationServiceThrowException() {
         // given
-        String expectedRequestBody = "{\"from\":\"Bill\",\"to\":\"Bob\",\"description\":\"Thanks to Bob\"}";
+        String expectedRequestBody = "{\"description\":\"Thanks to Bob\",\"from\":\"Bill\",\"to\":\"Bob\"}";
         String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo(urlBase + urlSendThanks))
                 .andExpect(method(HttpMethod.POST))
@@ -187,7 +188,7 @@ public class RestGamificationRepositoryTest {
     @Test
     public void shouldReturnIdAchievementWhenSendInterviewToRemoteGamificationService() {
         //given
-        String expectedRequestBody = "{\"from\":\"bill\",\"description\":\"description\"}";
+        String expectedRequestBody = "{\"description\":\"description\",\"from\":\"bill\"}";
         String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo(urlBase + urlSendInterview))
                 .andExpect(method(HttpMethod.POST))
@@ -208,7 +209,7 @@ public class RestGamificationRepositoryTest {
     @Test
     public void shouldThrowExceptionWhenSendInterviewToRemoteInterviewServiceThrowException() {
         // given
-        String expectedRequestBody = "{\"from\":\"101\",\"description\":\"description\"}";
+        String expectedRequestBody = "{\"description\":\"description\",\"from\":\"101\"}";
         String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo(urlBase + urlSendInterview))
                 .andExpect(method(HttpMethod.POST))

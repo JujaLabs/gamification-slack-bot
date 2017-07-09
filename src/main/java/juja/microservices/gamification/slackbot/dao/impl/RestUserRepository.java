@@ -16,7 +16,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,33 +41,34 @@ public class RestUserRepository extends AbstractRestRepository implements UserRe
     }
 
     @Override
-    public String findUuidUserBySlack(String slackName) {
-        logger.debug("Received SlackName : [{}]", slackName);
+    public List<UserDTO> findUsersBySlackNames(List<String> slackNames) {
+        logger.debug("Received SlackNames : [{}]", slackNames);
 
-        if (!slackName.startsWith("@")) {
-            slackName = "@" + slackName;
+        for (int i = 0; i < slackNames.size(); i++) {
+            if (!slackNames.get(i).startsWith("@")) {
+                logger.debug("add '@' to SlackName : [{}]", slackNames.get(i));
+                String slackName = slackNames.get(i);
+                slackNames.set(i, "@" + slackName);
+            }
         }
-
-        List<String> slackNames = new ArrayList<>();
-        slackNames.add(slackName);
 
         SlackNameRequest slackNameRequest = new SlackNameRequest(slackNames);
         HttpEntity<SlackNameRequest> request = new HttpEntity<>(slackNameRequest, setupBaseHttpHeaders());
 
-        String result;
+        List<UserDTO> result;
         try {
             logger.debug("Started request to Users service. Request is : [{}]", request.toString());
             ResponseEntity<UserDTO[]> response = restTemplate.exchange(urlBase + urlGetUser,
                     HttpMethod.POST, request, UserDTO[].class);
-            result = response.getBody()[0].getUuid();
             logger.debug("Finished request to Users service. Response is: [{}]", response.toString());
+            result = Arrays.asList(response.getBody());
         } catch (HttpClientErrorException ex) {
             ApiError error = convertToApiError(ex);
             logger.warn("Users service returned an error: [{}]", error);
             throw new UserExchangeException(error, ex);
         }
-        logger.info("Got UUID:{} by user: {}", result, slackName);
+
+        logger.info("Got UserDTO:{} by users: {}", result, slackNames);
         return result;
     }
-
 }

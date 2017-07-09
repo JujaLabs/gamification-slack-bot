@@ -1,11 +1,11 @@
 package juja.microservices.gamification.slackbot.controller;
 
-import juja.microservices.gamification.slackbot.model.CodenjoyAchievement;
-import juja.microservices.gamification.slackbot.model.DailyAchievement;
-import juja.microservices.gamification.slackbot.model.InterviewAchievement;
-import juja.microservices.gamification.slackbot.model.ThanksAchievement;
+import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
+import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
 import juja.microservices.gamification.slackbot.service.GamificationService;
-import juja.microservices.gamification.slackbot.service.UserService;
 import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import me.ramswaroop.jbot.core.slack.models.RichMessage;
 import org.slf4j.Logger;
@@ -29,18 +29,15 @@ public class GamificationSlackCommandController {
     private String slackToken;
 
     private final SlackNameHandlerService slackNameHandlerService;
-    private final UserService userService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private GamificationService gamificationService;
 
     @Inject
     public GamificationSlackCommandController(GamificationService gamificationService,
-                                              UserService userService,
                                               SlackNameHandlerService slackNameHandlerService) {
         this.gamificationService = gamificationService;
         this.slackNameHandlerService = slackNameHandlerService;
-        this.userService = userService;
     }
 
     @RequestMapping(value = "/commands/codenjoy",
@@ -50,7 +47,7 @@ public class GamificationSlackCommandController {
                                                      @RequestParam("user_name") String fromUser,
                                                      @RequestParam("text") String text) {
 
-        logger.debug("Received slash command Condenjoy achievement: user: [{}] command: [{}] token: [{}]",
+        logger.debug("Received slash command Condenjoy achievement: from user: [{}] command: [{}] token: [{}]",
                 fromUser, text, token);
 
         if (!token.equals(slackToken)) {
@@ -60,11 +57,10 @@ public class GamificationSlackCommandController {
 
         String response = "ERROR. Something went wrong and we didn't award the users :(";
 
-        logger.debug("Started convert slackname to uuid and create achievement request");
-        String fromUserUuid = userService.findUuidUserBySlack(fromUser);
-        String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
-        CodenjoyAchievement codenjoy = new CodenjoyAchievement(fromUserUuid, preparedTextWithUuid);
-        logger.debug("Finished convert slackname to uuid and create achievement request");
+        logger.debug("Started create slackParsedCommand and create achievement request");
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(fromUser, text);
+        CodenjoyAchievement codenjoy = new CodenjoyAchievement(slackParsedCommand);
+        logger.debug("Finished create slackParsedCommand and create achievement request");
 
         logger.debug("Sent codenjoy achievement request to Gamifcation service. Achievement: [{}]",
                 codenjoy.toString());
@@ -72,8 +68,8 @@ public class GamificationSlackCommandController {
         logger.debug("Received response from Gamification service: [{}]", Arrays.toString(result));
 
         if (result.length == 3) {
-            response = "Thanks, we awarded the users.";
-            //todo add slacknames
+            response = codenjoy.injectSlackNames("Thanks, we awarded the users. " +
+                    "First place: %s, Second place: %s, Third place: %s");
         }
 
         logger.info("Codenjoy command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
@@ -99,10 +95,10 @@ public class GamificationSlackCommandController {
 
         String response = "ERROR. Something went wrong and daily report didn't save.";
 
-        logger.debug("Started convert slackname to uuid and create achievement request");
-        String fromUserUuid = userService.findUuidUserBySlack(fromUser);
-        DailyAchievement daily = new DailyAchievement(fromUserUuid, text);
-        logger.debug("Finished convert slackname to uuid and create achievement request");
+        logger.debug("Started create slackParsedCommand and create achievement request");
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(fromUser, text);
+        DailyAchievement daily = new DailyAchievement(slackParsedCommand);
+        logger.debug("Finished create slackParsedCommand and create achievement request");
 
         logger.debug("Send daily achievement request to Gamifcation service. Achievement: [{}]", daily.toString());
         String[] result = gamificationService.sendDailyAchievement(daily);
@@ -133,22 +129,22 @@ public class GamificationSlackCommandController {
         }
         String response = "Error. Something went wrong and we didn't save the thanks.";
 
-        logger.debug("Started convert slackname to uuid and create achievement request");
-        String fromUserUuid = userService.findUuidUserBySlack(fromUser);
-        String preparedTextWithUuid = slackNameHandlerService.replaceSlackNamesToUuids(text);
-        ThanksAchievement thanks = new ThanksAchievement(fromUserUuid, preparedTextWithUuid);
-        logger.debug("Finished convert slackname to uuid and create achievement request");
+        logger.debug("Started create slackParsedCommand and create achievement request");
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(fromUser, text);
+        ThanksAchievement thanks = new ThanksAchievement(slackParsedCommand);
+        logger.debug("Finished create slackParsedCommand and create achievement request");
 
         logger.debug("Sent thanks achievement request to Gamifcation service. Achievement: [{}]", thanks.toString());
         String[] result = gamificationService.sendThanksAchievement(thanks);
         logger.debug("Received response from Gamification service: [{}]", Arrays.toString(result));
 
         if (result.length == 1) {
-            response = "Thanks, your 'thanks' saved.";
-        }// todo add slackname
+            response = thanks.injectSlackNames("Thanks, your 'thanks' for %s saved.");
+        }
         if (result.length == 2) {
-            response = "Thanks, your 'thanks' saved. Also you received +1 for your activity.";
-        } // todo add slackname
+            response = thanks.injectSlackNames("Thanks, your 'thanks' for %s saved. " +
+                    "Also you received +1 for your activity.");
+        }
 
         logger.info("Thanks command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
                 fromUser, text, response);
@@ -172,10 +168,10 @@ public class GamificationSlackCommandController {
         }
         String response = "ERROR. Something went wrong and we didn't save your interview";
 
-        logger.debug("Started convert slackname to uuid and create achievement request");
-        String fromUserUuid = userService.findUuidUserBySlack(fromUser);
-        InterviewAchievement interview = new InterviewAchievement(fromUserUuid, text);
-        logger.debug("Finished convert slackname to uuid and create achievement request");
+        logger.debug("Started create slackParsedCommand and create achievement request");
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(fromUser, text);
+        InterviewAchievement interview = new InterviewAchievement(slackParsedCommand);
+        logger.debug("Finished create slackParsedCommand and create achievement request");
 
         logger.debug("Send interview achivement request  to Gamifcation service. Achievement: [{}]", interview.toString());
         String[] result = gamificationService.sendInterviewAchievement(interview);

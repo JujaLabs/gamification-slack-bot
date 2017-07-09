@@ -1,10 +1,10 @@
 package juja.microservices.gamification.slackbot.service.impl;
 
 import juja.microservices.gamification.slackbot.dao.GamificationRepository;
-import juja.microservices.gamification.slackbot.model.CodenjoyAchievement;
-import juja.microservices.gamification.slackbot.model.DailyAchievement;
-import juja.microservices.gamification.slackbot.model.InterviewAchievement;
-import juja.microservices.gamification.slackbot.model.ThanksAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
 import juja.microservices.gamification.slackbot.service.GamificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,7 @@ public class DefaultGamificationService implements GamificationService {
     @Override
     public String[] sendThanksAchievement(ThanksAchievement thanks) {
         logger.debug("Received Thanks achievement: [{}]", thanks.toString());
-        String [] ids = gamificationRepository.saveThanksAchievement(thanks);
+        String[] ids = gamificationRepository.saveThanksAchievement(thanks);
         logger.info("Added Thanks achievement id: [{}]", Arrays.toString(ids));
         return ids;
     }
