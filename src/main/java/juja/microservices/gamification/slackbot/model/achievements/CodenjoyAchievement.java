@@ -41,7 +41,7 @@ public class CodenjoyAchievement implements ResponseWithSlackName {
 
     public CodenjoyAchievement(SlackParsedCommand parsedCommand) {
         this.fromUuid = parsedCommand.getFromUser().getUuid();
-        Map<String, UserDTO> usersWithTokens = getUsersForTokens(parsedCommand, tokens);
+        Map<String, UserDTO> usersWithTokens = parsedCommand.getUsersWithTokens(tokens);
         this.firstPlaceUser = usersWithTokens.get(tokens[0]);
         this.firstPlaceUuid = firstPlaceUser.getUuid();
 
@@ -50,10 +50,6 @@ public class CodenjoyAchievement implements ResponseWithSlackName {
 
         this.thirdPlaceUser = usersWithTokens.get(tokens[2]);
         this.thirdPlaceUuid = thirdPlaceUser.getUuid();
-    }
-
-    private Map<String, UserDTO> getUsersForTokens(SlackParsedCommand parsedCommand, String[] tokens) {
-        return parsedCommand.getUsersWithTokens(tokens);
     }
 
     @Override
