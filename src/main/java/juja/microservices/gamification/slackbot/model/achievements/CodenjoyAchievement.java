@@ -17,39 +17,39 @@ import java.util.Map;
 @JsonIgnoreProperties({"tokens", "okSlackResponse", "firstPlaceUser",
         "secondPlaceUser", "thirdPlaceUser"})
 public class CodenjoyAchievement implements ResponseWithSlackName {
-    @JsonProperty
-    private String from;
-    @JsonProperty
-    private String firstPlace;
-    @JsonProperty
-    private String secondPlace;
-    @JsonProperty
-    private String thirdPlace;
-
+    @JsonProperty("from")
+    private String fromUuid;
+    @JsonProperty("firstPlace")
+    private String firstPlaceUuid;
     private UserDTO firstPlaceUser;
+    @JsonProperty("secondPlace")
+    private String secondPlaceUuid;
     private UserDTO secondPlaceUser;
+    @JsonProperty("thirdPlace")
+    private String thirdPlaceUuid;
     private UserDTO thirdPlaceUser;
+
 
     private String[] tokens = new String[]{"-1th", "-2th", "-3th"};
 
-    public CodenjoyAchievement(String from, String firstPlace, String secondPlace, String thirdPlace) {
-        this.from = from;
-        this.firstPlace = firstPlace;
-        this.secondPlace = secondPlace;
-        this.thirdPlace = thirdPlace;
+    public CodenjoyAchievement(String fromUuid, String firstPlaceUuid, String secondPlaceUuid, String thirdPlaceUuid) {
+        this.fromUuid = fromUuid;
+        this.firstPlaceUuid = firstPlaceUuid;
+        this.secondPlaceUuid = secondPlaceUuid;
+        this.thirdPlaceUuid = thirdPlaceUuid;
     }
 
     public CodenjoyAchievement(SlackParsedCommand parsedCommand) {
-        this.from = parsedCommand.getFromUser().getUuid();
+        this.fromUuid = parsedCommand.getFromUser().getUuid();
         Map<String, UserDTO> usersWithTokens = getUsersForTokens(parsedCommand, tokens);
         this.firstPlaceUser = usersWithTokens.get(tokens[0]);
-        this.firstPlace = firstPlaceUser.getUuid();
+        this.firstPlaceUuid = firstPlaceUser.getUuid();
 
         this.secondPlaceUser = usersWithTokens.get(tokens[1]);
-        this.secondPlace = secondPlaceUser.getUuid();
+        this.secondPlaceUuid = secondPlaceUser.getUuid();
 
         this.thirdPlaceUser = usersWithTokens.get(tokens[2]);
-        this.thirdPlace = thirdPlaceUser.getUuid();
+        this.thirdPlaceUuid = thirdPlaceUser.getUuid();
     }
 
     private Map<String, UserDTO> getUsersForTokens(SlackParsedCommand parsedCommand, String[] tokens) {

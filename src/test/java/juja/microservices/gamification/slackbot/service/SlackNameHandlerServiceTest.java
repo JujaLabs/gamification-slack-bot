@@ -49,7 +49,7 @@ public class SlackNameHandlerServiceTest {
         //when
         SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), text);
         //then
-        assertEquals("SlackParsedCommand(from=@slackFrom, text=text @slack1 TexT text., " +
+        assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text @slack1 TexT text., " +
                 "slackNamesInText=[@slack1], userCountInText=1, " +
                 "users={@slackFrom=UserDTO(uuid=AAA000, slack=@slackFrom), " +
                 "@slack1=UserDTO(uuid=AAA111, slack=@slack1)})", slackParsedCommand.toString());
@@ -65,7 +65,7 @@ public class SlackNameHandlerServiceTest {
         //when
         SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), text);
         //then
-        assertEquals("SlackParsedCommand(from=@slackFrom, text=text @slack1 TexT @slack2 text., " +
+        assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text @slack1 TexT @slack2 text., " +
                 "slackNamesInText=[@slack1, @slack2], userCountInText=2, " +
                 "users={@slackFrom=UserDTO(uuid=AAA000, slack=@slackFrom), @slack2=UserDTO(uuid=AAA222, slack=@slack2), " +
                 "@slack1=UserDTO(uuid=AAA111, slack=@slack1)})", slackParsedCommand.toString());
@@ -81,7 +81,7 @@ public class SlackNameHandlerServiceTest {
         //when
         SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), text);
         //then
-        assertEquals("SlackParsedCommand(from=@slackFrom, text=text without slack name TexT text., " +
+        assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text without slack name TexT text., " +
                 "slackNamesInText=[], userCountInText=0, " +
                 "users={@slackFrom=UserDTO(uuid=AAA000, slack=@slackFrom)})", slackParsedCommand.toString());
     }

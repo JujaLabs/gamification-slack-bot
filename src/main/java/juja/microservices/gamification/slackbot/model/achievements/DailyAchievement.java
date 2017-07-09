@@ -11,18 +11,18 @@ import lombok.ToString;
 @Getter
 @ToString
 public class DailyAchievement {
-    @JsonProperty
-    private String from;
+    @JsonProperty("from")
+    private String fromUuid;
     @JsonProperty
     private String description;
 
-    public DailyAchievement(String from, String description) {
-        this.from = from;
+    public DailyAchievement(String fromUuid, String description) {
+        this.fromUuid = fromUuid;
         this.description = description;
     }
 
     public DailyAchievement(SlackParsedCommand slackParsedCommand) {
-        this.from = slackParsedCommand.getFromUser().getUuid();
+        this.fromUuid = slackParsedCommand.getFromUser().getUuid();
         this.description = slackParsedCommand.getText();
     }
 }

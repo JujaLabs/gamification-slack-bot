@@ -39,18 +39,18 @@ public class SlackNameHandlerService {
         this.userService = userService;
     }
 
-    public SlackParsedCommand createSlackParsedCommand(String from, String text) {
-        if (!from.startsWith("@")) {
-            logger.debug("add '@' to slack name: [{}]", from);
-            from = "@" + from;
+    public SlackParsedCommand createSlackParsedCommand(String fromSlackName, String text) {
+        if (!fromSlackName.startsWith("@")) {
+            logger.debug("add '@' to slack name: [{}]", fromSlackName);
+            fromSlackName = "@" + fromSlackName;
         }
-        return new SlackParsedCommand(from, text, receiveUsersMap(from, text));
+        return new SlackParsedCommand(fromSlackName, text, receiveUsersMap(fromSlackName, text));
     }
 
-    private Map<String, UserDTO> receiveUsersMap(String from, String text) {
+    private Map<String, UserDTO> receiveUsersMap(String fromSlackName, String text) {
         List<String> slackNames = receiveAllSlackNames(text);
-        slackNames.add(from);
-        logger.debug("added \"from\" slack name to request: [{}]", from);
+        slackNames.add(fromSlackName);
+        logger.debug("added \"fromSlackName\" slack name to request: [{}]", fromSlackName);
         logger.debug("send slack names: {} to user service", slackNames);
         List<UserDTO> users = userService.findUsersBySlackNames(slackNames);
         return users.stream()

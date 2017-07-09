@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 public class ThanksAchievementTest {
     private ObjectMapper objectMapper;
     private Map<String, UserDTO> users;
-    private String from;
+    private String fromSlackName;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -29,7 +29,7 @@ public class ThanksAchievementTest {
         users = new HashMap<>();
         users.put("@from", new UserDTO("uuid0", "@from"));
         users.put("@slack1", new UserDTO("uuid1", "@slack1"));
-        from = "@from";
+        fromSlackName = "@from";
     }
 
     @Test
@@ -37,10 +37,10 @@ public class ThanksAchievementTest {
         //given
         String text = "Thanks @slack1 for help";
         //when
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(from, text, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(fromSlackName, text, users);
         ThanksAchievement thanks = new ThanksAchievement(slackParsedCommand);
         //then
-        assertEquals("{\"from\":\"uuid0\",\"to\":\"uuid1\",\"description\":\"Thanks @slack1 for help\"}", objectMapper.writeValueAsString(thanks));
+        assertEquals("{\"description\":\"Thanks @slack1 for help\",\"from\":\"uuid0\",\"to\":\"uuid1\"}", objectMapper.writeValueAsString(thanks));
     }
 
     @Test
@@ -54,7 +54,7 @@ public class ThanksAchievementTest {
         thrown.expectMessage(containsString("We didn't find slack name in your command. 'Thanks without slack name'" +
                 " You must write user's slack name for 'thanks'."));
         //when
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(from, text, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(fromSlackName, text, users);
         new ThanksAchievement(slackParsedCommand);
     }
 
@@ -71,7 +71,7 @@ public class ThanksAchievementTest {
         thrown.expectMessage(containsString("We found 2 slack names in your command: 'Thanks @slack1 text @slack2'" +
                 "  You can't send thanks more than one user."));
         //when
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(from, text, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(fromSlackName, text, users);
         new ThanksAchievement(slackParsedCommand);
     }
 

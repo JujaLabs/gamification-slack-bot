@@ -15,25 +15,25 @@ import lombok.ToString;
 @Getter
 @ToString
 public class ThanksAchievement implements ResponseWithSlackName {
-    @JsonProperty
-    private String from;
-    @JsonProperty
-    private String to;
-    @JsonProperty
-    private String description;
+    @JsonProperty("from")
+    private String fromUuid;
+    @JsonProperty("to")
+    private String toUuid;
     @JsonIgnore
     private UserDTO toUser;
+    @JsonProperty
+    private String description;
 
-    public ThanksAchievement(String from, String to, String description) {
-        this.from = from;
-        this.to = to;
+    public ThanksAchievement(String fromUuid, String to, String description) {
+        this.fromUuid = fromUuid;
+        this.toUuid = to;
         this.description = description;
     }
 
     public ThanksAchievement(SlackParsedCommand slackParsedCommand) {
-        this.from = slackParsedCommand.getFromUser().getUuid();
+        this.fromUuid = slackParsedCommand.getFromUser().getUuid();
         this.toUser = receiveToUser(slackParsedCommand);
-        this.to = toUser.getUuid();
+        this.toUuid = toUser.getUuid();
         this.description = slackParsedCommand.getText();
     }
 

@@ -19,19 +19,19 @@ import java.util.regex.Pattern;
 public class SlackParsedCommand {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final String SLACK_NAME_PATTERN = "@([a-zA-z0-9\\.\\_\\-]){1,21}";
-    private String from;
+    private String fromSlackName;
     private String text;
     private List<String> slackNamesInText;
     private int userCountInText;
     private Map<String, UserDTO> users;
 
-    public SlackParsedCommand(String from, String text, Map<String, UserDTO> users) {
+    public SlackParsedCommand(String fromSlackName, String text, Map<String, UserDTO> users) {
 
-        if (!from.startsWith("@")) {
-            logger.debug("add '@' to slack name [{}]", from);
-            from = "@" + from;
+        if (!fromSlackName.startsWith("@")) {
+            logger.debug("add '@' to slack name [{}]", fromSlackName);
+            fromSlackName = "@" + fromSlackName;
         }
-        this.from = from;
+        this.fromSlackName = fromSlackName;
         this.text = text;
         this.slackNamesInText = receiveAllSlackNames(text);
         this.users = users;
@@ -47,7 +47,7 @@ public class SlackParsedCommand {
     }
 
     public UserDTO getFromUser() {
-        return users.get(from);
+        return users.get(fromSlackName);
     }
 
     public UserDTO getFirstUser() {
@@ -74,7 +74,7 @@ public class SlackParsedCommand {
     public List<UserDTO> getAllUsers() {
         checkIsTextContainsSlackName();
         List<UserDTO> result = new LinkedList(users.values());
-        result.remove(result.stream().filter(res -> res.getSlack().equals(from)).findFirst().get());
+        result.remove(result.stream().filter(res -> res.getSlack().equals(fromSlackName)).findFirst().get());
         logger.debug("Found {} users in the text: [{}]", result.size(), text);
         return result;
     }

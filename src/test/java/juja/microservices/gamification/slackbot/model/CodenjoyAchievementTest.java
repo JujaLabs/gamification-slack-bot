@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 public class CodenjoyAchievementTest {
     private ObjectMapper objectMapper;
     private Map<String, UserDTO> users;
-    private String from;
+    private String fromSlackName;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -35,14 +35,14 @@ public class CodenjoyAchievementTest {
         users.put("@slack1", new UserDTO("uuid1", "@slack1"));
         users.put("@slack2", new UserDTO("uuid2", "@slack2"));
         users.put("@slack3", new UserDTO("uuid3", "@slack3"));
-        from = "from";
+        fromSlackName = "from";
     }
 
     @Test
     public void createAchievementTest() throws JsonProcessingException {
         //given
         String text = "-1th @slack1 -2th @slack2 -3th @slack3";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(from, text, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(fromSlackName, text, users);
         //when
         CodenjoyAchievement codenjoy = new CodenjoyAchievement(slackParsedCommand);
         //then
@@ -54,7 +54,7 @@ public class CodenjoyAchievementTest {
     public void ifWrongTokensOrder() throws Exception {
         //given
         String text = "-2th @slack2 -1th @slack1 -3th @slack3";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(from, text, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(fromSlackName, text, users);
         //when
         CodenjoyAchievement codenjoy = new CodenjoyAchievement(slackParsedCommand);
         //then
@@ -67,7 +67,7 @@ public class CodenjoyAchievementTest {
     public void ifWithoutSpaces() throws Exception {
         //given
         String text = "-2th@slack2 -3th@slack3 -1th@slack1";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(from, text, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(fromSlackName, text, users);
         //when
         CodenjoyAchievement codenjoy = new CodenjoyAchievement(slackParsedCommand);
         //then
@@ -79,7 +79,7 @@ public class CodenjoyAchievementTest {
     public void ifTextInTheCommand() throws Exception {
         //given
         String text = "text-2th @slack2 text text-3th@slack3 -1th @slack1";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(from, text, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(fromSlackName, text, users);
         //when
         CodenjoyAchievement codenjoy = new CodenjoyAchievement(slackParsedCommand);
         //then
@@ -91,7 +91,7 @@ public class CodenjoyAchievementTest {
     public void ifNotSlackNameForToken() throws Exception {
         //given
         String text = "-2th@slack2 -3th -1th@slack1";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(from, text, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(fromSlackName, text, users);
         //then
         thrown.expect(WrongCommandFormatException.class);
         thrown.expectMessage(containsString("-2th@slack2 -3th -1th@slack1' doesn't contain slackName for token '-3th'"));
@@ -103,7 +103,7 @@ public class CodenjoyAchievementTest {
     public void ifIsNotToken() throws Exception {
         //given
         String text = "-2th@slack2 @slack3 -1th@slack1";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(from, text, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(fromSlackName, text, users);
         //then
         thrown.expect(WrongCommandFormatException.class);
         thrown.expectMessage(containsString("Token '-3th' didn't find in the string '-2th@slack2 @slack3 -1th@slack1'"));
@@ -115,7 +115,7 @@ public class CodenjoyAchievementTest {
     public void ifUseTwoSameWinnerMarkers() throws Exception {
         //given
         String text = "-2th@slack2 -3th@slack3 -3th @slack4 -1th@slack1";
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(from, text, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(fromSlackName, text, users);
         //then
         thrown.expect(WrongCommandFormatException.class);
         thrown.expectMessage(containsString("The text '-2th@slack2 -3th@slack3 -3th @slack4 -1th@slack1' " +

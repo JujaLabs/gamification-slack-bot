@@ -13,18 +13,18 @@ import lombok.ToString;
 @Getter
 @ToString
 public class InterviewAchievement {
-    @JsonProperty
-    private String from;
+    @JsonProperty("from")
+    private String fromUuid;
     @JsonProperty
     private String description;
 
-    public InterviewAchievement(String from, String description) {
-        this.from = from;
+    public InterviewAchievement(String fromUuid, String description) {
+        this.fromUuid = fromUuid;
         this.description = description;
     }
 
     public InterviewAchievement(SlackParsedCommand slackParsedCommand) {
-        this.from = slackParsedCommand.getFromUser().getUuid();
+        this.fromUuid = slackParsedCommand.getFromUser().getUuid();
         this.description = slackParsedCommand.getText();
     }
 }

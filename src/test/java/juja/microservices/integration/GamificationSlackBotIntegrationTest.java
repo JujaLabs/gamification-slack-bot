@@ -170,8 +170,8 @@ public class GamificationSlackBotIntegrationTest {
         final List<UserDTO> usersInCommand = Arrays.asList(new UserDTO[]{userFrom});
         mockSuccessUsersService(usersInCommand);
 
-        final String EXPECTED_REQUEST_TO_GAMIFICATION = String.format("{\"from\":\"%s\",\"description\":\"%s\"}",
-                usersInCommand.get(0).getUuid(), DAILY_COMMAND_TEXT_FROM_SLACK);
+        final String EXPECTED_REQUEST_TO_GAMIFICATION = String.format("{\"description\":\"%s\",\"from\":\"%s\"}",
+                DAILY_COMMAND_TEXT_FROM_SLACK, usersInCommand.get(0).getUuid());
         final String EXPECTED_RESPONSE_FROM_GAMIFICATION = "[\"101\"]";
 
         mockSuccessGamificationService(urlBaseGamification + urlSendDaily, EXPECTED_REQUEST_TO_GAMIFICATION,
@@ -192,8 +192,8 @@ public class GamificationSlackBotIntegrationTest {
         final List<UserDTO> usersInCommand = Arrays.asList(new UserDTO[]{userFrom});
         mockSuccessUsersService(usersInCommand);
 
-        final String EXPECTED_REQUEST_TO_GAMIFICATION = String.format("{\"from\":\"%s\",\"description\":\"%s\"}",
-                usersInCommand.get(0).getUuid(), INTERVIEW_COMMAND_TEXT_FROM_SLACK);
+        final String EXPECTED_REQUEST_TO_GAMIFICATION = String.format("{\"description\":\"%s\",\"from\":\"%s\"}",
+                INTERVIEW_COMMAND_TEXT_FROM_SLACK, usersInCommand.get(0).getUuid());
         final String EXPECTED_RESPONSE_FROM_GAMIFICATION = "[\"101\"]";
 
         mockSuccessGamificationService(urlBaseGamification + urlSendInterview, EXPECTED_REQUEST_TO_GAMIFICATION,
@@ -214,8 +214,8 @@ public class GamificationSlackBotIntegrationTest {
         final List<UserDTO> usersInCommand = Arrays.asList(new UserDTO[]{user1, userFrom});
         mockSuccessUsersService(usersInCommand);
 
-        final String EXPECTED_REQUEST_TO_GAMIFICATION = String.format("{\"from\":\"%s\",\"to\":\"%s\",\"description\":\"%s\"}",
-                usersInCommand.get(1).getUuid(), usersInCommand.get(0).getUuid(), user1.getSlack() + " thanks for your help!");
+        final String EXPECTED_REQUEST_TO_GAMIFICATION = String.format("{\"description\":\"%s\",\"from\":\"%s\",\"to\":\"%s\"}",
+                user1.getSlack() + " thanks for your help!", usersInCommand.get(1).getUuid(), usersInCommand.get(0).getUuid());
         final String EXPECTED_RESPONSE_FROM_GAMIFICATION = "[\"101\"]";
 
         mockSuccessGamificationService(urlBaseGamification + urlSendThanks, EXPECTED_REQUEST_TO_GAMIFICATION,
@@ -268,8 +268,8 @@ public class GamificationSlackBotIntegrationTest {
         final List<UserDTO> usersInCommand = Arrays.asList(new UserDTO[]{user1, userFrom});
         mockSuccessUsersService(usersInCommand);
 
-        final String EXPECTED_REQUEST_TO_GAMIFICATION = String.format("{\"from\":\"%s\",\"to\":\"%s\",\"description\":\"%s\"}",
-                usersInCommand.get(1).getUuid(), usersInCommand.get(0).getUuid(), user1.getSlack() + " thanks for your help!");
+        final String EXPECTED_REQUEST_TO_GAMIFICATION = String.format("{\"description\":\"%s\",\"from\":\"%s\",\"to\":\"%s\"}",
+                user1.getSlack() + " thanks for your help!", usersInCommand.get(1).getUuid(), usersInCommand.get(0).getUuid());
 
         mockFailGamificationService(urlBaseGamification + urlSendThanks, EXPECTED_REQUEST_TO_GAMIFICATION);
 

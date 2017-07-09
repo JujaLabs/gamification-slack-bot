@@ -71,7 +71,7 @@ public class RestGamificationRepositoryTest {
     @Test
     public void shouldReturnIdAchievementWhenSendDailyToRemoteGamificationService() {
         //given
-        String expectedRequestBody = "{\"from\":\"101\",\"description\":\"description\"}";
+        String expectedRequestBody = "{\"description\":\"description\",\"from\":\"101\"}";
         String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo(urlBase + urlSendDaily))
                 .andExpect(method(HttpMethod.POST))
@@ -90,7 +90,7 @@ public class RestGamificationRepositoryTest {
     @Test
     public void shouldThrowExceptionWhenSendDailyToRemoteGamificationServiceThrowException() {
         // given
-        String expectedRequestBody = "{\"from\":\"101\",\"description\":\"description\"}";
+        String expectedRequestBody = "{\"description\":\"description\",\"from\":\"101\"}";
         String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo(urlBase + urlSendDaily))
                 .andExpect(method(HttpMethod.POST))
@@ -149,7 +149,7 @@ public class RestGamificationRepositoryTest {
     @Test
     public void shouldReturnIdAchievementWhenSendThanksToRemoteGamificationService() {
         //given
-        String expectedRequestBody = "{\"from\":\"Bill\",\"to\":\"Bob\",\"description\":\"Thanks to Bob\"}";
+        String expectedRequestBody = "{\"description\":\"Thanks to Bob\",\"from\":\"Bill\",\"to\":\"Bob\"}";
         String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo(urlBase + urlSendThanks))
                 .andExpect(method(HttpMethod.POST))
@@ -168,7 +168,7 @@ public class RestGamificationRepositoryTest {
     @Test
     public void shouldThrowExceptionWhenSendThanksToRemoteGamificationServiceThrowException() {
         // given
-        String expectedRequestBody = "{\"from\":\"Bill\",\"to\":\"Bob\",\"description\":\"Thanks to Bob\"}";
+        String expectedRequestBody = "{\"description\":\"Thanks to Bob\",\"from\":\"Bill\",\"to\":\"Bob\"}";
         String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo(urlBase + urlSendThanks))
                 .andExpect(method(HttpMethod.POST))
@@ -188,7 +188,7 @@ public class RestGamificationRepositoryTest {
     @Test
     public void shouldReturnIdAchievementWhenSendInterviewToRemoteGamificationService() {
         //given
-        String expectedRequestBody = "{\"from\":\"bill\",\"description\":\"description\"}";
+        String expectedRequestBody = "{\"description\":\"description\",\"from\":\"bill\"}";
         String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo(urlBase + urlSendInterview))
                 .andExpect(method(HttpMethod.POST))
@@ -209,7 +209,7 @@ public class RestGamificationRepositoryTest {
     @Test
     public void shouldThrowExceptionWhenSendInterviewToRemoteInterviewServiceThrowException() {
         // given
-        String expectedRequestBody = "{\"from\":\"101\",\"description\":\"description\"}";
+        String expectedRequestBody = "{\"description\":\"description\",\"from\":\"101\"}";
         String expectedRequestHeader = "application/json";
         mockServer.expect(requestTo(urlBase + urlSendInterview))
                 .andExpect(method(HttpMethod.POST))
