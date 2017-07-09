@@ -9,7 +9,6 @@ import lombok.ToString;
  * @author Artem
  * @author Nikolay Horushko
  */
-
 @Getter
 @ToString
 public class InterviewAchievement {
