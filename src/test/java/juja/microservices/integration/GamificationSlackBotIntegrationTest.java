@@ -62,7 +62,7 @@ public class GamificationSlackBotIntegrationTest {
 
     @Value("${user.baseURL}")
     private String urlBaseUser;
-    @Value("${endpoint.userSearch}")
+    @Value("${endpoint.usersBySlackNames}")
     private String urlGetUser;
 
     private UserDTO user1 = new UserDTO("f2034f22-562b-4e02-bfcf-ec615c1ba62b", "@slack1");
