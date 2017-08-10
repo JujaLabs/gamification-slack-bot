@@ -31,7 +31,7 @@ public class RestUserRepository extends AbstractRestRepository implements UserRe
 
     @Value("${user.baseURL}")
     private String urlBase;
-    @Value("${endpoint.userSearch}")
+    @Value("${endpoint.usersBySlackNames}")
     private String urlGetUser;
 
 

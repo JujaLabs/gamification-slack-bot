@@ -41,7 +41,7 @@ public class RestUserRepositoryTest {
 
     @Value("${user.baseURL}")
     private String urlBase;
-    @Value("${endpoint.userSearch}")
+    @Value("${endpoint.usersBySlackNames}")
     private String urlGetUser;
 
     @Rule
