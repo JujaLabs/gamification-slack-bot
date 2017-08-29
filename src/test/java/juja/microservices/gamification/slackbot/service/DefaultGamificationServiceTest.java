@@ -1,10 +1,13 @@
 package juja.microservices.gamification.slackbot.service;
 
 import juja.microservices.gamification.slackbot.dao.GamificationRepository;
+import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
 import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
 import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
 import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
 import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
+import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,11 +17,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Danil Kuznetsov
@@ -31,9 +36,17 @@ public class DefaultGamificationServiceTest {
 
     @MockBean
     private GamificationRepository gamificationRepository;
+    @MockBean
+    private SlackNameHandlerService slackNameHandlerService;
 
     @Inject
     private GamificationService gamificationService;
+
+    private final String FROM_USER_SLACK_NAME = "@from-user";
+    private UserDTO fromUser = new UserDTO("uuid-from-user", FROM_USER_SLACK_NAME);
+    private UserDTO user1 = new UserDTO("uuid-user-1", "@slack1");
+    private UserDTO user2 = new UserDTO("uuid-user-2", "@slack2");
+    private UserDTO user3 = new UserDTO("uuid-user-3", "@slack3");
 
     @Before
     public void setup() {
@@ -41,66 +54,124 @@ public class DefaultGamificationServiceTest {
     }
 
     @Test
-    public void shouldSaveNewDailyAndReturnNewAchievementId() {
+    public void shouldSaveNewDaily() {
 
         //given
-        String[] expectedAchievementId = {"100"};
-        DailyAchievement dailyAchievement = new DailyAchievement("test", "description");
-        given(gamificationRepository.saveDailyAchievement(dailyAchievement)).willReturn(expectedAchievementId);
+        final String TEXT_COMMAND = "daily report";
+        final String[] SAVED_ACHIEVEMENT_ID = {"100"};
+        final String EXPECTED_RESPONSE_TO_SLACK = "Thanks, your daily report saved.";
+
+        Map<String, UserDTO> users = new HashMap<>();
+        users.put(fromUser.getSlack(), fromUser);
+
+        when(slackNameHandlerService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
+                .thenReturn(new SlackParsedCommand(fromUser.getSlack(), TEXT_COMMAND, users));
+        when(gamificationRepository.saveDailyAchievement(any(DailyAchievement.class)))
+                .thenReturn(SAVED_ACHIEVEMENT_ID);
 
         //when
-        String[] result = gamificationService.sendDailyAchievement(dailyAchievement);
+        String result = gamificationService.sendDailyAchievement(FROM_USER_SLACK_NAME, TEXT_COMMAND);
 
         //then
-        assertThat(result, equalTo(expectedAchievementId));
-        verify(gamificationRepository).saveDailyAchievement(dailyAchievement);
+        assertThat(result, equalTo(EXPECTED_RESPONSE_TO_SLACK));
     }
 
     @Test
-    public void shouldSaveNewCodenjoyAndReturnNewAchievementId() {
+    public void shouldSaveNewCodenjoy() {
 
         //given
-        String[] expectedAchievementId = {"100"};
-        CodenjoyAchievement codenjoyAchievement = new CodenjoyAchievement("Bill", "Walter",
-                "Bob", "John");
-        given(gamificationRepository.saveCodenjoyAchievement(codenjoyAchievement)).willReturn(expectedAchievementId);
+        final String TEXT_COMMAND = "-1th @slack1 -2th @slack2 -3th @slack3";
+        final String[] SAVED_ACHIEVEMENT_ID = {"100", "101", "102"};
+        final String EXPECTED_RESPONSE_TO_SLACK = "Thanks, we awarded the users. " +
+                "First place: @slack1, Second place: @slack2, Third place: @slack3";
+
+        Map<String, UserDTO> users = new HashMap<>();
+        users.put(fromUser.getSlack(), fromUser);
+        users.put(user1.getSlack(), user1);
+        users.put(user2.getSlack(), user2);
+        users.put(user3.getSlack(), user3);
+
+        when(slackNameHandlerService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
+                .thenReturn(new SlackParsedCommand(fromUser.getSlack(), TEXT_COMMAND, users));
+        when(gamificationRepository.saveCodenjoyAchievement(any(CodenjoyAchievement.class)))
+                .thenReturn(SAVED_ACHIEVEMENT_ID);
 
         //when
-        String[] result = gamificationService.sendCodenjoyAchievement(codenjoyAchievement);
+        String result = gamificationService.sendCodenjoyAchievement(FROM_USER_SLACK_NAME, TEXT_COMMAND);
 
         //then
-        assertThat(result, equalTo(expectedAchievementId));
-        verify(gamificationRepository).saveCodenjoyAchievement(codenjoyAchievement);
+        assertThat(result, equalTo(EXPECTED_RESPONSE_TO_SLACK));
     }
 
     @Test
-    public void shouldSaveNewThanksAndReturnNewAchievementId() {
+    public void shouldSaveNewThanks() {
 
         //given
-        final String[] expectedAchievementId = {"1000"};
-        ThanksAchievement thanksAchievement = new ThanksAchievement("Bill", "Bob", "Thanks to Bob");
-        given(gamificationRepository.saveThanksAchievement(thanksAchievement)).willReturn(expectedAchievementId);
+        final String TEXT_COMMAND = "thanks @slack1 comment";
+        final String[] SAVED_ACHIEVEMENT_ID = {"100"};
+        final String EXPECTED_RESPONSE_TO_SLACK = "Thanks, your 'thanks' for @slack1 saved.";
+
+        Map<String, UserDTO> users = new HashMap<>();
+        users.put(fromUser.getSlack(), fromUser);
+        users.put(user1.getSlack(), user1);
+
+        when(slackNameHandlerService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
+                .thenReturn(new SlackParsedCommand(fromUser.getSlack(), TEXT_COMMAND, users));
+        when(gamificationRepository.saveThanksAchievement(any(ThanksAchievement.class)))
+                .thenReturn(SAVED_ACHIEVEMENT_ID);
 
         //when
-        String[] result = gamificationService.sendThanksAchievement(thanksAchievement);
+        String result = gamificationService.sendThanksAchievement(FROM_USER_SLACK_NAME, TEXT_COMMAND);
 
         //then
-        assertThat(result, equalTo(expectedAchievementId));
-        verify(gamificationRepository).saveThanksAchievement(thanksAchievement);
+        assertThat(result, equalTo(EXPECTED_RESPONSE_TO_SLACK));
     }
 
     @Test
-    public void shouldSaveNewInterviewAchievementAndReturnNewAchievementId() {
+    public void shouldSaveSecondThanksAndAddExtraScore() {
+
         //given
-        String[] expectedAchievementId = {"100"};
-        InterviewAchievement interviewAchievement = new InterviewAchievement("Bill", "I got offer!");
-        given(gamificationRepository.saveInterviewAchievement(interviewAchievement)).willReturn(expectedAchievementId);
+        final String TEXT_COMMAND = "thanks @slack1 comment";
+        final String[] SAVED_ACHIEVEMENT_ID = {"100", "101"};
+        final String EXPECTED_RESPONSE_TO_SLACK = "Thanks, your 'thanks' for @slack1 saved. " +
+                "Also you received +1 for your activity.";
+
+        Map<String, UserDTO> users = new HashMap<>();
+        users.put(fromUser.getSlack(), fromUser);
+        users.put(user1.getSlack(), user1);
+
+        when(slackNameHandlerService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
+                .thenReturn(new SlackParsedCommand(fromUser.getSlack(), TEXT_COMMAND, users));
+        when(gamificationRepository.saveThanksAchievement(any(ThanksAchievement.class)))
+                .thenReturn(SAVED_ACHIEVEMENT_ID);
 
         //when
-        String[] result = gamificationService.sendInterviewAchievement(interviewAchievement);
+        String result = gamificationService.sendThanksAchievement(FROM_USER_SLACK_NAME, TEXT_COMMAND);
 
         //then
-        assertThat(result, equalTo(expectedAchievementId));
-        verify(gamificationRepository).saveInterviewAchievement(interviewAchievement);
+        assertThat(result, equalTo(EXPECTED_RESPONSE_TO_SLACK));
+    }
+
+    @Test
+    public void shouldSaveNewInterviewAchievement() {
+
+        //given
+        final String TEXT_COMMAND = "interview report";
+        final String[] SAVED_ACHIEVEMENT_ID = {"100"};
+        final String EXPECTED_RESPONSE_TO_SLACK = "Thanks. Your interview saved.";
+
+        Map<String, UserDTO> users = new HashMap<>();
+        users.put(fromUser.getSlack(), fromUser);
+
+        when(slackNameHandlerService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
+                .thenReturn(new SlackParsedCommand(fromUser.getSlack(), TEXT_COMMAND, users));
+        when(gamificationRepository.saveInterviewAchievement(any(InterviewAchievement.class)))
+                .thenReturn(SAVED_ACHIEVEMENT_ID);
+
+        //when
+        String result = gamificationService.sendInterviewAchievement(FROM_USER_SLACK_NAME, TEXT_COMMAND);
+
+        //then
+        assertThat(result, equalTo(EXPECTED_RESPONSE_TO_SLACK));
     }
 }
