@@ -1,20 +1,15 @@
 package juja.microservices.gamification.slackbot.service;
 
-import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
-
 /**
  * @author Danil Kuznetsov
  */
 public interface GamificationService {
 
-    String[] sendDailyAchievement(DailyAchievement daily);
+    String sendDailyAchievement(String fromUser, String text);
 
-    String[] sendCodenjoyAchievement(CodenjoyAchievement codenjoy);
+    String sendCodenjoyAchievement(String fromUser, String text);
 
-    String[] sendThanksAchievement(ThanksAchievement thanks);
+    String sendThanksAchievement(String fromUser, String text);
 
-    String[] sendInterviewAchievement(InterviewAchievement interview);
+    String sendInterviewAchievement(String fromUser, String text);
 }

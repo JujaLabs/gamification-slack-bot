@@ -1,12 +1,6 @@
 package juja.microservices.gamification.slackbot.controller;
 
-import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
-import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
 import juja.microservices.gamification.slackbot.service.GamificationService;
-import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import me.ramswaroop.jbot.core.slack.models.RichMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
-import java.util.Arrays;
 
 /**
  * @author Nikolay Horushko
@@ -28,16 +21,13 @@ public class GamificationSlackCommandController {
     @Value("${slack.slashCommandToken}")
     private String slackToken;
 
-    private final SlackNameHandlerService slackNameHandlerService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private GamificationService gamificationService;
 
     @Inject
-    public GamificationSlackCommandController(GamificationService gamificationService,
-                                              SlackNameHandlerService slackNameHandlerService) {
+    public GamificationSlackCommandController(GamificationService gamificationService) {
         this.gamificationService = gamificationService;
-        this.slackNameHandlerService = slackNameHandlerService;
     }
 
     @RequestMapping(value = "/commands/codenjoy",
@@ -55,27 +45,12 @@ public class GamificationSlackCommandController {
             return getRichMessageInvalidSlackCommand();
         }
 
-        String response = "ERROR. Something went wrong and we didn't award the users :(";
-
-        logger.debug("Started create slackParsedCommand and create achievement request");
-        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(fromUser, text);
-        CodenjoyAchievement codenjoy = new CodenjoyAchievement(slackParsedCommand);
-        logger.debug("Finished create slackParsedCommand and create achievement request");
-
-        logger.debug("Sent codenjoy achievement request to Gamifcation service. Achievement: [{}]",
-                codenjoy.toString());
-        String[] result = gamificationService.sendCodenjoyAchievement(codenjoy);
-        logger.debug("Received response from Gamification service: [{}]", Arrays.toString(result));
-
-        if (result.length == 3) {
-            response = codenjoy.injectSlackNames("Thanks, we awarded the users. " +
-                    "First place: %s, Second place: %s, Third place: %s");
-        }
+        String responseToSlack = gamificationService.sendCodenjoyAchievement(fromUser, text);
 
         logger.info("Codenjoy command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
-                fromUser, text, response);
+                fromUser, text, responseToSlack);
 
-        return new RichMessage(response);
+        return new RichMessage(responseToSlack);
     }
 
     @RequestMapping(value = "/commands/daily",
@@ -93,25 +68,12 @@ public class GamificationSlackCommandController {
             return getRichMessageInvalidSlackCommand();
         }
 
-        String response = "ERROR. Something went wrong and daily report didn't save.";
-
-        logger.debug("Started create slackParsedCommand and create achievement request");
-        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(fromUser, text);
-        DailyAchievement daily = new DailyAchievement(slackParsedCommand);
-        logger.debug("Finished create slackParsedCommand and create achievement request");
-
-        logger.debug("Send daily achievement request to Gamifcation service. Achievement: [{}]", daily.toString());
-        String[] result = gamificationService.sendDailyAchievement(daily);
-        logger.debug("Received response from Gamification service: [{}]", Arrays.toString(result));
-
-        if (result.length == 1) {
-            response = "Thanks, your daily report saved.";
-        }
+        String responseToSlack = gamificationService.sendDailyAchievement(fromUser, text);
 
         logger.info("Daily command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
-                fromUser, text, response);
+                fromUser, text, responseToSlack);
 
-        return new RichMessage(response);
+        return new RichMessage(responseToSlack);
     }
 
     @RequestMapping(value = "/commands/thanks",
@@ -127,29 +89,13 @@ public class GamificationSlackCommandController {
             logger.warn("Received invalid slack token: [{}] in command thanks for user: [{}]", token, fromUser);
             return getRichMessageInvalidSlackCommand();
         }
-        String response = "Error. Something went wrong and we didn't save the thanks.";
 
-        logger.debug("Started create slackParsedCommand and create achievement request");
-        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(fromUser, text);
-        ThanksAchievement thanks = new ThanksAchievement(slackParsedCommand);
-        logger.debug("Finished create slackParsedCommand and create achievement request");
-
-        logger.debug("Sent thanks achievement request to Gamifcation service. Achievement: [{}]", thanks.toString());
-        String[] result = gamificationService.sendThanksAchievement(thanks);
-        logger.debug("Received response from Gamification service: [{}]", Arrays.toString(result));
-
-        if (result.length == 1) {
-            response = thanks.injectSlackNames("Thanks, your 'thanks' for %s saved.");
-        }
-        if (result.length == 2) {
-            response = thanks.injectSlackNames("Thanks, your 'thanks' for %s saved. " +
-                    "Also you received +1 for your activity.");
-        }
+        String responseToSlack = gamificationService.sendThanksAchievement(fromUser, text);
 
         logger.info("Thanks command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
-                fromUser, text, response);
+                fromUser, text, responseToSlack);
 
-        return new RichMessage(response);
+        return new RichMessage(responseToSlack);
     }
 
     @RequestMapping(value = "/commands/interview",
@@ -166,24 +112,12 @@ public class GamificationSlackCommandController {
             logger.warn("Received invalid slack token: [{}] in command interview for user: [{}]", token, fromUser);
             return getRichMessageInvalidSlackCommand();
         }
-        String response = "ERROR. Something went wrong and we didn't save your interview";
 
-        logger.debug("Started create slackParsedCommand and create achievement request");
-        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(fromUser, text);
-        InterviewAchievement interview = new InterviewAchievement(slackParsedCommand);
-        logger.debug("Finished create slackParsedCommand and create achievement request");
-
-        logger.debug("Send interview achivement request  to Gamifcation service. Achievement: [{}]", interview.toString());
-        String[] result = gamificationService.sendInterviewAchievement(interview);
-        logger.debug("Received response from Gamification service: [{}]", Arrays.toString(result));
-
-        if (result.length == 1) {
-            response = "Thanks. Your interview saved.";
-        }
+        String responseToSlack = gamificationService.sendInterviewAchievement(fromUser, text);
 
         logger.info("Interview command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
-                fromUser, text, response);
-        return new RichMessage(response);
+                fromUser, text, responseToSlack);
+        return new RichMessage(responseToSlack);
     }
 
     private RichMessage getRichMessageInvalidSlackCommand() {

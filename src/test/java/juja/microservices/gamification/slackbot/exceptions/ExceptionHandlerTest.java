@@ -2,10 +2,7 @@ package juja.microservices.gamification.slackbot.exceptions;
 
 import juja.microservices.gamification.slackbot.controller.GamificationSlackCommandController;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
-import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
-import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
 import juja.microservices.gamification.slackbot.service.GamificationService;
-import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import juja.microservices.utils.SlackUrlUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,8 +16,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.inject.Inject;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -41,9 +36,6 @@ public class ExceptionHandlerTest {
     @MockBean
     private GamificationService gamificationService;
 
-    @MockBean
-    private SlackNameHandlerService slackNameHandlerService;
-
     private UserDTO userFrom;
 
     @Before
@@ -56,11 +48,6 @@ public class ExceptionHandlerTest {
 
         final String DAILY_COMMAND_TEXT = "daily description text";
 
-        Map<String, UserDTO> users = new HashMap<>();
-        users.put(userFrom.getSlack(), userFrom);
-
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(userFrom.getSlack(), DAILY_COMMAND_TEXT, users);
-
         ApiError apiError = new ApiError(
                 400, "GMF-F5-D2",
                 "You cannot give more than one thanks for day to one person",
@@ -69,9 +56,7 @@ public class ExceptionHandlerTest {
                 Collections.EMPTY_LIST
         );
 
-        when(slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), DAILY_COMMAND_TEXT))
-                .thenReturn(slackParsedCommand);
-        when(gamificationService.sendDailyAchievement(any(DailyAchievement.class)))
+        when(gamificationService.sendDailyAchievement(any(String.class), any(String.class)))
                 .thenThrow(new GamificationExchangeException(apiError, new RuntimeException("exception")));
 
         mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/daily"),
@@ -86,9 +71,6 @@ public class ExceptionHandlerTest {
 
         final String DAILY_COMMAND_TEXT = "daily description text";
 
-        Map<String, UserDTO> users = new HashMap<>();
-        users.put(userFrom.getSlack(), userFrom);
-
         ApiError apiError = new ApiError(
                 400, "USF-F1-D1",
                 "User not found",
@@ -97,7 +79,7 @@ public class ExceptionHandlerTest {
                 Collections.EMPTY_LIST
         );
 
-        when(slackNameHandlerService.createSlackParsedCommand(any(), any())).
+        when(gamificationService.sendDailyAchievement(any(), any())).
                 thenThrow(new UserExchangeException(apiError, new RuntimeException("exception")));
 
         mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/daily"),
@@ -112,11 +94,11 @@ public class ExceptionHandlerTest {
 
         final String COMMAND_TEXT = "@slack1 -2th @slack2 -3th @slack3";
 
-        when(slackNameHandlerService.createSlackParsedCommand(any(String.class), any(String.class))).
+        when(gamificationService.sendCodenjoyAchievement(any(String.class), any(String.class))).
                 thenThrow(new WrongCommandFormatException("Wrong command exception"));
 
         mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/codenjoy"),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/daily", COMMAND_TEXT))
+                SlackUrlUtils.getUriVars("slashCommandToken", "/codenjoy", COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value("Wrong command exception"));
@@ -125,12 +107,12 @@ public class ExceptionHandlerTest {
     @Test
     public void shouldHandleAllOtherException() throws Exception {
 
-        final String COMMAND_TEXT = "@slack1 -2th @slack2 -3th @slack3";
+        final String COMMAND_TEXT = "daily report";
 
-        when(slackNameHandlerService.createSlackParsedCommand(any(String.class), any(String.class))).
+        when(gamificationService.sendDailyAchievement(any(String.class), any(String.class))).
                 thenThrow(new RuntimeException("Runtime exception"));
 
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/codenjoy"),
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/daily"),
                 SlackUrlUtils.getUriVars("slashCommandToken", "/daily", COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
