@@ -7,23 +7,31 @@ import juja.microservices.gamification.slackbot.model.achievements.DailyAchievem
 import juja.microservices.gamification.slackbot.service.GamificationService;
 import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import juja.microservices.utils.SlackUrlUtils;
+import me.ramswaroop.jbot.core.slack.models.RichMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,6 +42,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(GamificationSlackCommandController.class)
 public class ExceptionHandlerTest {
+    private final static String INSTANT_MESSAGE = "Your command accepted. Please wait...";
+    private final static String responseUrl = "http://example.com";
 
     @Inject
     private MockMvc mvc;
@@ -43,6 +53,9 @@ public class ExceptionHandlerTest {
 
     @MockBean
     private SlackNameHandlerService slackNameHandlerService;
+
+    @MockBean
+    private RestTemplate restTemplate;
 
     private UserDTO userFrom;
 
@@ -78,7 +91,11 @@ public class ExceptionHandlerTest {
                 SlackUrlUtils.getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("You cannot give more than one thanks for day to one person"));
+                .andExpect(content().string(INSTANT_MESSAGE));
+
+        ArgumentCaptor<RichMessage> captor = ArgumentCaptor.forClass(RichMessage.class);
+        verify(restTemplate).postForObject(eq(responseUrl), captor.capture(), eq(String.class));
+        assertTrue(captor.getValue().getText().contains("You cannot give more than one thanks for day to one person"));
     }
 
     @Test
@@ -104,7 +121,11 @@ public class ExceptionHandlerTest {
                 SlackUrlUtils.getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("User not found"));
+                .andExpect(content().string(INSTANT_MESSAGE));
+
+        ArgumentCaptor<RichMessage> captor = ArgumentCaptor.forClass(RichMessage.class);
+        verify(restTemplate).postForObject(eq(responseUrl), captor.capture(), eq(String.class));
+        assertTrue(captor.getValue().getText().contains("User not found"));
     }
 
     @Test
@@ -119,7 +140,11 @@ public class ExceptionHandlerTest {
                 SlackUrlUtils.getUriVars("slashCommandToken", "/daily", COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("Wrong command exception"));
+                .andExpect(content().string(INSTANT_MESSAGE));
+
+        ArgumentCaptor<RichMessage> captor = ArgumentCaptor.forClass(RichMessage.class);
+        verify(restTemplate).postForObject(eq(responseUrl), captor.capture(), eq(String.class));
+        assertTrue(captor.getValue().getText().contains("Wrong command exception"));
     }
 
     @Test
@@ -134,6 +159,10 @@ public class ExceptionHandlerTest {
                 SlackUrlUtils.getUriVars("slashCommandToken", "/daily", COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text").value("Runtime exception"));
+                .andExpect(content().string(INSTANT_MESSAGE));
+
+        ArgumentCaptor<RichMessage> captor = ArgumentCaptor.forClass(RichMessage.class);
+        verify(restTemplate).postForObject(eq(responseUrl), captor.capture(), eq(String.class));
+        assertTrue(captor.getValue().getText().contains("Runtime exception"));
     }
 }
