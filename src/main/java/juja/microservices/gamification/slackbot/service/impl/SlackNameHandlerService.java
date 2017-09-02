@@ -30,7 +30,7 @@ public class SlackNameHandlerService {
      * ([a-z0-9\.\_\-]){1,21}
      * quick test regExp http://regexr.com/
      */
-    private final String SLACK_NAME_PATTERN = "@([a-zA-z0-9\\.\\_\\-]){1,21}";
+    private final String SLACK_NAME_PATTERN = "\\s@([a-zA-z0-9\\.\\_\\-]){1,21}";
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -44,7 +44,7 @@ public class SlackNameHandlerService {
             logger.debug("add '@' to slack name: [{}]", fromSlackName);
             fromSlackName = "@" + fromSlackName;
         }
-        return new SlackParsedCommand(fromSlackName, text, receiveUsersMap(fromSlackName, text));
+        return new SlackParsedCommand(fromSlackName, ""+text, receiveUsersMap(fromSlackName, text));
     }
 
     private Map<String, UserDTO> receiveUsersMap(String fromSlackName, String text) {
@@ -54,15 +54,15 @@ public class SlackNameHandlerService {
         logger.debug("send slack names: {} to user service", slackNames);
         List<UserDTO> users = userService.findUsersBySlackNames(slackNames);
         return users.stream()
-                .collect(Collectors.toMap(user -> user.getSlack(), user -> user));
+                .collect(Collectors.toMap(UserDTO::getSlack, user -> user));
     }
 
     private List<String> receiveAllSlackNames(String text) {
         List<String> result = new ArrayList<>();
         Pattern pattern = Pattern.compile(SLACK_NAME_PATTERN);
-        Matcher matcher = pattern.matcher(text);
+        Matcher matcher = pattern.matcher(" "+text);
         while (matcher.find()) {
-            result.add(matcher.group());
+            result.add(matcher.group().trim());
         }
         logger.debug("Recieved slack names: {} from text:", result.toString(), text);
         return result;

@@ -6,8 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,14 +15,14 @@ import javax.inject.Inject;
 
 /**
  * @author Nikolay Horushko
+ * @author Ivan Shapovalov
  */
 @RestController
+@RequestMapping(value = "/" + "${gamification.slackbot.rest.api.version}" + "${gamification.slackbot.commandsUrl}")
 public class GamificationSlackCommandController {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Value("${slack.slashCommandToken}")
     private String slackToken;
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private GamificationService gamificationService;
 
     @Inject
@@ -30,8 +30,7 @@ public class GamificationSlackCommandController {
         this.gamificationService = gamificationService;
     }
 
-    @RequestMapping(value = "/commands/codenjoy",
-            method = RequestMethod.POST,
+    @PostMapping(value = "${gamification.slackbot.endpoint.codenjoy}",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public RichMessage onReceiveSlashCommandCodenjoy(@RequestParam("token") String token,
                                                      @RequestParam("user_name") String fromUser,
@@ -53,8 +52,7 @@ public class GamificationSlackCommandController {
         return new RichMessage(responseToSlack);
     }
 
-    @RequestMapping(value = "/commands/daily",
-            method = RequestMethod.POST,
+    @PostMapping(value = "${gamification.slackbot.endpoint.daily}",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public RichMessage onReceiveSlashCommandDaily(@RequestParam("token") String token,
                                                   @RequestParam("user_name") String fromUser,
@@ -76,8 +74,7 @@ public class GamificationSlackCommandController {
         return new RichMessage(responseToSlack);
     }
 
-    @RequestMapping(value = "/commands/thanks",
-            method = RequestMethod.POST,
+    @PostMapping(value = "${gamification.slackbot.endpoint.thanks}",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public RichMessage onReceiveSlashCommandThanks(@RequestParam("token") String token,
                                                    @RequestParam("user_name") String fromUser,
@@ -98,8 +95,7 @@ public class GamificationSlackCommandController {
         return new RichMessage(responseToSlack);
     }
 
-    @RequestMapping(value = "/commands/interview",
-            method = RequestMethod.POST,
+    @PostMapping(value = "${gamification.slackbot.endpoint.interview}",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public RichMessage onReceiveSlashCommandInterview(@RequestParam("token") String token,
                                                       @RequestParam("user_name") String fromUser,

@@ -8,17 +8,23 @@ import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * @author Nikolay Horushko
  */
-@ToString(exclude={"SLACK_NAME_PATTERN","logger"})
+@ToString(exclude = {"SLACK_NAME_PATTERN", "logger"})
 public class SlackParsedCommand {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final String SLACK_NAME_PATTERN = "@([a-zA-z0-9\\.\\_\\-]){1,21}";
+    private final String SLACK_NAME_PATTERN = "\\s@([a-zA-z0-9\\.\\_\\-]){1,21}";
     private String fromSlackName;
     private String text;
     private List<String> slackNamesInText;
@@ -61,12 +67,12 @@ public class SlackParsedCommand {
         return userCountInText;
     }
 
-    private List<String> receiveAllSlackNames(String text){
+    private List<String> receiveAllSlackNames(String text) {
         List<String> result = new ArrayList<>();
         Pattern pattern = Pattern.compile(SLACK_NAME_PATTERN);
-        Matcher matcher = pattern.matcher(text);
+        Matcher matcher = pattern.matcher(" " + text);
         while (matcher.find()) {
-            result.add(matcher.group());
+            result.add(matcher.group().trim());
         }
         return result;
     }
@@ -95,7 +101,7 @@ public class SlackParsedCommand {
             Pattern slackNamePattern = Pattern.compile(SLACK_NAME_PATTERN);
             Matcher matcher = slackNamePattern.matcher(text.substring(text.indexOf(currentToken.getToken())));
             if (matcher.find()) {
-                String foundedSlackName = matcher.group();
+                String foundedSlackName = matcher.group().trim();
                 int indexFoundedSlackName = text.indexOf(foundedSlackName);
                 for (int j = i + 1; j < sortedTokenList.size(); j++) {
                     if (indexFoundedSlackName > sortedTokenList.get(j).getPositionInText()) {
