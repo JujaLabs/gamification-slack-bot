@@ -19,7 +19,6 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
-
 import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -40,40 +39,46 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @SpringBootTest
 public class RestGamificationRepositoryTest {
 
-    @Inject
-    private GamificationRepository gamificationRepository;
-
-    @Inject
-    private RestTemplate restTemplate;
-
-    private MockRestServiceServer mockServer;
-
-    @Value("${gamification.baseURL}")
-    private String urlBase;
-    @Value("${endpoint.daily}")
-    private String urlSendDaily;
-    @Value("${endpoint.codenjoy}")
-    private String urlSendCodenjoy;
-    @Value("${endpoint.thanks}")
-    private String urlSendThanks;
-    @Value("${endpoint.interview}")
-    private String urlSendInterview;
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+    @Inject
+    private GamificationRepository gamificationRepository;
+    @Inject
+    private RestTemplate restTemplate;
+    private MockRestServiceServer mockServer;
+    @Value("${gamification.rest.api.version}")
+    private String gamificationRestApiVersion;
+    @Value("${gamification.baseURL}")
+    private String gamificationBaseUrl;
+    @Value("${gamification.endpoint.daily}")
+    private String gamificationDailyUrl;
+    @Value("${gamification.endpoint.codenjoy}")
+    private String gamificationCodenjoyUrl;
+    @Value("${gamification.endpoint.thanks}")
+    private String gamificationThanksUrl;
+    @Value("${gamification.endpoint.interview}")
+    private String gamificationInterviewUrl;
+    private String gamificationFullThanksUrl;
+    private String gamificationFullDailyUrl;
+    private String gamificationFullCodenjoyUrl;
+    private String gamificationFullInterviewUrl;
 
     @Before
     public void setup() {
         mockServer = MockRestServiceServer.bindTo(restTemplate).build();
-    }
 
+        gamificationFullThanksUrl = gamificationBaseUrl + "/" + gamificationRestApiVersion + gamificationThanksUrl;
+        gamificationFullDailyUrl = gamificationBaseUrl + "/" + gamificationRestApiVersion + gamificationDailyUrl;
+        gamificationFullCodenjoyUrl = gamificationBaseUrl + "/" + gamificationRestApiVersion + gamificationCodenjoyUrl;
+        gamificationFullInterviewUrl = gamificationBaseUrl + "/" + gamificationRestApiVersion + gamificationInterviewUrl;
+    }
 
     @Test
     public void shouldReturnIdAchievementWhenSendDailyToRemoteGamificationService() {
         //given
         String expectedRequestBody = "{\"description\":\"description\",\"from\":\"101\"}";
         String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(urlBase + urlSendDaily))
+        mockServer.expect(requestTo(gamificationFullDailyUrl))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
@@ -92,7 +97,7 @@ public class RestGamificationRepositoryTest {
         // given
         String expectedRequestBody = "{\"description\":\"description\",\"from\":\"101\"}";
         String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(urlBase + urlSendDaily))
+        mockServer.expect(requestTo(gamificationFullDailyUrl))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
@@ -112,7 +117,7 @@ public class RestGamificationRepositoryTest {
         //given
         String expectedRequestBody = "{\"from\":\"Bill\",\"firstPlace\":\"Walter\",\"secondPlace\":\"Bob\",\"thirdPlace\":\"John\"}";
         String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(urlBase + urlSendCodenjoy))
+        mockServer.expect(requestTo(gamificationFullCodenjoyUrl))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
@@ -131,7 +136,7 @@ public class RestGamificationRepositoryTest {
         // given
         String expectedRequestBody = "{\"from\":\"Bill\",\"firstPlace\":\"Walter\",\"secondPlace\":\"Bob\",\"thirdPlace\":\"John\"}";
         String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(urlBase + urlSendCodenjoy))
+        mockServer.expect(requestTo(gamificationFullCodenjoyUrl))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
@@ -151,7 +156,7 @@ public class RestGamificationRepositoryTest {
         //given
         String expectedRequestBody = "{\"description\":\"Thanks to Bob\",\"from\":\"Bill\",\"to\":\"Bob\"}";
         String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(urlBase + urlSendThanks))
+        mockServer.expect(requestTo(gamificationFullThanksUrl))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
@@ -170,7 +175,7 @@ public class RestGamificationRepositoryTest {
         // given
         String expectedRequestBody = "{\"description\":\"Thanks to Bob\",\"from\":\"Bill\",\"to\":\"Bob\"}";
         String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(urlBase + urlSendThanks))
+        mockServer.expect(requestTo(gamificationFullThanksUrl))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
@@ -190,7 +195,7 @@ public class RestGamificationRepositoryTest {
         //given
         String expectedRequestBody = "{\"description\":\"description\",\"from\":\"bill\"}";
         String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(urlBase + urlSendInterview))
+        mockServer.expect(requestTo(gamificationFullInterviewUrl))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(),
                         containsString(expectedRequestHeader)))
@@ -211,7 +216,7 @@ public class RestGamificationRepositoryTest {
         // given
         String expectedRequestBody = "{\"description\":\"description\",\"from\":\"101\"}";
         String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(urlBase + urlSendInterview))
+        mockServer.expect(requestTo(gamificationFullInterviewUrl))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(),
                         containsString(expectedRequestHeader)))

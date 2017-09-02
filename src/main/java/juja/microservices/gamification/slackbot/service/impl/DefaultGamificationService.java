@@ -36,27 +36,23 @@ public class DefaultGamificationService implements GamificationService {
     @Override
     public String sendDailyAchievement(String fromUser, String text) {
 
-        logger.debug("Start sending and saving Daily achievement. fromUser: [{}] text: [{}]", fromUser, text);
-
         logger.debug("Start create Daily achievement from slack parsed command");
         DailyAchievement daily = new DailyAchievement(createSlackParsedCommand(fromUser, text));
-        logger.debug("Daily achievement was created. daily: {}", daily.toString());
+        logger.debug("Daily achievement was created. Daily: {}", daily.toString());
 
         String[] ids = gamificationRepository.saveDailyAchievement(daily);
         logger.info("Daily achievement was saved with id: {}", Arrays.toString(ids));
 
         if (ids.length == 1) {
-            return  "Thanks, your daily report saved.";
+            return "Thanks, your daily report saved.";
         } else {
             logger.debug("Expected 1 saved achievements, but gamification service saved: {} ", ids.length);
-            return  "Something went wrong and we didn't save your daily report";
+            return "Something went wrong and we didn't save your daily report";
         }
     }
 
     @Override
     public String sendCodenjoyAchievement(String fromUser, String text) {
-
-        logger.debug("Start sending and saving codenjoy achievement. fromUser: [{}] text: [{}]", fromUser, text);
 
         logger.debug("Start create Codenjoy achievement from slack parsed command");
         CodenjoyAchievement codenjoy = new CodenjoyAchievement(createSlackParsedCommand(fromUser, text));
@@ -76,8 +72,6 @@ public class DefaultGamificationService implements GamificationService {
 
     @Override
     public String sendThanksAchievement(String fromUser, String text) {
-
-        logger.debug("Start sending and saving thanks achievement. fromUser: [{}] text: [{}]", fromUser, text);
 
         logger.debug("Start create Thanks achievement from slack parsed command");
         ThanksAchievement thanks = new ThanksAchievement(createSlackParsedCommand(fromUser, text));
@@ -102,8 +96,6 @@ public class DefaultGamificationService implements GamificationService {
     @Override
     public String sendInterviewAchievement(String fromUser, String text) {
 
-        logger.debug("Start sending and saving interview achievement. fromUser: [{}] text: [{}]", fromUser, text);
-
         logger.debug("Start create Interview achievement from slack parsed command");
         InterviewAchievement interview = new InterviewAchievement(createSlackParsedCommand(fromUser, text));
         logger.debug("Interview achievement was created. interview: {}", interview.toString());
@@ -114,7 +106,7 @@ public class DefaultGamificationService implements GamificationService {
         if (ids.length == 1) {
             return "Thanks. Your interview saved.";
         } else {
-            return  "Something went wrong and we didn't save your interview";
+            return "Something went wrong and we didn't save your interview";
         }
     }
 

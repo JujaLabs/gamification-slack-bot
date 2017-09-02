@@ -21,6 +21,10 @@ import java.util.List;
 @SpringBootApplication
 public class GamificationSlackBotApplication {
 
+    public static void main(String[] args) {
+        SpringApplication.run(GamificationSlackBotApplication.class);
+    }
+
     @Bean
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate(httpRequestFactory());
@@ -37,9 +41,5 @@ public class GamificationSlackBotApplication {
         converters.add(new MappingJackson2HttpMessageConverter());
         converters.add(new StringHttpMessageConverter());
         return converters;
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(GamificationSlackBotApplication.class);
     }
 }
