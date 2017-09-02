@@ -46,8 +46,8 @@ import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 @AutoConfigureMockMvc
 public class GamificationSlackBotIntegrationTest {
     private final static String INSTANT_MESSAGE = "Your command accepted. Please wait...";
-    private final static String CODENJOY_THANKS_MESSAGE = "Thanks, we awarded the users. \" +\n" +
-            "                    \"First place: %s, Second place: %s, Third place: %s.";
+    private final static String CODENJOY_THANKS_MESSAGE = "Thanks, we awarded the users. " +
+            "First place: %s, Second place: %s, Third place: %s";
     private final static String DAILY_THANKS_MESSAGE = "Thanks, your daily report saved.";
     private final static String THANKS_ONE_THANKS_MESSAGE = "Thanks, your 'thanks' for %s saved.";
     private final static String INTERVIEW_THANKS_MESSAGE = "Thanks. Your interview saved.";
