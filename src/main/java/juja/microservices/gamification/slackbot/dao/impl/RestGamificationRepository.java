@@ -7,6 +7,7 @@ import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchie
 import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
 import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
 import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
+import juja.microservices.gamification.slackbot.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,21 +26,23 @@ import java.util.Arrays;
  */
 
 @Repository
-public class RestGamificationRepository extends AbstractRestRepository implements GamificationRepository {
+public class RestGamificationRepository implements GamificationRepository {
 
     private final RestTemplate restTemplate;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Value("${gamification.rest.api.version}")
+    private String gamificationRestApiVersion;
     @Value("${gamification.baseURL}")
-    private String urlBase;
-    @Value("${endpoint.daily}")
-    private String urlSendDaily;
-    @Value("${endpoint.codenjoy}")
-    private String urlSendCodenjoy;
-    @Value("${endpoint.thanks}")
-    private String urlSendThanks;
-    @Value("${endpoint.interview}")
-    private String urlSendInterview;
+    private String gamificationBaseUrl;
+    @Value("${gamification.endpoint.daily}")
+    private String gamificationSendDailyUrl;
+    @Value("${gamification.endpoint.codenjoy}")
+    private String gamificationSendCodenjoyUrl;
+    @Value("${gamification.endpoint.thanks}")
+    private String gamificationSendThanksUrl;
+    @Value("${gamification.endpoint.interview}")
+    private String gamificationSendInterviewUrl;
 
     @Inject
     public RestGamificationRepository(RestTemplate restTemplate) {
@@ -50,19 +53,19 @@ public class RestGamificationRepository extends AbstractRestRepository implement
     public String[] saveDailyAchievement(DailyAchievement daily) {
         logger.debug("Received Daily achievement: [{}]", daily.toString());
 
-        HttpEntity<DailyAchievement> request = new HttpEntity<>(daily, setupBaseHttpHeaders());
+        HttpEntity<DailyAchievement> request = new HttpEntity<>(daily, Utils.setupJsonHttpHeaders());
         String[] result;
-
+        String gamificationServiceURL = gamificationBaseUrl + "/" + gamificationRestApiVersion + gamificationSendDailyUrl;
         try {
             logger.debug("Started request to Gamification service. Request is : [{}]", request.toString());
-            ResponseEntity<String[]> response = restTemplate.exchange(urlBase + urlSendDaily,
+            ResponseEntity<String[]> response = restTemplate.exchange(gamificationServiceURL,
                     HttpMethod.POST, request, String[].class);
             result = response.getBody();
             logger.debug("Finished request to Gamification service. Response is: [{}]", response.toString());
         } catch (HttpClientErrorException ex) {
-            ApiError error = convertToApiError(ex);
+            ApiError error = Utils.convertToApiError(ex);
             logger.warn("Gamification service returned an error: [{}]", error);
-            throw new GamificationExchangeException(convertToApiError(ex), ex);
+            throw new GamificationExchangeException(Utils.convertToApiError(ex), ex);
         }
 
         logger.info("Saved Daily achievement: [{}]", Arrays.toString(result));
@@ -73,17 +76,18 @@ public class RestGamificationRepository extends AbstractRestRepository implement
     public String[] saveCodenjoyAchievement(CodenjoyAchievement codenjoy) {
         logger.debug("Received Codenjoy achievement: [{}]", codenjoy.toString());
 
-        HttpEntity<CodenjoyAchievement> request = new HttpEntity<>(codenjoy, setupBaseHttpHeaders());
+        HttpEntity<CodenjoyAchievement> request = new HttpEntity<>(codenjoy, Utils.setupJsonHttpHeaders());
         String[] result;
+        String gamificationServiceURL = gamificationBaseUrl + "/" + gamificationRestApiVersion + gamificationSendCodenjoyUrl;
 
         try {
             logger.debug("Started request to Gamification service. Request is : [{}]", request.toString());
-            ResponseEntity<String[]> response = restTemplate.exchange(urlBase + urlSendCodenjoy,
+            ResponseEntity<String[]> response = restTemplate.exchange(gamificationServiceURL,
                     HttpMethod.POST, request, String[].class);
             result = response.getBody();
             logger.debug("Finished request to Gamification service. Response is: [{}]", response.toString());
         } catch (HttpClientErrorException ex) {
-            ApiError error = convertToApiError(ex);
+            ApiError error = Utils.convertToApiError(ex);
             logger.warn("Gamification service returned an error: [{}]", error);
             throw new GamificationExchangeException(error, ex);
         }
@@ -95,19 +99,19 @@ public class RestGamificationRepository extends AbstractRestRepository implement
     public String[] saveThanksAchievement(ThanksAchievement thanks) {
         logger.debug("Received Thanks achievement: [{}]", thanks.toString());
 
-        HttpEntity<ThanksAchievement> request = new HttpEntity<>(thanks, setupBaseHttpHeaders());
+        HttpEntity<ThanksAchievement> request = new HttpEntity<>(thanks, Utils.setupJsonHttpHeaders());
         String[] result;
-
+        String gamificationServiceURL = gamificationBaseUrl + "/" + gamificationRestApiVersion + gamificationSendThanksUrl;
         try {
             logger.debug("Started request to Gamification service. Request is : [{}]", request.toString());
-            ResponseEntity<String[]> response = restTemplate.exchange(urlBase + urlSendThanks,
+            ResponseEntity<String[]> response = restTemplate.exchange(gamificationServiceURL,
                     HttpMethod.POST, request, String[].class);
             result = response.getBody();
             logger.debug("Finished request to Gamification service. Response is: [{}]", response.toString());
         } catch (HttpClientErrorException ex) {
-            ApiError error = convertToApiError(ex);
+            ApiError error = Utils.convertToApiError(ex);
             logger.warn("Gamification service returned an error: [{}]", error);
-            throw new GamificationExchangeException(convertToApiError(ex), ex);
+            throw new GamificationExchangeException(Utils.convertToApiError(ex), ex);
         }
 
         logger.info("Saved Thanks achievements: [{}]", Arrays.toString(result));
@@ -118,24 +122,22 @@ public class RestGamificationRepository extends AbstractRestRepository implement
     public String[] saveInterviewAchievement(InterviewAchievement interview) {
         logger.debug("Received Interview achievement: [{}]", interview.toString());
 
-        HttpEntity<InterviewAchievement> request = new HttpEntity<>(interview, setupBaseHttpHeaders());
+        HttpEntity<InterviewAchievement> request = new HttpEntity<>(interview, Utils.setupJsonHttpHeaders());
         String[] result;
-
+        String gamificationServiceURL = gamificationBaseUrl + "/" + gamificationRestApiVersion + gamificationSendInterviewUrl;
         try {
             logger.debug("Started request to Gamification service. Request is : [{}]", request.toString());
-            ResponseEntity<String[]> response = restTemplate.exchange(urlBase + urlSendInterview,
+            ResponseEntity<String[]> response = restTemplate.exchange(gamificationServiceURL,
                     HttpMethod.POST, request, String[].class);
             result = response.getBody();
             logger.debug("Finished request to Gamification service. Response is: [{}]", response.toString());
         } catch (HttpClientErrorException ex) {
-            ApiError error = convertToApiError(ex);
+            ApiError error = Utils.convertToApiError(ex);
             logger.warn("Gamification service returned an error: [{}]", error);
-            throw new GamificationExchangeException(convertToApiError(ex), ex);
+            throw new GamificationExchangeException(Utils.convertToApiError(ex), ex);
         }
 
         logger.info("Saved Interview achievements: [{}]", Arrays.toString(result));
         return result;
     }
-
-
 }

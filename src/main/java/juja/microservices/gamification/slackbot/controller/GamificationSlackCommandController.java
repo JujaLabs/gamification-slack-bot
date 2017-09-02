@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -20,33 +20,34 @@ import java.io.PrintWriter;
 
 /**
  * @author Nikolay Horushko
+ * @author Ivan Shapovalov
  * @author Konstantin Sergey
  */
 @RestController
+@RequestMapping(value = "/" + "${gamification.slackbot.rest.api.version}" + "${gamification.slackbot.commandsUrl}")
 public class GamificationSlackCommandController {
+
     private final static String INSTANT_MESSAGE = "Your command accepted. Please wait...";
     private final static String SORRY_MESSAGE = "Sorry! You're not lucky enough to use our slack command.";
 
-    @Value("${slack.slashCommandToken}")
-    private String slackToken;
-
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Value("${slack.slashCommandToken}")
+    private String slackToken;
     private GamificationService gamificationService;
     private RestTemplate restTemplate;
     private ExceptionsHandler exceptionsHandler;
 
     @Inject
     public GamificationSlackCommandController(GamificationService gamificationService,
-                                               RestTemplate restTemplate,
-                                               ExceptionsHandler exceptionsHandler) {
+                                              RestTemplate restTemplate,
+                                              ExceptionsHandler exceptionsHandler) {
         this.gamificationService = gamificationService;
         this.restTemplate = restTemplate;
         this.exceptionsHandler = exceptionsHandler;
     }
 
-    @RequestMapping(value = "/commands/codenjoy",
-            method = RequestMethod.POST,
+    @PostMapping(value = "${gamification.slackbot.endpoint.codenjoy}",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandCodenjoy(@RequestParam("token") String token,
                                               @RequestParam("user_name") String fromUser,
@@ -69,13 +70,11 @@ public class GamificationSlackCommandController {
         logger.info("Codenjoy command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
                 fromUser, text, responseToSlack);
 
-//        return new RichMessage(responseToSlack);
         RichMessage message = new RichMessage(responseToSlack);
         sendDelayedResponseMessage(responseUrl, message);
     }
 
-    @RequestMapping(value = "/commands/daily",
-            method = RequestMethod.POST,
+    @PostMapping(value = "${gamification.slackbot.endpoint.daily}",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandDaily(@RequestParam("token") String token,
                                            @RequestParam("user_name") String fromUser,
@@ -98,13 +97,11 @@ public class GamificationSlackCommandController {
         logger.info("Daily command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
                 fromUser, text, responseToSlack);
 
-//        return new RichMessage(responseToSlack);
         RichMessage message = new RichMessage(responseToSlack);
         sendDelayedResponseMessage(responseUrl, message);
     }
 
-    @RequestMapping(value = "/commands/thanks",
-            method = RequestMethod.POST,
+    @PostMapping(value = "${gamification.slackbot.endpoint.thanks}",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandThanks(@RequestParam("token") String token,
                                             @RequestParam("user_name") String fromUser,
@@ -126,13 +123,11 @@ public class GamificationSlackCommandController {
         logger.info("Thanks command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
                 fromUser, text, responseToSlack);
 
-//        return new RichMessage(responseToSlack);
         RichMessage message = new RichMessage(responseToSlack);
         sendDelayedResponseMessage(responseUrl, message);
     }
 
-    @RequestMapping(value = "/commands/interview",
-            method = RequestMethod.POST,
+    @PostMapping(value = "${gamification.slackbot.endpoint.interview}",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandInterview(@RequestParam("token") String token,
                                                @RequestParam("user_name") String fromUser,
@@ -155,13 +150,8 @@ public class GamificationSlackCommandController {
         logger.info("Interview command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
                 fromUser, text, responseToSlack);
 
-//        return new RichMessage(responseToSlack);
         RichMessage message = new RichMessage(responseToSlack);
         sendDelayedResponseMessage(responseUrl, message);
-    }
-
-    private RichMessage getRichMessageInvalidSlackCommand() {
-        return new RichMessage("Sorry! You're not lucky enough to use our slack command.");
     }
 
     private void sendInstantResponseMessage(HttpServletResponse response, String message) throws IOException {

@@ -5,6 +5,7 @@ import juja.microservices.gamification.slackbot.exceptions.ApiError;
 import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
 import juja.microservices.gamification.slackbot.model.DTO.SlackNameRequest;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import juja.microservices.gamification.slackbot.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,15 +25,17 @@ import java.util.List;
  */
 
 @Repository
-public class RestUserRepository extends AbstractRestRepository implements UserRepository {
+public class RestUserRepository implements UserRepository {
 
     private final RestTemplate restTemplate;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${user.baseURL}")
-    private String urlBase;
-    @Value("${endpoint.usersBySlackNames}")
-    private String urlGetUser;
+    @Value("${users.rest.api.version}")
+    private String usersRestApiVersion;
+    @Value("${users.baseURL}")
+    private String usersBaseUrl;
+    @Value("${users.endpoint.usersBySlackNames}")
+    private String usersFindUsersBySlackNamesUrl;
 
 
     @Inject
@@ -43,6 +46,7 @@ public class RestUserRepository extends AbstractRestRepository implements UserRe
     @Override
     public List<UserDTO> findUsersBySlackNames(List<String> slackNames) {
         logger.debug("Received SlackNames : [{}]", slackNames);
+        String userServiceURL = usersBaseUrl + usersRestApiVersion + usersFindUsersBySlackNamesUrl;
 
         for (int i = 0; i < slackNames.size(); i++) {
             if (!slackNames.get(i).startsWith("@")) {
@@ -53,17 +57,17 @@ public class RestUserRepository extends AbstractRestRepository implements UserRe
         }
 
         SlackNameRequest slackNameRequest = new SlackNameRequest(slackNames);
-        HttpEntity<SlackNameRequest> request = new HttpEntity<>(slackNameRequest, setupBaseHttpHeaders());
+        HttpEntity<SlackNameRequest> request = new HttpEntity<>(slackNameRequest, Utils.setupJsonHttpHeaders());
 
         List<UserDTO> result;
         try {
             logger.debug("Started request to Users service. Request is : [{}]", request.toString());
-            ResponseEntity<UserDTO[]> response = restTemplate.exchange(urlBase + urlGetUser,
+            ResponseEntity<UserDTO[]> response = restTemplate.exchange(userServiceURL,
                     HttpMethod.POST, request, UserDTO[].class);
             logger.debug("Finished request to Users service. Response is: [{}]", response.toString());
             result = Arrays.asList(response.getBody());
         } catch (HttpClientErrorException ex) {
-            ApiError error = convertToApiError(ex);
+            ApiError error = Utils.convertToApiError(ex);
             logger.warn("Users service returned an error: [{}]", error);
             throw new UserExchangeException(error, ex);
         }
