@@ -44,7 +44,7 @@ public class SlackNameHandlerService {
             logger.debug("add '@' to slack name: [{}]", fromSlackName);
             fromSlackName = "@" + fromSlackName;
         }
-        return new SlackParsedCommand(fromSlackName, ""+text, receiveUsersMap(fromSlackName, text));
+        return new SlackParsedCommand(fromSlackName, text, receiveUsersMap(fromSlackName, text));
     }
 
     private Map<String, UserDTO> receiveUsersMap(String fromSlackName, String text) {

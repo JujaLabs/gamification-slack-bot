@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 @ToString(exclude = {"SLACK_NAME_PATTERN", "logger"})
 public class SlackParsedCommand {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final String SLACK_NAME_PATTERN = "\\s@([a-zA-z0-9\\.\\_\\-]){1,21}";
+    private final String SLACK_NAME_PATTERN = "@([a-zA-z0-9\\.\\_\\-]){1,21}";
     private String fromSlackName;
     private String text;
     private List<String> slackNamesInText;
@@ -70,7 +70,7 @@ public class SlackParsedCommand {
     private List<String> receiveAllSlackNames(String text) {
         List<String> result = new ArrayList<>();
         Pattern pattern = Pattern.compile(SLACK_NAME_PATTERN);
-        Matcher matcher = pattern.matcher(" " + text);
+        Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
             result.add(matcher.group().trim());
         }
