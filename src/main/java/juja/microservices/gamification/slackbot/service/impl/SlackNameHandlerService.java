@@ -30,7 +30,7 @@ public class SlackNameHandlerService {
      * ([a-z0-9\.\_\-]){1,21}
      * quick test regExp http://regexr.com/
      */
-    private final String SLACK_NAME_PATTERN = "\\s@([a-zA-z0-9\\.\\_\\-]){1,21}";
+    private final String SLACK_NAME_PATTERN = "@([a-zA-z0-9\\.\\_\\-]){1,21}";
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -60,7 +60,7 @@ public class SlackNameHandlerService {
     private List<String> receiveAllSlackNames(String text) {
         List<String> result = new ArrayList<>();
         Pattern pattern = Pattern.compile(SLACK_NAME_PATTERN);
-        Matcher matcher = pattern.matcher(" "+text);
+        Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
             result.add(matcher.group().trim());
         }
