@@ -31,10 +31,6 @@ public class RestGamificationRepository implements GamificationRepository {
     private final RestTemplate restTemplate;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${gamification.rest.api.version}")
-    private String gamificationRestApiVersion;
-    @Value("${gamification.baseURL}")
-    private String gamificationBaseUrl;
     @Value("${gamification.endpoint.daily}")
     private String gamificationSendDailyUrl;
     @Value("${gamification.endpoint.codenjoy}")
@@ -55,10 +51,9 @@ public class RestGamificationRepository implements GamificationRepository {
 
         HttpEntity<DailyAchievement> request = new HttpEntity<>(daily, Utils.setupJsonHttpHeaders());
         String[] result;
-        String gamificationServiceURL = gamificationBaseUrl + "/" + gamificationRestApiVersion + gamificationSendDailyUrl;
         try {
             logger.debug("Started request to Gamification service. Request is : [{}]", request.toString());
-            ResponseEntity<String[]> response = restTemplate.exchange(gamificationServiceURL,
+            ResponseEntity<String[]> response = restTemplate.exchange(gamificationSendDailyUrl,
                     HttpMethod.POST, request, String[].class);
             result = response.getBody();
             logger.debug("Finished request to Gamification service. Response is: [{}]", response.toString());
@@ -78,11 +73,10 @@ public class RestGamificationRepository implements GamificationRepository {
 
         HttpEntity<CodenjoyAchievement> request = new HttpEntity<>(codenjoy, Utils.setupJsonHttpHeaders());
         String[] result;
-        String gamificationServiceURL = gamificationBaseUrl + "/" + gamificationRestApiVersion + gamificationSendCodenjoyUrl;
 
         try {
             logger.debug("Started request to Gamification service. Request is : [{}]", request.toString());
-            ResponseEntity<String[]> response = restTemplate.exchange(gamificationServiceURL,
+            ResponseEntity<String[]> response = restTemplate.exchange(gamificationSendCodenjoyUrl,
                     HttpMethod.POST, request, String[].class);
             result = response.getBody();
             logger.debug("Finished request to Gamification service. Response is: [{}]", response.toString());
@@ -101,10 +95,9 @@ public class RestGamificationRepository implements GamificationRepository {
 
         HttpEntity<ThanksAchievement> request = new HttpEntity<>(thanks, Utils.setupJsonHttpHeaders());
         String[] result;
-        String gamificationServiceURL = gamificationBaseUrl + "/" + gamificationRestApiVersion + gamificationSendThanksUrl;
         try {
             logger.debug("Started request to Gamification service. Request is : [{}]", request.toString());
-            ResponseEntity<String[]> response = restTemplate.exchange(gamificationServiceURL,
+            ResponseEntity<String[]> response = restTemplate.exchange(gamificationSendThanksUrl,
                     HttpMethod.POST, request, String[].class);
             result = response.getBody();
             logger.debug("Finished request to Gamification service. Response is: [{}]", response.toString());
@@ -124,10 +117,9 @@ public class RestGamificationRepository implements GamificationRepository {
 
         HttpEntity<InterviewAchievement> request = new HttpEntity<>(interview, Utils.setupJsonHttpHeaders());
         String[] result;
-        String gamificationServiceURL = gamificationBaseUrl + "/" + gamificationRestApiVersion + gamificationSendInterviewUrl;
         try {
             logger.debug("Started request to Gamification service. Request is : [{}]", request.toString());
-            ResponseEntity<String[]> response = restTemplate.exchange(gamificationServiceURL,
+            ResponseEntity<String[]> response = restTemplate.exchange(gamificationSendInterviewUrl,
                     HttpMethod.POST, request, String[].class);
             result = response.getBody();
             logger.debug("Finished request to Gamification service. Response is: [{}]", response.toString());
