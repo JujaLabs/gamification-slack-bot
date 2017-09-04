@@ -3,10 +3,7 @@ package juja.microservices.gamification.slackbot.dao.impl;
 import juja.microservices.gamification.slackbot.dao.GamificationRepository;
 import juja.microservices.gamification.slackbot.exceptions.ApiError;
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
-import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +24,8 @@ import java.util.Arrays;
 @Repository
 public class RestGamificationRepository extends AbstractRestRepository implements GamificationRepository {
 
+    private final String REST_SERVICE_NAME = "gamification";
+
     private final RestTemplate restTemplate;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -40,6 +39,8 @@ public class RestGamificationRepository extends AbstractRestRepository implement
     private String urlSendThanks;
     @Value("${endpoint.interview}")
     private String urlSendInterview;
+    @Value("${endpoint.team}")
+    private String urlSendTeam;
 
     @Inject
     public RestGamificationRepository(RestTemplate restTemplate) {
@@ -60,9 +61,9 @@ public class RestGamificationRepository extends AbstractRestRepository implement
             result = response.getBody();
             logger.debug("Finished request to Gamification service. Response is: [{}]", response.toString());
         } catch (HttpClientErrorException ex) {
-            ApiError error = convertToApiError(ex);
+            ApiError error = convertToApiError(ex, REST_SERVICE_NAME);
             logger.warn("Gamification service returned an error: [{}]", error);
-            throw new GamificationExchangeException(convertToApiError(ex), ex);
+            throw new GamificationExchangeException(convertToApiError(ex, REST_SERVICE_NAME), ex);
         }
 
         logger.info("Saved Daily achievement: [{}]", Arrays.toString(result));
@@ -83,7 +84,7 @@ public class RestGamificationRepository extends AbstractRestRepository implement
             result = response.getBody();
             logger.debug("Finished request to Gamification service. Response is: [{}]", response.toString());
         } catch (HttpClientErrorException ex) {
-            ApiError error = convertToApiError(ex);
+            ApiError error = convertToApiError(ex, REST_SERVICE_NAME);
             logger.warn("Gamification service returned an error: [{}]", error);
             throw new GamificationExchangeException(error, ex);
         }
@@ -105,9 +106,9 @@ public class RestGamificationRepository extends AbstractRestRepository implement
             result = response.getBody();
             logger.debug("Finished request to Gamification service. Response is: [{}]", response.toString());
         } catch (HttpClientErrorException ex) {
-            ApiError error = convertToApiError(ex);
+            ApiError error = convertToApiError(ex, REST_SERVICE_NAME);
             logger.warn("Gamification service returned an error: [{}]", error);
-            throw new GamificationExchangeException(convertToApiError(ex), ex);
+            throw new GamificationExchangeException(convertToApiError(ex, REST_SERVICE_NAME), ex);
         }
 
         logger.info("Saved Thanks achievements: [{}]", Arrays.toString(result));
@@ -128,12 +129,35 @@ public class RestGamificationRepository extends AbstractRestRepository implement
             result = response.getBody();
             logger.debug("Finished request to Gamification service. Response is: [{}]", response.toString());
         } catch (HttpClientErrorException ex) {
-            ApiError error = convertToApiError(ex);
+            ApiError error = convertToApiError(ex, REST_SERVICE_NAME);
             logger.warn("Gamification service returned an error: [{}]", error);
-            throw new GamificationExchangeException(convertToApiError(ex), ex);
+            throw new GamificationExchangeException(convertToApiError(ex, REST_SERVICE_NAME), ex);
         }
 
         logger.info("Saved Interview achievements: [{}]", Arrays.toString(result));
+        return result;
+    }
+
+    @Override
+    public String[] saveTeamAchievement(TeamAchievement team) {
+        logger.debug("Received Team achievement: [{}]", team.toString());
+
+        HttpEntity<TeamAchievement> request = new HttpEntity<>(team, setupBaseHttpHeaders());
+        String[] result;
+
+        try {
+            logger.debug("Started request to Gamification service. Request is : [{}]", request.toString());
+            ResponseEntity<String[]> response = restTemplate.exchange(urlBase + urlSendTeam,
+                    HttpMethod.POST, request, String[].class);
+            result = response.getBody();
+            logger.debug("Finished request to Gamification service. Response is: [{}]", response.toString());
+        } catch (HttpClientErrorException ex) {
+            ApiError error = convertToApiError(ex, REST_SERVICE_NAME);
+            logger.warn("Gamification service returned an error: [{}]", error);
+            throw new GamificationExchangeException(convertToApiError(ex, REST_SERVICE_NAME), ex);
+        }
+
+        logger.info("Saved Team achievements: [{}]", Arrays.toString(result));
         return result;
     }
 

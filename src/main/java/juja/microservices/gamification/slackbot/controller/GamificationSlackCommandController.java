@@ -120,6 +120,29 @@ public class GamificationSlackCommandController {
         return new RichMessage(responseToSlack);
     }
 
+    @RequestMapping(value = "/commands/team",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public RichMessage onReceiveSlashCommandTeam(@RequestParam("token") String token,
+                                                  @RequestParam("user_name") String fromUser,
+                                                  @RequestParam("text") String text) {
+
+        logger.debug("Received slash command Team achievement: user: [{}] command: [{}] token: [{}]",
+                fromUser, text, token);
+
+        if (!token.equals(slackToken)) {
+            logger.warn("Received invalid slack token: [{}] in command Team for user: [{}] ", token, fromUser);
+            return getRichMessageInvalidSlackCommand();
+        }
+
+        String responseToSlack = gamificationService.sendTeamAchievement(fromUser, text);
+
+        logger.info("Team command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
+                fromUser, text, responseToSlack);
+
+        return new RichMessage(responseToSlack);
+    }
+
     private RichMessage getRichMessageInvalidSlackCommand() {
         return new RichMessage("Sorry! You're not lucky enough to use our slack command.");
     }

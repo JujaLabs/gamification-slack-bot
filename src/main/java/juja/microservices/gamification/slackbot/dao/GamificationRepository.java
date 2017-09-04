@@ -1,9 +1,6 @@
 package juja.microservices.gamification.slackbot.dao;
 
-import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.*;
 
 /**
  * @author Danil Kuznetsov
@@ -19,4 +16,5 @@ public interface GamificationRepository {
 
     String[] saveInterviewAchievement(InterviewAchievement interview);
 
+    String[] saveTeamAchievement(TeamAchievement team);
 }

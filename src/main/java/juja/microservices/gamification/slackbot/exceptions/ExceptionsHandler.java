@@ -37,4 +37,10 @@ public class ExceptionsHandler {
         logger.warn("GamificationExchangeException : {}", ex.detailMessage());
         return new RichMessage(ex.getMessage());
     }
+
+    @ExceptionHandler(TeamExchangeException.class)
+    public RichMessage handleTeamExchangeException(TeamExchangeException ex) {
+        logger.warn("TeamExchangeException : {}", ex.detailMessage());
+        return new RichMessage(ex.getMessage());
+    }
 }

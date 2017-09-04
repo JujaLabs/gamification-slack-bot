@@ -21,15 +21,16 @@ public abstract class AbstractRestRepository {
         return headers;
     }
 
-    protected ApiError convertToApiError(HttpClientErrorException httpClientErrorException) {
+    protected ApiError convertToApiError(HttpClientErrorException httpClientErrorException, String serviceName) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.readValue(httpClientErrorException.getResponseBodyAsString(), ApiError.class);
         } catch (IOException e) {
             return new ApiError(
                     500, "BotInternalError",
-                    "I'm, sorry. I cannot parse api error message from remote service :(",
-                    "Cannot parse api error message from remote service",
+                    "I'm, sorry. I cannot parse api error message from remote ".concat(serviceName)
+                            .concat(" service :("),
+                    "Cannot parse api error message from remote ".concat(serviceName).concat( " service"),
                     e.getMessage(),
                     Arrays.asList(httpClientErrorException.getMessage())
             );
