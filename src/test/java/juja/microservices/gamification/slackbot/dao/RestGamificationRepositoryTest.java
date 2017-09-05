@@ -1,10 +1,7 @@
 package juja.microservices.gamification.slackbot.dao;
 
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
-import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -228,7 +225,7 @@ public class RestGamificationRepositoryTest {
         //given
         String expectedRequestBody = "{\"from\":\"uuid1\",\"members\":[\"uuid1\",\"uuid2\",\"uuid3\",\"uuid4\"]}";
         String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(urlBase + urlSendTeam))
+        mockServer.expect(requestTo(gamificationTeamUrl))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(),
                         containsString(expectedRequestHeader)))
@@ -247,13 +244,13 @@ public class RestGamificationRepositoryTest {
     @Test
     public void shouldThrowExceptionWhenGamificationRepositoryThrowException() {
         //given
-        mockServer.expect(requestTo(urlBase + urlSendTeam))
+        mockServer.expect(requestTo(gamificationTeamUrl))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withBadRequest().body("bad request"));
 
         //then
         thrown.expect(GamificationExchangeException.class);
-        thrown.expectMessage(containsString("I cannot parse api error message from remote gamification service"));
+        thrown.expectMessage(containsString("I'm, sorry. I cannot parse api error message from remote service :("));
 
         //when
         gamificationRepository.saveTeamAchievement(new TeamAchievement("uuid1",

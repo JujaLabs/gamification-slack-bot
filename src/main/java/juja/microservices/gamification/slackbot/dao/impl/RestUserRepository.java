@@ -5,8 +5,8 @@ import juja.microservices.gamification.slackbot.exceptions.ApiError;
 import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
 import juja.microservices.gamification.slackbot.model.DTO.SlackNameRequest;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
-import juja.microservices.gamification.slackbot.util.Utils;
 import juja.microservices.gamification.slackbot.model.DTO.UuidRequest;
+import juja.microservices.gamification.slackbot.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +37,6 @@ public class RestUserRepository implements UserRepository {
     private String usersFindUsersBySlackNamesUrl;
     @Value("${users.endpoint.usersByUuids}")
     private String usersFindUsersByUuidsUrl;
-
 
     @Inject
     public RestUserRepository(RestTemplate restTemplate) {
@@ -81,17 +80,17 @@ public class RestUserRepository implements UserRepository {
         logger.debug("Received uuids : [{}]", uuids);
 
         UuidRequest uuidRequest = new UuidRequest(uuids);
-        HttpEntity<UuidRequest> request = new HttpEntity<>(uuidRequest, setupBaseHttpHeaders());
+        HttpEntity<UuidRequest> request = new HttpEntity<>(uuidRequest, Utils.setupJsonHttpHeaders());
 
         Set<UserDTO> result;
         try {
             logger.debug("Started request to Users service. Request is : [{}]", request.toString());
-            ResponseEntity<UserDTO[]> response = restTemplate.exchange(urlBase + urlGetUserByUuids,
+            ResponseEntity<UserDTO[]> response = restTemplate.exchange(usersFindUsersByUuidsUrl,
                     HttpMethod.POST, request, UserDTO[].class);
             logger.debug("Finished request to Users service. Response is: [{}]", response.toString());
             result = new LinkedHashSet<>(Arrays.asList(response.getBody()));
         } catch (HttpClientErrorException ex) {
-            ApiError error = convertToApiError(ex, REST_SERVICE_NAME);
+            ApiError error = Utils.convertToApiError(ex);
             logger.warn("Users service returned an error: [{}]", error);
             throw new UserExchangeException(error, ex);
         }

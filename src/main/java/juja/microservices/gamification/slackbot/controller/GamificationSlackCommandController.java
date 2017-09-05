@@ -1,5 +1,6 @@
 package juja.microservices.gamification.slackbot.controller;
 
+import juja.microservices.gamification.slackbot.exceptions.ExceptionsHandler;
 import juja.microservices.gamification.slackbot.service.GamificationService;
 import me.ramswaroop.jbot.core.slack.models.RichMessage;
 import org.slf4j.Logger;
@@ -152,34 +153,32 @@ public class GamificationSlackCommandController {
         sendDelayedResponseMessage(responseUrl, message);
     }
 
-    //TODO
-    @RequestMapping(value = "/commands/team",
-            method = RequestMethod.POST,
+    @PostMapping(value = "${gamification.slackbot.endpoint.team}",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public RichMessage onReceiveSlashCommandTeam(@RequestParam("token") String token,
-                                                 @RequestParam("user_name") String fromUser,
-                                                 @RequestParam("text") String text) {
+    public void onReceiveSlashCommandTeam(@RequestParam("token") String token,
+                                          @RequestParam("user_name") String fromUser,
+                                          @RequestParam("text") String text,
+                                          @RequestParam("response_url") String responseUrl,
+                                          HttpServletResponse servletResponse) throws IOException {
 
         logger.debug("Received slash command Team achievement: user: [{}] command: [{}] token: [{}]",
                 fromUser, text, token);
 
         if (!token.equals(slackToken)) {
             logger.warn("Received invalid slack token: [{}] in command Team for user: [{}] ", token, fromUser);
-            return getRichMessageInvalidSlackCommand();
+            sendInstantResponseMessage(servletResponse, SORRY_MESSAGE);
         }
+        exceptionsHandler.setResponseUrl(responseUrl);
+        sendInstantResponseMessage(servletResponse, INSTANT_MESSAGE);
 
         String responseToSlack = gamificationService.sendTeamAchievement(fromUser, text);
 
         logger.info("Team command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
                 fromUser, text, responseToSlack);
 
-        return new RichMessage(responseToSlack);
+        RichMessage message = new RichMessage(responseToSlack);
+        sendDelayedResponseMessage(responseUrl, message);
     }
-
-    //TODO
-//    private RichMessage getRichMessageInvalidSlackCommand() {
-//        return new RichMessage("Sorry! You're not lucky enough to use our slack command.");
-//    }
 
     private void sendInstantResponseMessage(HttpServletResponse response, String message) throws IOException {
         logger.debug("Before sending instant response message '{}' ", message);

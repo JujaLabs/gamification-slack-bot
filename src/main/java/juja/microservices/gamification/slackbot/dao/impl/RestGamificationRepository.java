@@ -3,10 +3,7 @@ package juja.microservices.gamification.slackbot.dao.impl;
 import juja.microservices.gamification.slackbot.dao.GamificationRepository;
 import juja.microservices.gamification.slackbot.exceptions.ApiError;
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
-import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.*;
 import juja.microservices.gamification.slackbot.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,19 +136,19 @@ public class RestGamificationRepository implements GamificationRepository {
     public String[] saveTeamAchievement(TeamAchievement team) {
         logger.debug("Received Team achievement: [{}]", team.toString());
 
-        HttpEntity<TeamAchievement> request = new HttpEntity<>(team, setupBaseHttpHeaders());
+        HttpEntity<TeamAchievement> request = new HttpEntity<>(team, Utils.setupJsonHttpHeaders());
         String[] result;
 
         try {
             logger.debug("Started request to Gamification service. Request is : [{}]", request.toString());
-            ResponseEntity<String[]> response = restTemplate.exchange(urlBase + urlSendTeam,
+            ResponseEntity<String[]> response = restTemplate.exchange(gamificationSendTeamUrl,
                     HttpMethod.POST, request, String[].class);
             result = response.getBody();
             logger.debug("Finished request to Gamification service. Response is: [{}]", response.toString());
         } catch (HttpClientErrorException ex) {
-            ApiError error = convertToApiError(ex, REST_SERVICE_NAME);
+            ApiError error = Utils.convertToApiError(ex);
             logger.warn("Gamification service returned an error: [{}]", error);
-            throw new GamificationExchangeException(convertToApiError(ex, REST_SERVICE_NAME), ex);
+            throw new GamificationExchangeException(Utils.convertToApiError(ex), ex);
         }
 
         logger.info("Saved Team achievements: [{}]", Arrays.toString(result));

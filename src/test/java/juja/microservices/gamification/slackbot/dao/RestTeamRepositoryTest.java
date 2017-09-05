@@ -38,10 +38,8 @@ public class RestTeamRepositoryTest {
 
     private MockRestServiceServer mockServer;
 
-    @Value("${teams.baseURL}")
-    private String urlBase;
-    @Value("${endpoint.teamByUserUuid}")
-    private String urlGetTeamByUserUuid;
+    @Value("${teams.endpoint.teamByUserUuid}")
+    private String teamsGetTeamByUserUuidUrl;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -54,7 +52,7 @@ public class RestTeamRepositoryTest {
     @Test
     public void getTeam() {
         //given
-        mockServer.expect(requestTo(urlBase + urlGetTeamByUserUuid + "uuid1"))
+        mockServer.expect(requestTo(teamsGetTeamByUserUuidUrl + "/uuid1"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(
                         "{\"id\":\"123\",\"fakefield\":\"blablabla\",\"members\":[\"uuid1\",\"uuid2\",\"uuid3\",\"uuid4\"]}",
@@ -71,13 +69,13 @@ public class RestTeamRepositoryTest {
     @Test
     public void shouldThrowExceptionWhenTeamRepositoryThrowException() {
         //given
-        mockServer.expect(requestTo(urlBase + urlGetTeamByUserUuid + "uuid1"))
+        mockServer.expect(requestTo(teamsGetTeamByUserUuidUrl + "/uuid1"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withBadRequest().body("bad request"));
 
         //then
         thrown.expect(TeamExchangeException.class);
-        thrown.expectMessage(containsString("I cannot parse api error message from remote team service"));
+        thrown.expectMessage(containsString("I'm, sorry. I cannot parse api error message from remote service :("));
 
         //when
         teamRepository.getTeamByUserUuid("uuid1");

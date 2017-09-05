@@ -16,8 +16,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
@@ -79,7 +78,7 @@ public class RestUserRepositoryTest {
     public void shouldReturnListUserDTOWhenSendUuidsSet() {
         //given
         Set<String> uuids = new LinkedHashSet<>(Arrays.asList("uuid1", "uuid2"));
-        mockServer.expect(requestTo(urlBase + urlGetUserByUuids))
+        mockServer.expect(requestTo(usersFindUsersByUuidsUrl))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string("{\"uuids\":[\"uuid1\",\"uuid2\"]}"))
@@ -96,13 +95,13 @@ public class RestUserRepositoryTest {
     @Test
     public void shouldThrowExceptionWhenUserRepositoryThrowException() {
         //given
-        mockServer.expect(requestTo(urlBase + urlGetUserByUuids))
+        mockServer.expect(requestTo(usersFindUsersByUuidsUrl))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withBadRequest().body("bad request"));
 
         //then
         thrown.expect(UserExchangeException.class);
-        thrown.expectMessage(containsString("I cannot parse api error message from remote user service"));
+        thrown.expectMessage(containsString("I'm, sorry. I cannot parse api error message from remote service :("));
 
         //when
         userRepository.findUsersByUuids(new HashSet<>(Arrays.asList("uuid1","uuid2")));
