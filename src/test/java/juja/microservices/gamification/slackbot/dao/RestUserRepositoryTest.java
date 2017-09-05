@@ -40,10 +40,6 @@ public class RestUserRepositoryTest {
     @Inject
     private RestTemplate restTemplate;
     private MockRestServiceServer mockServer;
-    @Value("${users.rest.api.version}")
-    private String usersRestApiVersion;
-    @Value("${users.baseURL}")
-    private String usersBaseUrl;
     @Value("${users.endpoint.usersBySlackNames}")
     private String usersFindUsersBySlackNamesUrl;
 
@@ -58,8 +54,7 @@ public class RestUserRepositoryTest {
         List<String> slackNames = new ArrayList<>();
         slackNames.add("bob.slack");
         slackNames.add("@john.slack");
-        String usersFullFindUsersBySlackNamesUrl = usersBaseUrl + usersRestApiVersion + usersFindUsersBySlackNamesUrl;
-        mockServer.expect(requestTo(usersFullFindUsersBySlackNamesUrl))
+        mockServer.expect(requestTo(usersFindUsersBySlackNamesUrl))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string("{\"slackNames\":[\"@bob.slack\",\"@john.slack\"]}"))

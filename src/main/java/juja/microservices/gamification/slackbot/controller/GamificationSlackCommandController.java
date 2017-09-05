@@ -24,7 +24,6 @@ import java.io.PrintWriter;
  * @author Konstantin Sergey
  */
 @RestController
-@RequestMapping(value = "/" + "${gamification.slackbot.rest.api.version}" + "${gamification.slackbot.commandsUrl}")
 public class GamificationSlackCommandController {
 
     private final static String INSTANT_MESSAGE = "Your command accepted. Please wait...";

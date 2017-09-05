@@ -30,10 +30,6 @@ public class RestUserRepository implements UserRepository {
     private final RestTemplate restTemplate;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${users.rest.api.version}")
-    private String usersRestApiVersion;
-    @Value("${users.baseURL}")
-    private String usersBaseUrl;
     @Value("${users.endpoint.usersBySlackNames}")
     private String usersFindUsersBySlackNamesUrl;
 
@@ -46,7 +42,6 @@ public class RestUserRepository implements UserRepository {
     @Override
     public List<UserDTO> findUsersBySlackNames(List<String> slackNames) {
         logger.debug("Received SlackNames : [{}]", slackNames);
-        String userServiceURL = usersBaseUrl + usersRestApiVersion + usersFindUsersBySlackNamesUrl;
 
         for (int i = 0; i < slackNames.size(); i++) {
             if (!slackNames.get(i).startsWith("@")) {
@@ -62,7 +57,7 @@ public class RestUserRepository implements UserRepository {
         List<UserDTO> result;
         try {
             logger.debug("Started request to Users service. Request is : [{}]", request.toString());
-            ResponseEntity<UserDTO[]> response = restTemplate.exchange(userServiceURL,
+            ResponseEntity<UserDTO[]> response = restTemplate.exchange(usersFindUsersBySlackNamesUrl,
                     HttpMethod.POST, request, UserDTO[].class);
             logger.debug("Finished request to Users service. Response is: [{}]", response.toString());
             result = Arrays.asList(response.getBody());
