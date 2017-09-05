@@ -85,7 +85,7 @@ public class SlackParsedCommandTest {
         users.put("@slack2", new UserDTO("uuid2", "@slack2"));
 
         String[] tokens = new String[]{"-t1", "-t2"};
-        String text = "text-t2@slack2 text-t1@slack1 text";
+        String text = "text -t2 @slack2 text -t1 @slack1 text";
         SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //when
         Map<String, UserDTO> result = slackParsedCommand.getUsersWithTokens(tokens);
@@ -103,7 +103,7 @@ public class SlackParsedCommandTest {
         users.put("@slack2", new UserDTO("uuid2", "@slack2"));
 
         String[] tokens = new String[]{"-t1", "-t2"};
-        String text = "text-t2@slack2 -t1text@slack1 text";
+        String text = "text -t2 @slack2 -t1text @slack1 text";
         SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //when
         Map<String, UserDTO> result = slackParsedCommand.getUsersWithTokens(tokens);
@@ -122,7 +122,7 @@ public class SlackParsedCommandTest {
         users.put("@slack3", new UserDTO("uuid3", "@slack3"));
 
         String[] tokens = new String[]{"-t1", "-t2", "-t3"};
-        String text = "text-t2@slack2 -t1text@slack1 text-t3@slack3";
+        String text = "text -t2 @slack2 -t1 text @slack1 text -t3 @slack3";
         SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //when
         Map<String, UserDTO> result = slackParsedCommand.getUsersWithTokens(tokens);
@@ -158,11 +158,11 @@ public class SlackParsedCommandTest {
         users.put("@slack2", new UserDTO("uuid2", "@slack2"));
 
         String[] tokens = new String[]{"-t1", "-t2"};
-        String text = "text-t2@slack2 text-t1 text";
+        String text = "text-t2 @slack2 text -t1 text";
         SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //then
         thrown.expect(WrongCommandFormatException.class);
-        thrown.expectMessage(containsString("The text 'text-t2@slack2 text-t1 text' doesn't " +
+        thrown.expectMessage(containsString("The text 'text-t2 @slack2 text -t1 text' doesn't " +
                 "contain slackName for token '-t1'"));
         //when
         slackParsedCommand.getUsersWithTokens(tokens);
@@ -213,7 +213,7 @@ public class SlackParsedCommandTest {
         users.put("@from", new UserDTO("uuid0", "@from"));
         users.put("@slack1", new UserDTO("uuid1", "@slack1"));
 
-        List<String> slackNames = Arrays.asList(new String[]{"@slack1"});
+        List<String> slackNames = Arrays.asList("@slack1");
         String text = "text text @slack1 text";
         SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //when
@@ -266,7 +266,7 @@ public class SlackParsedCommandTest {
         //when
         String result = slackParsedCommand.getText();
         //then
-        assertEquals("text", result.toString());
+        assertEquals("text", result);
     }
 
     @Test

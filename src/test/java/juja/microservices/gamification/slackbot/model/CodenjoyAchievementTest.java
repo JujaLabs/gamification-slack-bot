@@ -66,7 +66,7 @@ public class CodenjoyAchievementTest {
     @Test
     public void ifWithoutSpaces() throws Exception {
         //given
-        String text = "-2th@slack2 -3th@slack3 -1th@slack1";
+        String text = "-2th @slack2 -3th @slack3 -1th @slack1";
         SlackParsedCommand slackParsedCommand = new SlackParsedCommand(fromSlackName, text, users);
         //when
         CodenjoyAchievement codenjoy = new CodenjoyAchievement(slackParsedCommand);
@@ -78,7 +78,7 @@ public class CodenjoyAchievementTest {
     @Test
     public void ifTextInTheCommand() throws Exception {
         //given
-        String text = "text-2th @slack2 text text-3th@slack3 -1th @slack1";
+        String text = "text -2th @slack2 text text-3th @slack3 -1th @slack1";
         SlackParsedCommand slackParsedCommand = new SlackParsedCommand(fromSlackName, text, users);
         //when
         CodenjoyAchievement codenjoy = new CodenjoyAchievement(slackParsedCommand);
@@ -90,11 +90,12 @@ public class CodenjoyAchievementTest {
     @Test
     public void ifNotSlackNameForToken() throws Exception {
         //given
-        String text = "-2th@slack2 -3th -1th@slack1";
+        String text = "-2th @slack2 -3th -1th @slack1";
         SlackParsedCommand slackParsedCommand = new SlackParsedCommand(fromSlackName, text, users);
         //then
         thrown.expect(WrongCommandFormatException.class);
-        thrown.expectMessage(containsString("-2th@slack2 -3th -1th@slack1' doesn't contain slackName for token '-3th'"));
+        thrown.expectMessage(containsString("-2th @slack2 -3th -1th @slack1' doesn't contain slackName for token " +
+                "'-3th'"));
         //when
         new CodenjoyAchievement(slackParsedCommand);
     }

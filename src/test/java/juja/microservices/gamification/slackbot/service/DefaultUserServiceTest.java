@@ -9,7 +9,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.inject.Inject;
-
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -17,6 +16,8 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 /**
  * @author Nikolay Horushko
@@ -34,15 +35,16 @@ public class DefaultUserServiceTest {
     @Test
     public void returnUsersListBySlacks() throws Exception {
         //given
-        List<String> slackNamesRequest = Arrays.asList(new String[]{"@slack1", "@slack2"});
-        List<UserDTO> usersResponse = Arrays.asList(new UserDTO[]{new UserDTO("uuid1", "@slack1"),
-                new UserDTO("uuid2", "slack2")});
+        List<String> slackNamesRequest = Arrays.asList("@slack1", "@slack2");
+        List<UserDTO> usersResponse = Arrays.asList(new UserDTO("uuid1", "@slack1"),
+                new UserDTO("uuid2", "slack2"));
         given(userRepository.findUsersBySlackNames(slackNamesRequest)).willReturn(usersResponse);
         //when
         List<UserDTO> result = userService.findUsersBySlackNames(slackNamesRequest);
         //then
-        assertEquals("[UserDTO(uuid=uuid1, slack=@slack1), UserDTO(uuid=uuid2, slack=slack2)]",
-                result.toString());
+        assertEquals("[UserDTO(uuid=uuid1, slack=@slack1), UserDTO(uuid=uuid2, slack=slack2)]", result.toString());
+        verify(userRepository).findUsersBySlackNames(slackNamesRequest);
+        verifyNoMoreInteractions(userRepository);
     }
 
     @Test

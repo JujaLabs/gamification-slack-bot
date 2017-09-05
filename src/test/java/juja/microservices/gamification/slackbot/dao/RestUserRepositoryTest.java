@@ -16,12 +16,16 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -34,23 +38,17 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @SpringBootTest
 public class RestUserRepositoryTest {
 
-    @Inject
-    private UserRepository userRepository;
-
-    @Inject
-    private RestTemplate restTemplate;
-
-    private MockRestServiceServer mockServer;
-
-    @Value("${user.baseURL}")
-    private String urlBase;
-    @Value("${endpoint.usersBySlackNames}")
-    private String urlGetUserBySlackNames;
-    @Value("${endpoint.usersByUuids}")
-    private String urlGetUserByUuids;
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+    @Inject
+    private UserRepository userRepository;
+    @Inject
+    private RestTemplate restTemplate;
+    private MockRestServiceServer mockServer;
+    @Value("${users.endpoint.usersBySlackNames}")
+    private String usersFindUsersBySlackNamesUrl;
+    @Value("${users.endpoint.usersByUuids}")
+    private String usersFindUsersByUuidsUrl;
 
     @Before
     public void setup() {
@@ -61,9 +59,9 @@ public class RestUserRepositoryTest {
     public void shouldReturnListUserDTOWhenSendSlackNameList() {
         //given
         List<String> slackNames = new ArrayList<>();
-        slackNames.add("@bob.slack");
-        slackNames.add("john.slack");
-        mockServer.expect(requestTo(urlBase + urlGetUserBySlackNames))
+        slackNames.add("bob.slack");
+        slackNames.add("@john.slack");
+        mockServer.expect(requestTo(usersFindUsersBySlackNamesUrl))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string("{\"slackNames\":[\"@bob.slack\",\"@john.slack\"]}"))
