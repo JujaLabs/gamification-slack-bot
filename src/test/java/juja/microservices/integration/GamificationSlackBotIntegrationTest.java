@@ -59,11 +59,20 @@ public class GamificationSlackBotIntegrationTest {
     private String urlSendThanks;
     @Value("${endpoint.interview}")
     private String urlSendInterview;
+    @Value("${endpoint.team}")
+    private String urlSendTeam;
 
     @Value("${user.baseURL}")
     private String urlBaseUser;
     @Value("${endpoint.usersBySlackNames}")
-    private String urlGetUser;
+    private String urlGetUserBySlackNames;
+    @Value("${endpoint.usersByUuids}")
+    private String urlGetUserByUuids;
+
+    @Value("${teams.baseURL}")
+    private String urlBaseTeam;
+    @Value("${endpoint.teamByUserUuid}")
+    private String urlGetTeamByUserUuid;
 
     private UserDTO user1 = new UserDTO("f2034f22-562b-4e02-bfcf-ec615c1ba62b", "@slack1");
     private UserDTO user2 = new UserDTO("f2034f33-563c-4e03-bfcf-ec615c1ba63c", "@slack2");
@@ -246,6 +255,43 @@ public class GamificationSlackBotIntegrationTest {
                 .andExpect(jsonPath("$.text").value(EXPECTED_RESPONSE_TO_SLACK));
     }
 
+//    @Test
+//    public void onReceiveSlashCommandTeamReturnOkRichMessage() throws Exception {
+//    TODO Create integration test for team achievement
+//        final String expectedRequestToUserBySlacks =
+//                "{\"slackNames\":[\"@slack1\"]}";
+//        final String expectedResponseFromUserBySlacks = "[{\"uuid\":\"uuid1\",\"slack\":\"@slack1\"}]";
+//        mockSuccessUserService(urlBaseUser + urlGetUserBySlackNames,expectedRequestToUserBySlacks,
+//                expectedResponseFromUserBySlacks);
+//
+//        final String expectedResponseFromTeam = "{\"members\":[\"uuid1\", \"uuid2\", \"uuid3\", \"uuid4\"]}";
+//        mockSuccessTeamService(urlBaseTeam + urlGetTeamByUserUuid + "uuid1", "",
+//                expectedResponseFromTeam);
+//
+//        final String expectedRequestToUserByUuids =
+//                "{\"uuids\":[\"uuid1\",\"uuid2\",\"uuid3\",\"uuid4\"]}";
+//        final String expectedResponseFromUserByUuids = "[{\"uuid\":\"uuid1\",\"slack\":\"@slack1\"}," +
+//                "{\"uuid\":\"uuid2\",\"slack\":\"@slack2\"}," +
+//                "{\"uuid\":\"uuid3\",\"slack\":\"@slack3\"}," +
+//                "{\"uuid\":\"uuid4\",\"slack\":\"@slack4\"}]";
+//        mockSuccessUserService(urlBaseUser + urlGetUserByUuids,expectedRequestToUserByUuids,
+//                expectedResponseFromUserByUuids);
+//
+//        final String expectedRequestToGamification =
+//                "{\"from\":\"uuid1\",\"members\":[\"uuid1\",\"uuid2\",\"uuid3\",\"uuid4\"]}";
+//        final String expectedResponseFromGamification = "[\"101\", \"102\", \"103\", \"104\"]";
+//        mockSuccessGamificationService(urlBaseGamification + urlSendTeam, expectedRequestToGamification,
+//                expectedResponseFromGamification);
+//
+//        final String teamCommandTextFromSlack = "";
+//        final String expectedResponseToSlack = "Thanks, your team report saved.";
+//        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate("/commands/team"),
+//                SlackUrlUtils.getUriVars("slashCommandToken", "/team", teamCommandTextFromSlack))
+//                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.text").value(expectedResponseToSlack));
+//    }
+
     @Test
     public void returnClientErrorMessageWhenUserServiceIsFail() throws Exception {
         final String THANKS_COMMAND_TEXT_FROM_SLACK = "@slack1 thanks @slack2 for your help!";
@@ -288,7 +334,7 @@ public class GamificationSlackBotIntegrationTest {
             slackNames.add(user.getSlack());
         }
         ObjectMapper mapper = new ObjectMapper();
-        mockServer.expect(requestTo(urlBaseUser + urlGetUser))
+        mockServer.expect(requestTo(urlBaseUser + urlGetUserBySlackNames))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string(String.format("{\"slackNames\":%s}", mapper.writeValueAsString(slackNames))))
@@ -318,7 +364,7 @@ public class GamificationSlackBotIntegrationTest {
             slackNames.add(user.getSlack());
         }
         ObjectMapper mapper = new ObjectMapper();
-        mockServer.expect(requestTo(urlBaseUser + urlGetUser))
+        mockServer.expect(requestTo(urlBaseUser + urlGetUserBySlackNames))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string(String.format("{\"slackNames\":%s}", mapper.writeValueAsString(slackNames))))
@@ -333,5 +379,23 @@ public class GamificationSlackBotIntegrationTest {
                 .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
                 .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
 
+    }
+
+    private void mockSuccessUserService(String expectedURI, String expectedRequestBody, String response) {
+        mockServer.expect(requestTo(expectedURI))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(),
+                        containsString("application/json")))
+                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
+                .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
+    }
+
+    private void mockSuccessTeamService(String expectedURI, String expectedRequestBody, String response) {
+        mockServer.expect(requestTo(expectedURI))
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(),
+                        containsString("application/json")))
+                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
+                .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
     }
 }

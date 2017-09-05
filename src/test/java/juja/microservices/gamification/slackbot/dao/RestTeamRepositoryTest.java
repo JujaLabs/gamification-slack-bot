@@ -69,7 +69,7 @@ public class RestTeamRepositoryTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenUserServiceThrowExceptinon() {
+    public void shouldThrowExceptionWhenTeamRepositoryThrowException() {
         //given
         mockServer.expect(requestTo(urlBase + urlGetTeamByUserUuid + "uuid1"))
                 .andExpect(method(HttpMethod.GET))
@@ -82,8 +82,4 @@ public class RestTeamRepositoryTest {
         //when
         teamRepository.getTeamByUserUuid("uuid1");
     }
-
-
-
-
 }

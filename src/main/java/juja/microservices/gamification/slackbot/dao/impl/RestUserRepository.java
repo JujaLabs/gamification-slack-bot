@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -91,7 +91,7 @@ public class RestUserRepository extends AbstractRestRepository implements UserRe
             ResponseEntity<UserDTO[]> response = restTemplate.exchange(urlBase + urlGetUserByUuids,
                     HttpMethod.POST, request, UserDTO[].class);
             logger.debug("Finished request to Users service. Response is: [{}]", response.toString());
-            result = new HashSet<>(Arrays.asList(response.getBody()));
+            result = new LinkedHashSet<>(Arrays.asList(response.getBody()));
         } catch (HttpClientErrorException ex) {
             ApiError error = convertToApiError(ex, REST_SERVICE_NAME);
             logger.warn("Users service returned an error: [{}]", error);

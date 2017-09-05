@@ -134,20 +134,23 @@ public class DefaultGamificationService implements GamificationService {
         String fromUuid = createSlackParsedCommand(fromUser, text).getFromUser().getUuid();
         TeamDTO teamDTO = teamService.getTeamByUserUuid(fromUuid);
         int teamSize = teamDTO.getMembers().size();
+
         TeamAchievement team = new TeamAchievement(fromUuid, teamDTO.getMembers());
         logger.debug("Team achievement was created. team: {}", team.toString());
+
+        Set<UserDTO> users = userService.findUsersByUuids(teamDTO.getMembers());
+        Set<String> slackNames = new LinkedHashSet<>();
+        users.forEach(user -> slackNames.add(user.getSlack()));
+        logger.debug("Slack names for team {} were received: {}", team.toString(), slackNames);
 
         String[] ids = gamificationRepository.saveTeamAchievement(team);
         logger.info("Team achievement was saved with ids: {}", Arrays.toString(ids));
 
         if (ids.length == teamSize) {
-            Set<UserDTO> users = userService.findUsersByUuids(teamDTO.getMembers());
-            Set<String> slackNames = new LinkedHashSet<>();
-            users.forEach(user -> slackNames.add(user.getSlack()));
             return  "Thanks, your team report saved. Members: " + slackNames;
         } else {
             logger.debug("Expected {} saved achievements, but gamification service saved: {} ", teamSize, ids.length);
-            return  "Something went wrong and we didn't save your team report";
+            return  "Something went wrong during saving your team report";
         }
     }
 
