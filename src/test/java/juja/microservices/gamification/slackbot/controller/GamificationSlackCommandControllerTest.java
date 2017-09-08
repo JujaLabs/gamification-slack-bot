@@ -22,7 +22,6 @@ import javax.inject.Inject;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -39,10 +38,11 @@ public class GamificationSlackCommandControllerTest {
 
     private final String SORRY_MESSAGE = "Sorry! You're not lucky enough to use our slack command.";
     private final String INSTANT_MESSAGE = "Your command accepted. Please wait...";
-    private final String responseUrl = "http://example.com";
+    private final String RESPONSE_URL = "http://example.com";
 
     private final String FROM_USER_SLACK_NAME = "@from-user";
     private final String VALID_SLASH_COMMAND_TOKEN = "slashCommandToken";
+
 
     @Rule
     public ExpectedException exceptions = ExpectedException.none();
@@ -77,7 +77,7 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(SORRY_MESSAGE));
-        verify(exceptionsHandler).setResponseUrl(anyString());
+        verify(exceptionsHandler).setResponseUrl(RESPONSE_URL);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
-        verify(exceptionsHandler).setResponseUrl(anyString());
+        verify(exceptionsHandler).setResponseUrl(RESPONSE_URL);
         verify(gamificationService).sendCodenjoyAchievement(FROM_USER_SLACK_NAME, CODENJOY_COMMAND_TEXT);
 
         assertDelayedResponseMessage(RESPONSE_TO_SLACK);
@@ -114,7 +114,7 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
-        verify(exceptionsHandler).setResponseUrl(anyString());
+        verify(exceptionsHandler).setResponseUrl(RESPONSE_URL);
 
         exceptions.expect(RuntimeException.class);
         exceptions.expectMessage(RESPONSE_TO_SLACK);
@@ -130,7 +130,7 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(SORRY_MESSAGE));
-        verify(exceptionsHandler).setResponseUrl(anyString());
+        verify(exceptionsHandler).setResponseUrl(RESPONSE_URL);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
-        verify(exceptionsHandler).setResponseUrl(anyString());
+        verify(exceptionsHandler).setResponseUrl(RESPONSE_URL);
         verify(gamificationService).sendDailyAchievement(FROM_USER_SLACK_NAME, DAILY_COMMAND_TEXT);
 
         assertDelayedResponseMessage(RESPONSE_TO_SLACK);
@@ -167,7 +167,7 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
-        verify(exceptionsHandler).setResponseUrl(anyString());
+        verify(exceptionsHandler).setResponseUrl(RESPONSE_URL);
 
         exceptions.expect(RuntimeException.class);
         exceptions.expectMessage(RESPONSE_TO_SLACK);
@@ -183,7 +183,7 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(SORRY_MESSAGE));
-        verify(exceptionsHandler).setResponseUrl(anyString());
+        verify(exceptionsHandler).setResponseUrl(RESPONSE_URL);
     }
 
     @Test
@@ -199,7 +199,7 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
-        verify(exceptionsHandler).setResponseUrl(anyString());
+        verify(exceptionsHandler).setResponseUrl(RESPONSE_URL);
         verify(gamificationService).sendThanksAchievement(FROM_USER_SLACK_NAME, THANKS_COMMAND_TEXT);
 
         assertDelayedResponseMessage(RESPONSE_TO_SLACK);
@@ -220,7 +220,7 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
-        verify(exceptionsHandler).setResponseUrl(anyString());
+        verify(exceptionsHandler).setResponseUrl(RESPONSE_URL);
 
         exceptions.expect(RuntimeException.class);
         exceptions.expectMessage(RESPONSE_TO_SLACK);
@@ -236,7 +236,7 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(SORRY_MESSAGE));
-        verify(exceptionsHandler).setResponseUrl(anyString());
+        verify(exceptionsHandler).setResponseUrl(RESPONSE_URL);
     }
 
     @Test
@@ -252,7 +252,7 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
-        verify(exceptionsHandler).setResponseUrl(anyString());
+        verify(exceptionsHandler).setResponseUrl(RESPONSE_URL);
         verify(gamificationService).sendInterviewAchievement(FROM_USER_SLACK_NAME, INTERVIEW_COMMAND_TEXT);
 
         assertDelayedResponseMessage(RESPONSE_TO_SLACK);
@@ -272,7 +272,7 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
-        verify(exceptionsHandler).setResponseUrl(anyString());
+        verify(exceptionsHandler).setResponseUrl(RESPONSE_URL);
 
         exceptions.expect(RuntimeException.class);
         exceptions.expectMessage(RESPONSE_TO_SLACK);
@@ -281,7 +281,7 @@ public class GamificationSlackCommandControllerTest {
 
     private void assertDelayedResponseMessage(String message) {
         ArgumentCaptor<RichMessage> captor = ArgumentCaptor.forClass(RichMessage.class);
-        verify(restTemplate).postForObject(eq(responseUrl), captor.capture(), eq(String.class));
+        verify(restTemplate).postForObject(eq(RESPONSE_URL), captor.capture(), eq(String.class));
         assertTrue(captor.getValue().getText().contains(message));
     }
 }
