@@ -277,11 +277,11 @@ public class GamificationSlackBotIntegrationTest {
         mockSuccessPostService(usersFindUsersBySlackNamesUrl,expectedRequestToUserBySlacks,
                 expectedResponseFromUserBySlacks);
 
-        final String expectedResponseFromTeam = "{\"members\":[\"uuid2\", \"uuid1\", \"uuid4\", \"uuid3\"]}";
+        final String expectedResponseFromTeam = "{\"members\":[\"uuid1\", \"uuid2\", \"uuid3\", \"uuid4\"]}";
         mockSuccessGetService(teamGetTeamByUserUuidUrl + "/uuid1", expectedResponseFromTeam);
 
         final String expectedRequestToUserByUuids =
-                "{\"uuids\":[\"uuid2\",\"uuid1\",\"uuid4\",\"uuid3\"]}";
+                "{\"uuids\":[\"uuid1\",\"uuid2\",\"uuid3\",\"uuid4\"]}";
         final String expectedResponseFromUserByUuids = "[{\"uuid\":\"uuid1\",\"slack\":\"@from-user\"}," +
                 "{\"uuid\":\"uuid2\",\"slack\":\"@slack2\"}," +
                 "{\"uuid\":\"uuid3\",\"slack\":\"@slack3\"}," +
@@ -290,7 +290,7 @@ public class GamificationSlackBotIntegrationTest {
                 expectedResponseFromUserByUuids);
 
         final String expectedRequestToGamification =
-                "{\"from\":\"uuid1\",\"members\":[\"uuid2\",\"uuid1\",\"uuid4\",\"uuid3\"]}";
+                "{\"from\":\"uuid1\",\"members\":[\"uuid1\",\"uuid2\",\"uuid3\",\"uuid4\"]}";
         final String expectedResponseFromGamification = "[\"101\", \"102\", \"103\", \"104\"]";
         mockSuccessPostService(gamificationTeamUrl, expectedRequestToGamification,
                 expectedResponseFromGamification);
@@ -319,7 +319,6 @@ public class GamificationSlackBotIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
     }
-
 
     @Test
     public void returnClientErrorMessageWhenGamificationServiceIsFail() throws Exception {
