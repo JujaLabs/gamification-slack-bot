@@ -44,14 +44,6 @@ public class RestUserRepository extends AbstractRestRepository implements UserRe
     public List<UserDTO> findUsersBySlackNames(List<String> slackNames) {
         logger.debug("Received SlackNames : [{}]", slackNames);
 
-        for (int i = 0; i < slackNames.size(); i++) {
-            if (!slackNames.get(i).startsWith("@")) {
-                logger.debug("add '@' to SlackName : [{}]", slackNames.get(i));
-                String slackName = slackNames.get(i);
-                slackNames.set(i, "@" + slackName);
-            }
-        }
-
         SlackNameRequest slackNameRequest = new SlackNameRequest(slackNames);
         HttpEntity<SlackNameRequest> request = new HttpEntity<>(slackNameRequest, setupBaseHttpHeaders());
 
