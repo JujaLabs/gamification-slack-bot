@@ -22,8 +22,10 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
+
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
@@ -34,21 +36,15 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @SpringBootTest
 public class RestUserRepositoryTest {
 
-    @Inject
-    private UserRepository userRepository;
-
-    @Inject
-    private RestTemplate restTemplate;
-
-    private MockRestServiceServer mockServer;
-
-    @Value("${user.baseURL}")
-    private String urlBase;
-    @Value("${endpoint.usersBySlackNames}")
-    private String urlGetUser;
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+    @Inject
+    private UserRepository userRepository;
+    @Inject
+    private RestTemplate restTemplate;
+    private MockRestServiceServer mockServer;
+    @Value("${users.endpoint.usersBySlackNames}")
+    private String usersFindUsersBySlackNamesUrl;
 
     @Before
     public void setup() {
@@ -59,9 +55,9 @@ public class RestUserRepositoryTest {
     public void shouldReturnListUserDTOWhenSendSlackNameList() {
         //given
         List<String> slackNames = new ArrayList<>();
-        slackNames.add("@bob.slack");
+        slackNames.add("bob.slack");
         slackNames.add("@john.slack");
-        mockServer.expect(requestTo(urlBase + urlGetUser))
+        mockServer.expect(requestTo(usersFindUsersBySlackNamesUrl))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string("{\"slackNames\":[\"@bob.slack\",\"@john.slack\"]}"))

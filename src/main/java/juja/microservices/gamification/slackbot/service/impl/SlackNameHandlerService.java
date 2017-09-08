@@ -54,7 +54,7 @@ public class SlackNameHandlerService {
         logger.debug("send slack names: {} to user service", slackNames);
         List<UserDTO> users = userService.findUsersBySlackNames(slackNames);
         return users.stream()
-                .collect(Collectors.toMap(user -> user.getSlack(), user -> user));
+                .collect(Collectors.toMap(UserDTO::getSlack, user -> user));
     }
 
     private List<String> receiveAllSlackNames(String text) {
@@ -62,7 +62,7 @@ public class SlackNameHandlerService {
         Pattern pattern = Pattern.compile(SLACK_NAME_PATTERN);
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
-            result.add(matcher.group());
+            result.add(matcher.group().trim());
         }
         logger.debug("Recieved slack names: {} from text:", result.toString(), text);
         return result;
