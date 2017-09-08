@@ -59,6 +59,7 @@ dependencies {
     compile 'me.ramswaroop.jbot:jbot:3.0.2'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'net.javacrumbs.json-unit:json-unit-fluent:1.19.0'
 }
 
 task wrapper(type: Wrapper) {
