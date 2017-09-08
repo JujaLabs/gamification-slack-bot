@@ -14,6 +14,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 
 @Repository
 public class RestTeamRepository implements TeamRepository {
@@ -33,7 +35,7 @@ public class RestTeamRepository implements TeamRepository {
     public TeamDTO getTeamByUserUuid(String uuid) {
         String urlTemplate = getTeamByUserUuidUrl + "/"+ uuid;
         TeamDTO result;
-        logger.debug("Send request to team repository");
+        logger.debug("Started request to Teams service. Get team by uuid {}.", uuid);
         try {
             ResponseEntity<TeamDTO> response = this.restTemplate.getForEntity(urlTemplate, TeamDTO.class);
             result = response.getBody();

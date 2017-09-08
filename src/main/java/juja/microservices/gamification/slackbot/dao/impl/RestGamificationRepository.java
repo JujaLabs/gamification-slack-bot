@@ -59,7 +59,7 @@ public class RestGamificationRepository implements GamificationRepository {
         } catch (HttpClientErrorException ex) {
             ApiError error = Utils.convertToApiError(ex);
             logger.warn("Gamification service returned an error: [{}]", error);
-            throw new GamificationExchangeException(Utils.convertToApiError(ex), ex);
+            throw new GamificationExchangeException(error, ex);
         }
 
         logger.info("Saved Daily achievement: [{}]", Arrays.toString(result));
@@ -103,7 +103,7 @@ public class RestGamificationRepository implements GamificationRepository {
         } catch (HttpClientErrorException ex) {
             ApiError error = Utils.convertToApiError(ex);
             logger.warn("Gamification service returned an error: [{}]", error);
-            throw new GamificationExchangeException(Utils.convertToApiError(ex), ex);
+            throw new GamificationExchangeException(error, ex);
         }
 
         logger.info("Saved Thanks achievements: [{}]", Arrays.toString(result));
@@ -125,7 +125,7 @@ public class RestGamificationRepository implements GamificationRepository {
         } catch (HttpClientErrorException ex) {
             ApiError error = Utils.convertToApiError(ex);
             logger.warn("Gamification service returned an error: [{}]", error);
-            throw new GamificationExchangeException(Utils.convertToApiError(ex), ex);
+            throw new GamificationExchangeException(error, ex);
         }
 
         logger.info("Saved Interview achievements: [{}]", Arrays.toString(result));
@@ -148,12 +148,10 @@ public class RestGamificationRepository implements GamificationRepository {
         } catch (HttpClientErrorException ex) {
             ApiError error = Utils.convertToApiError(ex);
             logger.warn("Gamification service returned an error: [{}]", error);
-            throw new GamificationExchangeException(Utils.convertToApiError(ex), ex);
+            throw new GamificationExchangeException(error, ex);
         }
 
         logger.info("Saved Team achievements: [{}]", Arrays.toString(result));
         return result;
     }
-
-
 }

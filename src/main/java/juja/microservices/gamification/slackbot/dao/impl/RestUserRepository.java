@@ -85,8 +85,8 @@ public class RestUserRepository implements UserRepository {
         Set<UserDTO> result;
         try {
             logger.debug("Started request to Users service. Request is : [{}]", request.toString());
-            ResponseEntity<UserDTO[]> response = restTemplate.exchange(usersFindUsersByUuidsUrl,
-                    HttpMethod.POST, request, UserDTO[].class);
+            ResponseEntity<UserDTO[]> response = restTemplate.postForEntity(usersFindUsersByUuidsUrl,
+                    request, UserDTO[].class);
             logger.debug("Finished request to Users service. Response is: [{}]", response.toString());
             result = new LinkedHashSet<>(Arrays.asList(response.getBody()));
         } catch (HttpClientErrorException ex) {

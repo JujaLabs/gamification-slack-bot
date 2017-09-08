@@ -48,6 +48,12 @@ public class ExceptionsHandler {
         sendErrorResponseAsRichMessage(new RichMessage(ex.getMessage()));
     }
 
+    @ExceptionHandler(TeamExchangeException.class)
+    public void handleTeamExchangeException(TeamExchangeException ex) {
+        logger.warn("TeamExchangeException : {}", ex.detailMessage());
+        sendErrorResponseAsRichMessage(new RichMessage(ex.getMessage()));
+    }
+
     public void setResponseUrl(String responseUrl) {
         this.responseUrl.set(responseUrl);
     }
@@ -59,11 +65,5 @@ public class ExceptionsHandler {
             logger.warn("Nested exception : '{}' with text '{}' . Unable to send response to slack", ex.getMessage(),
                     richMessage.getText());
         }
-    }
-
-    @ExceptionHandler(TeamExchangeException.class)
-    public RichMessage handleTeamExchangeException(TeamExchangeException ex) {
-        logger.warn("TeamExchangeException : {}", ex.detailMessage());
-        return new RichMessage(ex.getMessage());
     }
 }
