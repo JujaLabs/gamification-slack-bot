@@ -32,6 +32,7 @@ public class SlackNameHandlerServiceTest {
     private UserDTO userFrom;
     private UserDTO user1;
     private UserDTO user2;
+    private String userFromSlackName = "slackFrom";
 
     @Before
     public void setup() {
@@ -48,7 +49,7 @@ public class SlackNameHandlerServiceTest {
         List<UserDTO> responseFromUserService = Arrays.asList(userFrom, user1);
         when(userService.findUsersBySlackNames(requestToUserService)).thenReturn(responseFromUserService);
         //when
-        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), text);
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFromSlackName, text);
         //then
         assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text @slack1 TexT text., " +
                 "slackNamesInText=[@slack1], userCountInText=1, " +
@@ -86,7 +87,7 @@ public class SlackNameHandlerServiceTest {
         List<UserDTO> responseFromUserService = Arrays.asList(userFrom, user1, user2);
         when(userService.findUsersBySlackNames(requestToUserService)).thenReturn(responseFromUserService);
         //when
-        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), text);
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFromSlackName, text);
         //then
         assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text @slack1 TexT @slack2 text., " +
                 "slackNamesInText=[@slack1, @slack2], userCountInText=2, " +
@@ -104,7 +105,7 @@ public class SlackNameHandlerServiceTest {
         List<UserDTO> responseFromUserService = Arrays.asList(userFrom);
         when(userService.findUsersBySlackNames(requestToUserService)).thenReturn(responseFromUserService);
         //when
-        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), text);
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFromSlackName, text);
         //then
         assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text without slack name TexT text., " +
                 "slackNamesInText=[], userCountInText=0, " +
