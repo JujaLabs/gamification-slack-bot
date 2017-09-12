@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
@@ -23,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -107,6 +109,25 @@ public class ExceptionHandlerTest {
         ArgumentCaptor<RichMessage> captor = ArgumentCaptor.forClass(RichMessage.class);
         verify(restTemplate).postForObject(eq(responseUrl), captor.capture(), eq(String.class));
         assertTrue(captor.getValue().getText().contains("User not found"));
+    }
+
+    @Test
+    public void shouldhandleResourceAccessException() throws Exception {
+        final String COMMAND_TEXT = "@slack1 -2th @slack2 -3th @slack3";
+        when(gamificationService.sendCodenjoyAchievement(any(String.class), any(String.class))).
+                thenThrow(new ResourceAccessException("Some service unavailable"));
+
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotCodenjoyUrl),
+                SlackUrlUtils.getUriVars("slashCommandToken", "/codenjoy", COMMAND_TEXT))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().isOk())
+                .andExpect(content().string(INSTANT_MESSAGE));
+
+        ArgumentCaptor<RichMessage> captor = ArgumentCaptor.forClass(RichMessage.class);
+        verify(restTemplate).postForObject(eq(responseUrl), captor.capture(), eq(String.class));
+        assertTrue(captor.getValue().getText().contains("Some service unavailable"));
+        verify(gamificationService).sendCodenjoyAchievement(any(String.class), any(String.class));
+        verifyNoMoreInteractions(gamificationService, restTemplate);
     }
 
     @Test
