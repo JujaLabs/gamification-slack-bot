@@ -138,7 +138,7 @@ public class DefaultGamificationService implements GamificationService {
         String[] ids = gamificationRepository.saveTeamAchievement(team);
         logger.info("Team achievement was saved with ids: {}", Arrays.toString(ids));
 
-        int teamSize = teamDTO.getMembers().size();
+        int teamSize = teamMembers.size();
         if (ids.length == teamSize) {
             return  "Thanks, your team report saved. Members: " + slackNames;
         } else {
