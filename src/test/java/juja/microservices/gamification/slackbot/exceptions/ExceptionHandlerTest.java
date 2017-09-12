@@ -112,7 +112,7 @@ public class ExceptionHandlerTest {
     }
 
     @Test
-    public void shouldhandleResourceAccessException() throws Exception {
+    public void shouldHandleResourceAccessException() throws Exception {
         final String COMMAND_TEXT = "@slack1 -2th @slack2 -3th @slack3";
         when(gamificationService.sendCodenjoyAchievement(any(String.class), any(String.class))).
                 thenThrow(new ResourceAccessException("Some service unavailable"));

@@ -15,8 +15,9 @@ import javax.inject.Inject;
  */
 @RestControllerAdvice
 public class ExceptionsHandler {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private RestTemplate restTemplate;
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private ThreadLocal<String> responseUrl = new ThreadLocal<>();
 
     @Inject
