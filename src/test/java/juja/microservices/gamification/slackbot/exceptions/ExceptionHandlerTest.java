@@ -54,6 +54,8 @@ public class ExceptionHandlerTest {
     private String gamificationSlackbotCodenjoyUrl;
     @Value("${gamification.slackbot.endpoint.interview}")
     private String gamificationSlackbotInterviewUrl;
+    @Value("${gamification.slackbot.endpoint.team}")
+    private String gamificationSlackbotTeamUrl;
 
     @Test
     public void shouldHandleGamificationAPIError() throws Exception {
@@ -107,6 +109,33 @@ public class ExceptionHandlerTest {
         ArgumentCaptor<RichMessage> captor = ArgumentCaptor.forClass(RichMessage.class);
         verify(restTemplate).postForObject(eq(responseUrl), captor.capture(), eq(String.class));
         assertTrue(captor.getValue().getText().contains("User not found"));
+    }
+
+    @Test
+    public void shouldHandleTeamAPIError() throws Exception {
+
+        final String TEAM_COMMAND_TEXT = "";
+
+        ApiError apiError = new ApiError(
+                400, "TMF-F4-D1",
+                "Team not found",
+                "Team not found",
+                "Something went wrong",
+                Collections.emptyList()
+        );
+
+        when(gamificationService.sendTeamAchievement(any(),any())).
+                thenThrow(new TeamExchangeException(apiError, new RuntimeException("exception")));
+
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotTeamUrl),
+                SlackUrlUtils.getUriVars("slashCommandToken", "/team", TEAM_COMMAND_TEXT))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().isOk())
+                .andExpect(content().string(INSTANT_MESSAGE));
+
+       ArgumentCaptor<RichMessage> captor = ArgumentCaptor.forClass(RichMessage.class);
+       verify(restTemplate).postForObject(eq(responseUrl), captor.capture(), eq(String.class));
+       assertTrue(captor.getValue().getText().contains("Team not found"));
     }
 
     @Test

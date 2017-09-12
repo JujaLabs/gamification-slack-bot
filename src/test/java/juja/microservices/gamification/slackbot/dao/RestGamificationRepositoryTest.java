@@ -1,10 +1,7 @@
 package juja.microservices.gamification.slackbot.dao;
 
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
-import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,6 +17,8 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -54,6 +53,8 @@ public class RestGamificationRepositoryTest {
     private String gamificationThanksUrl;
     @Value("${gamification.endpoint.interview}")
     private String gamificationInterviewUrl;
+    @Value("${gamification.endpoint.team}")
+    private String gamificationTeamUrl;
 
     @Before
     public void setup() {
@@ -218,5 +219,41 @@ public class RestGamificationRepositoryTest {
         //when
         gamificationRepository.saveInterviewAchievement(new InterviewAchievement("101", "description"));
     }
-}
 
+    @Test
+    public void shouldReturnIdAchievementWhenSendTeamToRemoteGamificationService() {
+        //given
+        String expectedRequestBody = "{\"from\":\"uuid1\",\"members\":[\"uuid1\",\"uuid2\",\"uuid3\",\"uuid4\"]}";
+        String expectedRequestHeader = "application/json";
+        mockServer.expect(requestTo(gamificationTeamUrl))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(),
+                        containsString(expectedRequestHeader)))
+                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
+                .andRespond(withSuccess("[\"1000\", \"1001\", \"1002\", \"1003\"]", MediaType.APPLICATION_JSON));
+        //when
+        String[] result = gamificationRepository.saveTeamAchievement(new TeamAchievement("uuid1",
+                new LinkedHashSet(Arrays.asList("uuid1", "uuid2", "uuid3", "uuid4"))));
+
+        // then
+        mockServer.verify();
+        assertEquals(4, result.length);
+        assertEquals("[1000, 1001, 1002, 1003]", Arrays.toString(result));
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenGamificationRepositoryThrowException() {
+        //given
+        mockServer.expect(requestTo(gamificationTeamUrl))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withBadRequest().body("bad request"));
+
+        //then
+        thrown.expect(GamificationExchangeException.class);
+        thrown.expectMessage(containsString("I'm, sorry. I cannot parse api error message from remote service :("));
+
+        //when
+        gamificationRepository.saveTeamAchievement(new TeamAchievement("uuid1",
+                new HashSet(Arrays.asList("uuid1", "uuid2", "uuid3", "uuid4"))));
+    }
+}
