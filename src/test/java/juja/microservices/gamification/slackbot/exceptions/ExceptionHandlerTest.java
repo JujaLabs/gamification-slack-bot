@@ -32,6 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author Danil Kuznetsov
  * @author Nikolay Horushko
+ * @author Petr Kramar
+ * @author Ivan Shapovalov
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(GamificationSlackCommandController.class)
@@ -126,7 +128,7 @@ public class ExceptionHandlerTest {
                 Collections.emptyList()
         );
 
-        when(gamificationService.sendTeamAchievement(any(),any())).
+        when(gamificationService.sendTeamAchievement(any(), any())).
                 thenThrow(new TeamExchangeException(apiError, new RuntimeException("exception")));
 
         mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotTeamUrl),
@@ -139,6 +141,7 @@ public class ExceptionHandlerTest {
         verify(restTemplate).postForObject(eq(responseUrl), captor.capture(), eq(String.class));
         assertTrue(captor.getValue().getText().contains("Team not found"));
     }
+
     @Test
     public void shouldHandleResourceAccessException() throws Exception {
         final String COMMAND_TEXT = "@slack1 -2th @slack2 -3th @slack3";
