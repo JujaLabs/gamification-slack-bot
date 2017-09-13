@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
@@ -28,6 +29,11 @@ public class ExceptionsHandler {
     public void handleAllOtherExceptions(Exception ex) {
         logger.warn("Other Exception': {}", ex.getMessage());
         sendErrorResponseAsRichMessage(new RichMessage(ex.getMessage()));
+    }
+
+    @ExceptionHandler(ResourceAccessException.class)
+    public void handleResourceAccessException(ResourceAccessException ex) {
+        sendErrorResponseAsRichMessage(new RichMessage("Some service unavailable"));
     }
 
     @ExceptionHandler(WrongCommandFormatException.class)
