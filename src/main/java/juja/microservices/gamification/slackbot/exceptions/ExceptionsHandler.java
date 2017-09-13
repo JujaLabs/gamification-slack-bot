@@ -54,6 +54,12 @@ public class ExceptionsHandler {
         sendErrorResponseAsRichMessage(new RichMessage(ex.getMessage()));
     }
 
+    @ExceptionHandler(TeamExchangeException.class)
+    public void handleTeamExchangeException(TeamExchangeException ex) {
+        logger.warn("TeamExchangeException : {}", ex.detailMessage());
+        sendErrorResponseAsRichMessage(new RichMessage(ex.getMessage()));
+    }
+
     public void setResponseUrl(String responseUrl) {
         this.responseUrl.set(responseUrl);
     }

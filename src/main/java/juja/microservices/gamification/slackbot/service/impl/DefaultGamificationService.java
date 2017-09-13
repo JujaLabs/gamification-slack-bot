@@ -1,18 +1,21 @@
 package juja.microservices.gamification.slackbot.service.impl;
 
 import juja.microservices.gamification.slackbot.dao.GamificationRepository;
+import juja.microservices.gamification.slackbot.model.DTO.TeamDTO;
+import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
-import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
-import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.*;
 import juja.microservices.gamification.slackbot.service.GamificationService;
+import juja.microservices.gamification.slackbot.service.TeamService;
+import juja.microservices.gamification.slackbot.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * @author Danil Kuznetsov
@@ -24,12 +27,16 @@ public class DefaultGamificationService implements GamificationService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final GamificationRepository gamificationRepository;
+    private final TeamService teamService;
+    private final UserService userService;
     private final SlackNameHandlerService slackNameHandlerService;
 
     @Inject
-    public DefaultGamificationService(GamificationRepository gamificationRepository,
-                                      SlackNameHandlerService slackNameHandlerService) {
+    public DefaultGamificationService(GamificationRepository gamificationRepository, TeamService teamService,
+                                      UserService userService, SlackNameHandlerService slackNameHandlerService) {
         this.gamificationRepository = gamificationRepository;
+        this.teamService = teamService;
+        this.userService = userService;
         this.slackNameHandlerService = slackNameHandlerService;
     }
 
@@ -107,6 +114,36 @@ public class DefaultGamificationService implements GamificationService {
             return "Thanks. Your interview saved.";
         } else {
             return "Something went wrong and we didn't save your interview";
+        }
+    }
+
+    @Override
+    public String sendTeamAchievement(String fromUser, String text) {
+
+        logger.debug("Start sending and saving Team achievement. fromUser: [{}] text: [{}]", fromUser, text);
+
+        logger.debug("Start create Team achievement from slack parsed command");
+        String fromUuid = createSlackParsedCommand(fromUser, text).getFromUser().getUuid();
+        TeamDTO teamDTO = teamService.getTeamByUserUuid(fromUuid);
+
+        Set<String> teamMembers= teamDTO.getMembers();
+        TeamAchievement team = new TeamAchievement(fromUuid, teamMembers);
+        logger.debug("Team achievement was created. team: {}", team.toString());
+
+        Set<UserDTO> users = userService.findUsersByUuids(teamMembers);
+        Set<String> slackNames = new LinkedHashSet<>();
+        users.forEach(user -> slackNames.add(user.getSlack()));
+        logger.debug("Slack names for team {} were received: {}", team.toString(), slackNames);
+
+        String[] ids = gamificationRepository.saveTeamAchievement(team);
+        logger.info("Team achievement was saved with ids: {}", Arrays.toString(ids));
+
+        int teamSize = teamMembers.size();
+        if (ids.length == teamSize) {
+            return  "Thanks, your team report saved. Members: " + slackNames;
+        } else {
+            logger.debug("Expected {} saved achievements, but gamification service saved: {} ", teamSize, ids.length);
+            return  "Something went wrong during saving your team report";
         }
     }
 
