@@ -16,16 +16,19 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -104,6 +107,6 @@ public class RestUserRepositoryTest {
         thrown.expectMessage(containsString("I'm, sorry. I cannot parse api error message from remote service :("));
 
         //when
-        userRepository.findUsersByUuids(new HashSet<>(Arrays.asList("uuid1","uuid2")));
+        userRepository.findUsersByUuids(new HashSet<>(Arrays.asList("uuid1", "uuid2")));
     }
 }

@@ -294,7 +294,7 @@ public class GamificationSlackBotIntegrationTest {
         final String expectedResponseFromGamification = "[\"101\", \"102\", \"103\", \"104\"]";
         mockSuccessPostService(gamificationTeamUrl, expectedRequestToGamification,
                 expectedResponseFromGamification);
-        mockSlackResponseUrl(responseUrl, new RichMessage(String.format(TEAM_THANKS_MESSAGE, "@from-user")));
+        mockSlackResponseUrl(responseUrl, new RichMessage(TEAM_THANKS_MESSAGE));
 
         final String teamCommandTextFromSlack = "";
         mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotTeamUrl),
