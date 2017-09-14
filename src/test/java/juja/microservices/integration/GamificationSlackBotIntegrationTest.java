@@ -310,7 +310,7 @@ public class GamificationSlackBotIntegrationTest {
         final List<UserDTO> usersInCommand = Arrays.asList(user1, user2, userFrom);
         mockFailUsersService(usersInCommand);
 
-        final String EXPECTED_RESPONSE_TO_SLACK = "Oops something went wrong :(";
+        final String EXPECTED_RESPONSE_TO_SLACK = "very big and scare error";
         mockSlackResponseUrl(responseUrl, new RichMessage(EXPECTED_RESPONSE_TO_SLACK));
 
         mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotThanksUrl),

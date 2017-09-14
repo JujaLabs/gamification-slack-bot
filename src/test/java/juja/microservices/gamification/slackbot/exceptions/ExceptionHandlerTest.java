@@ -112,7 +112,7 @@ public class ExceptionHandlerTest {
 
         ArgumentCaptor<RichMessage> captor = ArgumentCaptor.forClass(RichMessage.class);
         verify(restTemplate).postForObject(eq(responseUrl), captor.capture(), eq(String.class));
-        assertTrue(captor.getValue().getText().contains("User not found"));
+        assertTrue(captor.getValue().getText().contains("Something went wrong"));
     }
 
     @Test
