@@ -1,11 +1,8 @@
 package juja.microservices.gamification.slackbot.exceptions;
 
-import lombok.Getter;
-
 /**
  * @author Danil Kuznetsov
  */
-@Getter
 public class BaseBotException extends RuntimeException {
 
     private final ApiError error;
@@ -22,5 +19,9 @@ public class BaseBotException extends RuntimeException {
     @Override
     public String getMessage() {
         return error.getClientMessage();
+    }
+
+    public String getExceptionMessage() {
+        return error.getExceptionMessage();
     }
 }

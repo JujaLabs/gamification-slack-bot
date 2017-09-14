@@ -45,7 +45,7 @@ public class ExceptionsHandler {
     @ExceptionHandler(UserExchangeException.class)
     public void handleUserExchangeException(UserExchangeException ex) {
         logger.warn("UserExchangeException: {}", ex.detailMessage());
-        sendErrorResponseAsRichMessage(new RichMessage(ex.getError().getExceptionMessage()));
+        sendErrorResponseAsRichMessage(new RichMessage(ex.getExceptionMessage()));
     }
 
     @ExceptionHandler(GamificationExchangeException.class)
