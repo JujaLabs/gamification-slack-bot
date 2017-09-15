@@ -14,7 +14,7 @@ public class TeamAchievement {
     @JsonProperty("members")
     private Set<String> members;
 
-    public TeamAchievement(String fromUuid, Set members) {
+    public TeamAchievement(String fromUuid, Set<String> members) {
         this.fromUuid = fromUuid;
         this.members = members;
     }

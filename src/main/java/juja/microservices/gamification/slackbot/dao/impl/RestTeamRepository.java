@@ -14,8 +14,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
 
 @Repository
 public class RestTeamRepository implements TeamRepository {
@@ -33,7 +31,7 @@ public class RestTeamRepository implements TeamRepository {
 
     @Override
     public TeamDTO getTeamByUserUuid(String uuid) {
-        String urlTemplate = getTeamByUserUuidUrl + "/"+ uuid;
+        String urlTemplate = getTeamByUserUuidUrl + "/" + uuid;
         TeamDTO result;
         logger.debug("Started request to Teams service. Get team by uuid {}.", uuid);
         try {

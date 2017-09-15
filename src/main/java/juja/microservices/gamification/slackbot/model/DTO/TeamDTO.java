@@ -2,7 +2,6 @@ package juja.microservices.gamification.slackbot.model.DTO;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.ToString;
@@ -19,7 +18,7 @@ public class TeamDTO {
     private final Set<String> members;
 
     @JsonCreator
-    public TeamDTO(@JsonProperty("members") @JsonDeserialize(as=LinkedHashSet.class) Set<String> members) {
+    public TeamDTO(@JsonProperty("members") @JsonDeserialize(as = LinkedHashSet.class) Set<String> members) {
         this.members = members;
     }
 }

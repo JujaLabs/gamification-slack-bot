@@ -294,7 +294,7 @@ public class GamificationSlackBotIntegrationTest {
         final String expectedResponseFromGamification = "[\"101\", \"102\", \"103\", \"104\"]";
         mockSuccessPostService(gamificationTeamUrl, expectedRequestToGamification,
                 expectedResponseFromGamification);
-        mockSlackResponseUrl(responseUrl, new RichMessage(String.format(TEAM_THANKS_MESSAGE, "@from-user")));
+        mockSlackResponseUrl(responseUrl, new RichMessage(TEAM_THANKS_MESSAGE));
 
         final String teamCommandTextFromSlack = "";
         mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotTeamUrl),
@@ -310,7 +310,7 @@ public class GamificationSlackBotIntegrationTest {
         final List<UserDTO> usersInCommand = Arrays.asList(user1, user2, userFrom);
         mockFailUsersService(usersInCommand);
 
-        final String EXPECTED_RESPONSE_TO_SLACK = "Oops something went wrong :(";
+        final String EXPECTED_RESPONSE_TO_SLACK = "very big and scare error";
         mockSlackResponseUrl(responseUrl, new RichMessage(EXPECTED_RESPONSE_TO_SLACK));
 
         mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotThanksUrl),
