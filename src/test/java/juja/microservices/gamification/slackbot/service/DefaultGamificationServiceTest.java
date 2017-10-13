@@ -3,6 +3,7 @@ package juja.microservices.gamification.slackbot.service;
 import juja.microservices.gamification.slackbot.dao.GamificationRepository;
 import juja.microservices.gamification.slackbot.model.CodenjoyAchievement;
 import juja.microservices.gamification.slackbot.model.DailyAchievement;
+import juja.microservices.gamification.slackbot.model.InterviewAchievement;
 import juja.microservices.gamification.slackbot.model.ThanksAchievement;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,12 +43,12 @@ public class DefaultGamificationServiceTest {
     public void shouldSaveNewDailyAndReturnNewAchievementId() {
 
         //given
-        String expectedAchievementId = "100";
+        String[] expectedAchievementId = {"100"};
         DailyAchievement dailyAchievement = new DailyAchievement("test", "description");
         given(gamificationRepository.saveDailyAchievement(dailyAchievement)).willReturn(expectedAchievementId);
 
         //when
-        String result = gamificationService.sendDailyAchievement(dailyAchievement);
+        String[] result = gamificationService.sendDailyAchievement(dailyAchievement);
 
         //then
         assertThat(result, equalTo(expectedAchievementId));
@@ -58,12 +59,13 @@ public class DefaultGamificationServiceTest {
     public void shouldSaveNewCodenjoyAndReturnNewAchievementId() {
 
         //given
-        String expectedAchievementId = "100";
-        CodenjoyAchievement codenjoyAchievement = new CodenjoyAchievement("Bill", "Walter", "Bob", "Jonh");
+        String[] expectedAchievementId = {"100"};
+        CodenjoyAchievement codenjoyAchievement = new CodenjoyAchievement("Bill", "Walter",
+                                                                        "Bob", "John");
         given(gamificationRepository.saveCodenjoyAchievement(codenjoyAchievement)).willReturn(expectedAchievementId);
 
         //when
-        String result = gamificationService.sendCodenjoyAchievement(codenjoyAchievement);
+        String[] result = gamificationService.sendCodenjoyAchievement(codenjoyAchievement);
 
         //then
         assertThat(result, equalTo(expectedAchievementId));
@@ -74,15 +76,30 @@ public class DefaultGamificationServiceTest {
     public void shouldSaveNewThanksAndReturnNewAchievementId() {
 
         //given
-        String expectedAchievementId = "100";
+        final String[] expectedAchievementId = {"1000"};
         ThanksAchievement thanksAchievement = new ThanksAchievement("Bill", "Bob", "Thanks to Bob");
         given(gamificationRepository.saveThanksAchievement(thanksAchievement)).willReturn(expectedAchievementId);
 
         //when
-        String result = gamificationService.sendThanksAchievement(thanksAchievement);
+        String[] result = gamificationService.sendThanksAchievement(thanksAchievement);
 
         //then
         assertThat(result, equalTo(expectedAchievementId));
         verify(gamificationRepository).saveThanksAchievement(thanksAchievement);
+    }
+
+    @Test
+    public void shouldSaveNewInterviewAchievementAndReturnNewAchievementId() {
+        //given
+        String[] expectedAchievementId = {"100"};
+        InterviewAchievement interviewAchievement = new InterviewAchievement("Bill", "I got offer!");
+        given(gamificationRepository.saveInterviewAchievement(interviewAchievement)).willReturn(expectedAchievementId);
+
+        //when
+        String[] result = gamificationService.sendInterviewAchievement(interviewAchievement);
+
+        //then
+        assertThat(result, equalTo(expectedAchievementId));
+        verify(gamificationRepository).saveInterviewAchievement(interviewAchievement);
     }
 }

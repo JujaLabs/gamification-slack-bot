@@ -1,7 +1,6 @@
 package juja.microservices.gamification.slackbot.dao;
 
-import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
-import juja.microservices.gamification.slackbot.model.User;
+import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,15 +17,14 @@ import org.springframework.web.client.RestTemplate;
 import javax.inject.Inject;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
- * Created by Artem
+ * @author Artem
  */
 
 @RunWith(SpringRunner.class)
@@ -54,60 +52,48 @@ public class RestUserRepositoryTest {
         mockServer = MockRestServiceServer.bindTo(restTemplate).build();
     }
 
-
     @Test
-    public void shouldReturnUserWhenSendUserDataToRemoteUserService() {
+    public void shouldReturnUserWhenSendUserDataToRemoteUserService2() {
         //given
-        mockServer.expect(requestTo(urlBase + urlGetUser + "/slackNickname=@user"))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withSuccess("{\"uuid\":\"a1b\",\"gmail\":\"mail@gmail.com\",\"slack\":\"@user\",\"skype\":\"user_skype\",\"linkedin\":\"user.linkedin\"," +
-                        "\"facebook\":\"user.facebook\",\"twitter\":\"user.twitter\"}", MediaType.APPLICATION_JSON));
-
+        mockServer.expect(requestTo(urlBase + urlGetUser))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string("{\"slackNames\":[\"@bob\"]}"))
+                .andRespond(withSuccess("[{\"uuid\":\"AAAA123\",\"slack\":\"@bob\"}]", MediaType.APPLICATION_JSON_UTF8));
         //when
-        User result = userRepository.findUserBySlack("@user");
-
+        String result = userRepository.findUuidUserBySlack("@bob");
         // then
         mockServer.verify();
-        assertThat(result, equalTo(new User("a1b", "mail@gmail.com", "@user", "user_skype", "user.linkedin", "user.facebook", "user.twitter")));
+        assertEquals(result, "AAAA123");
     }
 
     @Test
-    public void shouldReturnUuidUserWhenSendUserDataToRemoteUserService() {
+    public void shouldAddDogToTheSlackNameIfSlackNameHasNotIt() {
         //given
-        mockServer.expect(requestTo(urlBase + urlGetUser + "/slackNickname=@user"))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withSuccess("{\"uuid\":\"a1b\",\"gmail\":\"mail@gmail.com\",\"slack\":\"@user\",\"skype\":\"user_skype\",\"linkedin\":\"user.linkedin\"," +
-                        "\"facebook\":\"user.facebook\",\"twitter\":\"user.twitter\"}", MediaType.APPLICATION_JSON));
+        mockServer.expect(requestTo(urlBase + urlGetUser))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string("{\"slackNames\":[\"@bob\"]}"))
+                .andRespond(withSuccess("[{\"uuid\":\"AAAA123\",\"slack\":\"@bob\"}]", MediaType.APPLICATION_JSON_UTF8));
         //when
-        String result = userRepository.findUuidUserBySlack("@user");
-
+        String result = userRepository.findUuidUserBySlack("bob");
         // then
         mockServer.verify();
-        assertThat(result, equalTo("a1b"));
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenFindUserBySlackToRemoteUserServiceThrowException() {
-        // given
-        mockServer.expect(requestTo(urlBase + urlGetUser + "/slackNickname=@user"))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withBadRequest().body("bad request"));
-        //then
-        thrown.expect(GamificationExchangeException.class);
-        thrown.expectMessage(containsString("User Exchange Error"));
-        //when
-        userRepository.findUserBySlack("@user");
+        assertEquals(result, "AAAA123");
     }
 
     @Test
     public void shouldThrowExceptionWhenFindUserUuidBySlackToRemoteUserServiceThrowException() {
         // given
-        mockServer.expect(requestTo(urlBase + urlGetUser + "/slackNickname=@user"))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withBadRequest().body("bad request"));
+        mockServer.expect(requestTo(urlBase + urlGetUser))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":1," +
+                        "\"clientMessage\":\"Oops something went wrong :(\"," +
+                        "\"developerMessage\":\"General exception for this service\"," +
+                        "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
         //then
-        thrown.expect(GamificationExchangeException.class);
-        thrown.expectMessage(containsString("User Exchange Error"));
+        thrown.expect(UserExchangeException.class);
+        thrown.expectMessage(containsString("Oops something went wrong :("));
         //when
         userRepository.findUuidUserBySlack("@user");
     }
