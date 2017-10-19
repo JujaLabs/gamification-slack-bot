@@ -239,7 +239,7 @@ public class GamificationSlackBotIntegrationTest {
         mockSuccessUsersService(usersInCommand);
 
         final String EXPECTED_REQUEST_TO_GAMIFICATION = String.format("{\"description\":\"%s\",\"from\":\"%s\",\"to\":\"%s\"}",
-                user1.getSlack() + " thanks for your help!", usersInCommand.get(1).getUuid(), usersInCommand.get(0).getUuid());
+                "thanks for your help!", usersInCommand.get(1).getUuid(), usersInCommand.get(0).getUuid());
         final String EXPECTED_RESPONSE_FROM_GAMIFICATION = "[\"101\"]";
 
         mockSuccessPostService(gamificationThanksUrl, EXPECTED_REQUEST_TO_GAMIFICATION,
@@ -327,7 +327,7 @@ public class GamificationSlackBotIntegrationTest {
         mockSuccessUsersService(usersInCommand);
 
         final String EXPECTED_REQUEST_TO_GAMIFICATION = String.format("{\"description\":\"%s\",\"from\":\"%s\",\"to\":\"%s\"}",
-                user1.getSlack() + " thanks for your help!", usersInCommand.get(1).getUuid(), usersInCommand.get(0).getUuid());
+                "thanks for your help!", usersInCommand.get(1).getUuid(), usersInCommand.get(0).getUuid());
 
         mockFailGamificationService(gamificationThanksUrl, EXPECTED_REQUEST_TO_GAMIFICATION);
 
