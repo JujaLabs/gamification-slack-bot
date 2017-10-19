@@ -34,7 +34,7 @@ public class ThanksAchievement implements ResponseWithSlackName {
         this.fromUuid = slackParsedCommand.getFromUser().getUuid();
         this.toUser = receiveToUser(slackParsedCommand);
         this.toUuid = toUser.getUuid();
-        this.description = slackParsedCommand.getText();
+        this.description = slackParsedCommand.getTextWithoutSlackNames();
     }
 
     private UserDTO receiveToUser(SlackParsedCommand slackParsedCommand) {

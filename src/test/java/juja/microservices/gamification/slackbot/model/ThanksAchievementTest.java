@@ -40,7 +40,7 @@ public class ThanksAchievementTest {
         SlackParsedCommand slackParsedCommand = new SlackParsedCommand(fromSlackName, text, users);
         ThanksAchievement thanks = new ThanksAchievement(slackParsedCommand);
         //then
-        assertEquals("{\"description\":\"Thanks @slack1 for help\",\"from\":\"uuid0\",\"to\":\"uuid1\"}", objectMapper.writeValueAsString(thanks));
+        assertEquals("{\"description\":\"Thanks for help\",\"from\":\"uuid0\",\"to\":\"uuid1\"}", objectMapper.writeValueAsString(thanks));
     }
 
     @Test

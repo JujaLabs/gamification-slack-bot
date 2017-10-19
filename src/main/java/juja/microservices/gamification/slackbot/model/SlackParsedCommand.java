@@ -77,6 +77,12 @@ public class SlackParsedCommand {
         return result;
     }
 
+    public String getTextWithoutSlackNames() {
+        String result = text.replaceAll(SLACK_NAME_PATTERN, "");
+        result = result.replaceAll("\\s+", " ").trim();
+        return result;
+    }
+
     public List<UserDTO> getAllUsers() {
         checkIsTextContainsSlackName();
         List<UserDTO> result = new LinkedList(users.values());
