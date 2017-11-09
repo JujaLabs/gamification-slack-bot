@@ -1,101 +1,65 @@
 package juja.microservices.gamification.slackbot.dao.impl;
 
+import feign.FeignException;
 import juja.microservices.gamification.slackbot.dao.UserRepository;
-import juja.microservices.gamification.slackbot.exceptions.ApiError;
 import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
 import juja.microservices.gamification.slackbot.model.DTO.SlackNameRequest;
-import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.DTO.UuidRequest;
+import juja.microservices.gamification.slackbot.dao.feign.UsersClient;
+import juja.microservices.gamification.slackbot.exceptions.ApiError;
+import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
  * @author Artem
+ * @author Ivan Shapovalov
  */
-
 @Repository
 public class RestUserRepository implements UserRepository {
 
-    private final RestTemplate restTemplate;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${users.endpoint.usersBySlackNames}")
-    private String usersFindUsersBySlackNamesUrl;
-    @Value("${users.endpoint.usersByUuids}")
-    private String usersFindUsersByUuidsUrl;
-
     @Inject
-    public RestUserRepository(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    private UsersClient usersClient;
 
     @Override
     public List<UserDTO> findUsersBySlackNames(List<String> slackNames) {
         logger.debug("Received SlackNames : [{}]", slackNames);
-
-        for (int i = 0; i < slackNames.size(); i++) {
-            if (!slackNames.get(i).startsWith("@")) {
-                logger.debug("add '@' to SlackName : [{}]", slackNames.get(i));
-                String slackName = slackNames.get(i);
-                slackNames.set(i, "@" + slackName);
-            }
-        }
-
         SlackNameRequest slackNameRequest = new SlackNameRequest(slackNames);
-        HttpEntity<SlackNameRequest> request = new HttpEntity<>(slackNameRequest, Utils.setupJsonHttpHeaders());
-
-        List<UserDTO> result;
+        List<UserDTO> users;
         try {
-            logger.debug("Started request to Users service. Request is : [{}]", request.toString());
-            ResponseEntity<UserDTO[]> response = restTemplate.exchange(usersFindUsersBySlackNamesUrl,
-                    HttpMethod.POST, request, UserDTO[].class);
-            logger.debug("Finished request to Users service. Response is: [{}]", response.toString());
-            result = Arrays.asList(response.getBody());
-        } catch (HttpClientErrorException ex) {
-            ApiError error = Utils.convertToApiError(ex);
+            users = usersClient.findUsersBySlackNames(slackNameRequest);
+            logger.debug("Finished request to Users service. Users [{}]", users.toString());
+        } catch (FeignException ex) {
+            ApiError error = Utils.convertToApiError(ex.getMessage());
             logger.warn("Users service returned an error: [{}]", error);
             throw new UserExchangeException(error, ex);
         }
-
-        logger.info("Got UserDTO:{} by users: {}", result, slackNames);
-        return result;
+        logger.info("Got UserDTO:{} by users: {}", users, slackNames);
+        return users;
     }
 
     @Override
     public Set<UserDTO> findUsersByUuids(Set<String> uuids) {
         logger.debug("Received uuids : [{}]", uuids);
-
         UuidRequest uuidRequest = new UuidRequest(uuids);
-        HttpEntity<UuidRequest> request = new HttpEntity<>(uuidRequest, Utils.setupJsonHttpHeaders());
-
-        Set<UserDTO> result;
+        Set<UserDTO> users;
         try {
-            logger.debug("Started request to Users service. Request is : [{}]", request.toString());
-            ResponseEntity<UserDTO[]> response = restTemplate.postForEntity(usersFindUsersByUuidsUrl,
-                    request, UserDTO[].class);
-            logger.debug("Finished request to Users service. Response is: [{}]", response.toString());
-            result = new LinkedHashSet<>(Arrays.asList(response.getBody()));
-        } catch (HttpClientErrorException ex) {
-            ApiError error = Utils.convertToApiError(ex);
+            users = usersClient.findUsersByUuids(uuidRequest);
+            logger.debug("Finished request to Users service. Users [{}]", users.toString());
+        } catch (FeignException ex) {
+            ApiError error = Utils.convertToApiError(ex.getMessage());
             logger.warn("Users service returned an error: [{}]", error);
             throw new UserExchangeException(error, ex);
         }
-
-        logger.info("Got UserDTO:{} by uuids: {}", result, uuids);
-        return result;
+        logger.info("Got UserDTO:{} by uuids: {}", users, uuids);
+        return users;
     }
 }
