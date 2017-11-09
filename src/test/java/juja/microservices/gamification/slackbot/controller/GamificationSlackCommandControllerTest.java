@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -47,16 +46,11 @@ public class GamificationSlackCommandControllerTest {
     @Rule
     public ExpectedException exceptions = ExpectedException.none();
 
-    @Value("${gamification.slackbot.endpoint.daily}")
-    private String gamificationSlackbotDailyUrl;
-    @Value("${gamification.slackbot.endpoint.thanks}")
-    private String gamificationSlackbotThanksUrl;
-    @Value("${gamification.slackbot.endpoint.codenjoy}")
-    private String gamificationSlackbotCodenjoyUrl;
-    @Value("${gamification.slackbot.endpoint.interview}")
-    private String gamificationSlackbotInterviewUrl;
-    @Value("${gamification.slackbot.endpoint.team}")
-    private String gamificationSlackbotTeamUrl;
+    private String gamificationSlackbotDailyUrl="/v1/commands/daily";
+    private String gamificationSlackbotThanksUrl="/v1/commands/thanks";
+    private String gamificationSlackbotCodenjoyUrl="/v1/commands/codenjoy";
+    private String gamificationSlackbotInterviewUrl="/v1/commands/interview";
+    private String gamificationSlackbotTeamUrl="/v1/commands/team";
 
     @Inject
     private MockMvc mvc;

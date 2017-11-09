@@ -7,7 +7,6 @@ import me.ramswaroop.jbot.core.slack.models.RichMessage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -50,16 +49,9 @@ public class ExceptionHandlerTest {
     @MockBean
     private RestTemplate restTemplate;
 
-    @Value("${gamification.slackbot.endpoint.daily}")
-    private String gamificationSlackbotDailyUrl;
-    @Value("${gamification.slackbot.endpoint.thanks}")
-    private String gamificationSlackbotThanksUrl;
-    @Value("${gamification.slackbot.endpoint.codenjoy}")
-    private String gamificationSlackbotCodenjoyUrl;
-    @Value("${gamification.slackbot.endpoint.interview}")
-    private String gamificationSlackbotInterviewUrl;
-    @Value("${gamification.slackbot.endpoint.team}")
-    private String gamificationSlackbotTeamUrl;
+    private String gamificationSlackbotDailyUrl = "/v1/commands/daily";
+    private String gamificationSlackbotCodenjoyUrl = "/v1/commands/codenjoy";
+    private String gamificationSlackbotTeamUrl = "/v1/commands/team";
 
     @Test
     public void shouldHandleGamificationAPIError() throws Exception {
@@ -197,5 +189,25 @@ public class ExceptionHandlerTest {
         ArgumentCaptor<RichMessage> captor = ArgumentCaptor.forClass(RichMessage.class);
         verify(restTemplate).postForObject(eq(responseUrl), captor.capture(), eq(String.class));
         assertTrue(captor.getValue().getText().contains("Runtime exception"));
+    }
+
+    @Test
+    public void shouldHandleSendResponseAsRichMessage() throws Exception {
+        final String COMMAND_TEXT = "@slack1 -2th @slack2 -3th @slack3";
+        when(gamificationService.sendCodenjoyAchievement(any(String.class), any(String.class))).
+                thenThrow(new WrongCommandFormatException("Wrong command exception"));
+        RuntimeException exception = new RuntimeException("any exception");
+        ArgumentCaptor<RichMessage> captor = ArgumentCaptor.forClass(RichMessage.class);
+        when(restTemplate.postForObject(eq(responseUrl), captor.capture(), eq(String.class))).thenThrow(exception);
+
+        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotCodenjoyUrl),
+                SlackUrlUtils.getUriVars("slashCommandToken", "/codenjoy", COMMAND_TEXT))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().isOk())
+                .andExpect(content().string(INSTANT_MESSAGE));
+
+        verify(restTemplate).postForObject(eq(responseUrl), captor.capture(), eq(String.class));
+        assertTrue(captor.getValue().getText().contains("Wrong command exception"));
+        verifyNoMoreInteractions(restTemplate);
     }
 }

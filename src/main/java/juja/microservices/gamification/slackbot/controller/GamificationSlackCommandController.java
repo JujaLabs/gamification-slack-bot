@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -23,6 +24,7 @@ import java.io.PrintWriter;
  * @author Konstantin Sergey
  */
 @RestController
+@RequestMapping(value = "/v1/commands")
 public class GamificationSlackCommandController {
 
     private final static String INSTANT_MESSAGE = "Your command accepted. Please wait...";
@@ -45,8 +47,7 @@ public class GamificationSlackCommandController {
         this.exceptionsHandler = exceptionsHandler;
     }
 
-    @PostMapping(value = "${gamification.slackbot.endpoint.codenjoy}",
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = "/codenjoy", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandCodenjoy(@RequestParam("token") String token,
                                               @RequestParam("user_name") String fromUser,
                                               @RequestParam("text") String text,
@@ -72,8 +73,7 @@ public class GamificationSlackCommandController {
         sendDelayedResponseMessage(responseUrl, message);
     }
 
-    @PostMapping(value = "${gamification.slackbot.endpoint.daily}",
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = "/daily", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandDaily(@RequestParam("token") String token,
                                            @RequestParam("user_name") String fromUser,
                                            @RequestParam("text") String text,
@@ -99,8 +99,7 @@ public class GamificationSlackCommandController {
         sendDelayedResponseMessage(responseUrl, message);
     }
 
-    @PostMapping(value = "${gamification.slackbot.endpoint.thanks}",
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = "/thanks", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandThanks(@RequestParam("token") String token,
                                             @RequestParam("user_name") String fromUser,
                                             @RequestParam("text") String text,
@@ -125,8 +124,7 @@ public class GamificationSlackCommandController {
         sendDelayedResponseMessage(responseUrl, message);
     }
 
-    @PostMapping(value = "${gamification.slackbot.endpoint.interview}",
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = "/interview", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandInterview(@RequestParam("token") String token,
                                                @RequestParam("user_name") String fromUser,
                                                @RequestParam("text") String text,
@@ -152,8 +150,7 @@ public class GamificationSlackCommandController {
         sendDelayedResponseMessage(responseUrl, message);
     }
 
-    @PostMapping(value = "${gamification.slackbot.endpoint.team}",
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = "/team", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandTeam(@RequestParam("token") String token,
                                           @RequestParam("user_name") String fromUser,
                                           @RequestParam("text") String text,
