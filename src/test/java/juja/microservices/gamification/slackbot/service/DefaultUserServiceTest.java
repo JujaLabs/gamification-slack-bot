@@ -33,17 +33,18 @@ public class DefaultUserServiceTest {
     private UserRepository userRepository;
 
     @Test
-    public void returnUsersListBySlacks() throws Exception {
+    public void findUsersBySlackNamesShouldReturnUsersCorrectly() throws Exception {
         //given
-        List<String> slackNamesRequest = Arrays.asList("@slack1", "@slack2");
+        List<String> incorrectSlackNamesRequest = Arrays.asList("slack1", "@slack2");
+        List<String> correctSlackNamesRequest = Arrays.asList("@slack1", "@slack2");
         List<UserDTO> usersResponse = Arrays.asList(new UserDTO("uuid1", "@slack1"),
                 new UserDTO("uuid2", "slack2"));
-        given(userRepository.findUsersBySlackNames(slackNamesRequest)).willReturn(usersResponse);
+        given(userRepository.findUsersBySlackNames(correctSlackNamesRequest)).willReturn(usersResponse);
         //when
-        List<UserDTO> result = userService.findUsersBySlackNames(slackNamesRequest);
+        List<UserDTO> result = userService.findUsersBySlackNames(incorrectSlackNamesRequest);
         //then
         assertEquals("[UserDTO(uuid=uuid1, slack=@slack1), UserDTO(uuid=uuid2, slack=slack2)]", result.toString());
-        verify(userRepository).findUsersBySlackNames(slackNamesRequest);
+        verify(userRepository).findUsersBySlackNames(correctSlackNamesRequest);
         verifyNoMoreInteractions(userRepository);
     }
 
@@ -51,8 +52,8 @@ public class DefaultUserServiceTest {
     public void returnUsersListByUuids() throws Exception {
         //given
         Set<String> uuidsRequest = new LinkedHashSet<>(Arrays.asList("uuid1", "uuid2"));
-        Set<UserDTO> usersResponse = new LinkedHashSet<>(Arrays.asList(new UserDTO[]{
-                new UserDTO("uuid1", "@slack1"), new UserDTO("uuid2", "slack2")}));
+        Set<UserDTO> usersResponse = new LinkedHashSet<>(Arrays.asList(new UserDTO("uuid1", "@slack1"),
+                new UserDTO("uuid2", "slack2")));
         given(userRepository.findUsersByUuids(uuidsRequest)).willReturn(usersResponse);
         //when
         Set<UserDTO> result = userService.findUsersByUuids(uuidsRequest);

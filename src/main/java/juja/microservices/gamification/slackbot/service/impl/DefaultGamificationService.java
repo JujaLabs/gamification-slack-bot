@@ -1,16 +1,20 @@
 package juja.microservices.gamification.slackbot.service.impl;
 
 import juja.microservices.gamification.slackbot.dao.GamificationRepository;
-import juja.microservices.gamification.slackbot.model.DTO.TeamDTO;
-import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
-import juja.microservices.gamification.slackbot.model.achievements.*;
-import juja.microservices.gamification.slackbot.service.GamificationService;
-import juja.microservices.gamification.slackbot.service.TeamService;
-import juja.microservices.gamification.slackbot.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import juja.microservices.gamification.slackbot.model.DTO.TeamDTO;
+import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.TeamAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
+import juja.microservices.gamification.slackbot.service.GamificationService;
+import juja.microservices.gamification.slackbot.service.TeamService;
+import juja.microservices.gamification.slackbot.service.UserService;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -21,7 +25,6 @@ import java.util.Set;
  * @author Danil Kuznetsov
  * @author Nikolay Horushko
  */
-
 @Service
 public class DefaultGamificationService implements GamificationService {
 
@@ -126,7 +129,7 @@ public class DefaultGamificationService implements GamificationService {
         String fromUuid = createSlackParsedCommand(fromUser, text).getFromUser().getUuid();
         TeamDTO teamDTO = teamService.getTeamByUserUuid(fromUuid);
 
-        Set<String> teamMembers= teamDTO.getMembers();
+        Set<String> teamMembers = teamDTO.getMembers();
         TeamAchievement team = new TeamAchievement(fromUuid, teamMembers);
         logger.debug("Team achievement was created. team: {}", team.toString());
 

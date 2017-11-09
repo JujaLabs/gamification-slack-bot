@@ -1,7 +1,7 @@
 package juja.microservices.gamification.slackbot.service;
 
-import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
+import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.inject.Inject;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -100,8 +101,8 @@ public class SlackNameHandlerServiceTest {
     public void getSlackParcedCommandWithoutSlackInText() throws Exception {
         //given
         String text = "text without slack name TexT text.";
-        List<String> requestToUserService = Arrays.asList(userFrom.getSlack());
-        List<UserDTO> responseFromUserService = Arrays.asList(userFrom);
+        List<String> requestToUserService = Collections.singletonList(userFrom.getSlack());
+        List<UserDTO> responseFromUserService = Collections.singletonList(userFrom);
         when(userService.findUsersBySlackNames(requestToUserService)).thenReturn(responseFromUserService);
         //when
         SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), text);

@@ -1,11 +1,15 @@
 package juja.microservices.gamification.slackbot.service;
 
 import juja.microservices.gamification.slackbot.dao.GamificationRepository;
-import juja.microservices.gamification.slackbot.model.DTO.TeamDTO;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
-import juja.microservices.gamification.slackbot.model.achievements.*;
+import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.TeamAchievement;
 import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
+import juja.microservices.gamification.slackbot.model.DTO.TeamDTO;
+import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +19,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -279,9 +287,11 @@ public class DefaultGamificationServiceTest {
                 "Thanks, your team report saved. Members: [@slack1, @slack2, @slack3, @slack4]";
         final Set<String> members = new LinkedHashSet<>(Arrays.asList("uuid1", "uuid2", "uuid3", "uuid4"));
         final TeamDTO team = new TeamDTO(members);
-        final Set<UserDTO> usersResponce = new LinkedHashSet<>(Arrays.asList(new UserDTO[]{
-                new UserDTO("uuid1", "@slack1"), new UserDTO("uuid2", "@slack2"),
-                new UserDTO("uuid3", "@slack3"), new UserDTO("uuid4", "@slack4")}));
+        final Set<UserDTO> usersResponce = new LinkedHashSet<>(Arrays.asList(
+                new UserDTO("uuid1", "@slack1"),
+                new UserDTO("uuid2", "@slack2"),
+                new UserDTO("uuid3", "@slack3"),
+                new UserDTO("uuid4", "@slack4")));
 
         Map<String, UserDTO> users = new HashMap<>();
         users.put(fromUser.getSlack(), fromUser);
@@ -307,9 +317,11 @@ public class DefaultGamificationServiceTest {
         final String expectedResponceToSlack = "Something went wrong during saving your team report";
         final Set<String> members = new LinkedHashSet<>(Arrays.asList("uuid1", "uuid2", "uuid3", "uuid4"));
         final TeamDTO team = new TeamDTO(members);
-        final Set<UserDTO> usersResponce = new LinkedHashSet<>(Arrays.asList(new UserDTO[]{
-                new UserDTO("uuid1", "@slack1"), new UserDTO("uuid2", "@slack2"),
-                new UserDTO("uuid3", "@slack3"), new UserDTO("uuid4", "@slack4")}));
+        final Set<UserDTO> usersResponce = new LinkedHashSet<>(Arrays.asList(
+                new UserDTO("uuid1", "@slack1"),
+                new UserDTO("uuid2", "@slack2"),
+                new UserDTO("uuid3", "@slack3"),
+                new UserDTO("uuid4", "@slack4")));
 
         Map<String, UserDTO> users = new HashMap<>();
         users.put(fromUser.getSlack(), fromUser);

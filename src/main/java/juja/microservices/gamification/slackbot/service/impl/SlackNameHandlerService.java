@@ -1,11 +1,11 @@
 package juja.microservices.gamification.slackbot.service.impl;
 
-import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
-import juja.microservices.gamification.slackbot.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import juja.microservices.gamification.slackbot.service.UserService;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -22,17 +22,8 @@ import java.util.stream.Collectors;
 @Service
 public class SlackNameHandlerService {
 
-    private UserService userService;
-
-    /**
-     * Slack name cannot be longer than 21 characters and
-     * can only contain letters, numbers, periods, hyphens, and underscores.
-     * ([a-z0-9\.\_\-]){1,21}
-     * quick test regExp http://regexr.com/
-     */
-    private final String SLACK_NAME_PATTERN = "@([a-zA-z0-9\\.\\_\\-]){1,21}";
-
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private UserService userService;
 
     @Inject
     public SlackNameHandlerService(UserService userService) {
@@ -59,7 +50,7 @@ public class SlackNameHandlerService {
 
     private List<String> receiveAllSlackNames(String text) {
         List<String> result = new ArrayList<>();
-        Pattern pattern = Pattern.compile(SLACK_NAME_PATTERN);
+        Pattern pattern = Pattern.compile(SlackParsedCommand.SLACK_NAME_PATTERN);
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
             result.add(matcher.group().trim());

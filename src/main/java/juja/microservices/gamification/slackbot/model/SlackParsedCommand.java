@@ -1,12 +1,12 @@
 package juja.microservices.gamification.slackbot.model;
 
-import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
-import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
+import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +23,15 @@ import java.util.regex.Pattern;
  */
 @ToString(exclude = {"SLACK_NAME_PATTERN", "logger"})
 public class SlackParsedCommand {
+    /**
+     * Slack name cannot be longer than 21 characters and
+     * can only contain letters, numbers, periods, hyphens, and underscores.
+     * ([a-z0-9\.\_\-]){1,21}
+     * quick test regExp http://regexr.com/
+     */
+    public static final String SLACK_NAME_PATTERN = "@([a-zA-z0-9\\.\\_\\-]){1,21}";
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final String SLACK_NAME_PATTERN = "@([a-zA-z0-9\\.\\_\\-]){1,21}";
     private String fromSlackName;
     private String text;
     private List<String> slackNamesInText;
@@ -85,7 +92,7 @@ public class SlackParsedCommand {
 
     public List<UserDTO> getAllUsers() {
         checkIsTextContainsSlackName();
-        List<UserDTO> result = new LinkedList(users.values());
+        List<UserDTO> result = new LinkedList<>(users.values());
         result.remove(result.stream().filter(res -> res.getSlack().equals(fromSlackName)).findFirst().get());
         logger.debug("Found {} users in the text: [{}]", result.size(), text);
         return result;

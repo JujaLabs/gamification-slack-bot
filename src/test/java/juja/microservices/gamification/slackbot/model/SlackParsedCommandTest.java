@@ -6,7 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +18,6 @@ import static org.junit.Assert.assertEquals;
  * @author Nikolay Horushko
  */
 public class SlackParsedCommandTest {
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -213,7 +212,7 @@ public class SlackParsedCommandTest {
         users.put("@from", new UserDTO("uuid0", "@from"));
         users.put("@slack1", new UserDTO("uuid1", "@slack1"));
 
-        List<String> slackNames = Arrays.asList("@slack1");
+        List<String> slackNames = Collections.singletonList("@slack1");
         String text = "text text @slack1 text";
         SlackParsedCommand slackParsedCommand = new SlackParsedCommand("@from", text, users);
         //when
