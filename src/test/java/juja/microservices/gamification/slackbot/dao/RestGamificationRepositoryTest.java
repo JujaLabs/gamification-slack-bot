@@ -1,259 +1,289 @@
 package juja.microservices.gamification.slackbot.dao;
 
+import feign.FeignException;
+import juja.microservices.gamification.slackbot.dao.feign.GamificationClient;
 import juja.microservices.gamification.slackbot.exceptions.GamificationExchangeException;
-import juja.microservices.gamification.slackbot.model.achievements.*;
-import org.junit.Before;
+import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.TeamAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.Set;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertArrayEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Danil Kuznetsov
  * @author Nikolay Horushko
+ * @author Ivan Shapovalov
  */
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class RestGamificationRepositoryTest {
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     @Inject
     private GamificationRepository gamificationRepository;
-    @Inject
-    private RestTemplate restTemplate;
-    private MockRestServiceServer mockServer;
-    @Value("${gamification.endpoint.daily}")
-    private String gamificationDailyUrl;
-    @Value("${gamification.endpoint.codenjoy}")
-    private String gamificationCodenjoyUrl;
-    @Value("${gamification.endpoint.thanks}")
-    private String gamificationThanksUrl;
-    @Value("${gamification.endpoint.interview}")
-    private String gamificationInterviewUrl;
-    @Value("${gamification.endpoint.team}")
-    private String gamificationTeamUrl;
-
-    @Before
-    public void setup() {
-        mockServer = MockRestServiceServer.bindTo(restTemplate).build();
-    }
+    @MockBean
+    private GamificationClient gamificationClient;
 
     @Test
-    public void shouldReturnIdAchievementWhenSendDailyToRemoteGamificationService() {
+    public void shouldReturnAchievementIdWhenSendDailyToRemoteGamificationService() {
         //given
-        String expectedRequestBody = "{\"description\":\"description\",\"from\":\"101\"}";
-        String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(gamificationDailyUrl))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
-                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withSuccess("[\"1000\"]", MediaType.APPLICATION_JSON));
+        DailyAchievement dailyAchievement = new DailyAchievement("from-uuid", "description");
+        String[] expected = {"1000"};
+        when(gamificationClient.saveDailyAchievement(dailyAchievement)).thenReturn(expected);
+
         //when
-        String[] result = gamificationRepository.saveDailyAchievement(new DailyAchievement("101", "description"));
+        String[] actual = gamificationRepository.saveDailyAchievement(dailyAchievement);
 
         // then
-        mockServer.verify();
-        assertEquals(result.length, 1);
-        assertEquals("[1000]", Arrays.toString(result));
+        assertArrayEquals(expected, actual);
+        verify(gamificationClient).saveDailyAchievement(dailyAchievement);
+        verifyNoMoreInteractions(gamificationClient);
     }
 
     @Test
-    public void shouldThrowExceptionWhenSendDailyToRemoteGamificationServiceThrowException() {
+    public void shouldThrowExceptionWhenSendDailyToRemoteGamificationServiceThrowsExceptionWithCorrectContent() {
         // given
-        String expectedRequestBody = "{\"description\":\"description\",\"from\":\"101\"}";
-        String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(gamificationDailyUrl))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
-                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":1," +
-                        "\"clientMessage\":\"Oops something went wrong :(\"," +
-                        "\"developerMessage\":\"General exception for this service\"," +
-                        "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
-        //then
+        String expectedJsonResponseBody =
+                "status 400 reading GamificationClient#saveDailyAchievement(); content:" +
+                        "{\n" +
+                        "  \"httpStatus\": 400,\n" +
+                        "  \"internalErrorCode\": \"GMF-F2-D2\",\n" +
+                        "  \"clientMessage\": \"Oops something went wrong :(\",\n" +
+                        "  \"developerMessage\": \"General exception for this service\",\n" +
+                        "  \"exceptionMessage\": \"very big and scare error\",\n" +
+                        "  \"detailErrors\": []\n" +
+                        "}";
+        DailyAchievement dailyAchievement = new DailyAchievement("101", "description");
+        FeignException feignException = mock(FeignException.class);
+        when(gamificationClient.saveDailyAchievement(dailyAchievement)).thenThrow(feignException);
+        when(feignException.getMessage()).thenReturn(expectedJsonResponseBody);
+
         thrown.expect(GamificationExchangeException.class);
         thrown.expectMessage(containsString("Oops something went wrong :("));
-        //when
-        gamificationRepository.saveDailyAchievement(new DailyAchievement("101", "description"));
+
+        try {
+            //when
+            gamificationRepository.saveDailyAchievement(dailyAchievement);
+
+        } finally {
+            //then
+            verify(gamificationClient).saveDailyAchievement(dailyAchievement);
+            verifyNoMoreInteractions(gamificationClient);
+        }
     }
 
     @Test
-    public void shouldReturnIdAchievementWhenSendCodenjoyToRemoteGamificationService() {
-        //given
-        String expectedRequestBody = "{\"from\":\"Bill\",\"firstPlace\":\"Walter\",\"secondPlace\":\"Bob\",\"thirdPlace\":\"John\"}";
-        String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(gamificationCodenjoyUrl))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
-                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withSuccess("[\"1000\", \"1001\", \"1002\"]", MediaType.APPLICATION_JSON));
-        //when
-        String[] result = gamificationRepository.saveCodenjoyAchievement(new CodenjoyAchievement("Bill", "Walter", "Bob", "John"));
-
-        // then
-        mockServer.verify();
-        assertEquals(3, result.length);
-        assertEquals("[1000, 1001, 1002]", Arrays.toString(result));
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenSendCodenjoyToRemoteGamificationServiceThrowException() {
+    public void shouldThrowExceptionWhenSendDailyToRemoteGamificationServiceThrowsExceptionWithIncorrectContent() {
         // given
-        String expectedRequestBody = "{\"from\":\"Bill\",\"firstPlace\":\"Walter\",\"secondPlace\":\"Bob\",\"thirdPlace\":\"John\"}";
-        String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(gamificationCodenjoyUrl))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
-                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":1," +
-                        "\"clientMessage\":\"Oops something went wrong :(\"," +
-                        "\"developerMessage\":\"General exception for this service\"," +
-                        "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
-        //then
-        thrown.expect(GamificationExchangeException.class);
-        thrown.expectMessage(containsString("Oops something went wrong :("));
-        //when
-        gamificationRepository.saveCodenjoyAchievement(new CodenjoyAchievement("Bill", "Walter", "Bob", "John"));
-    }
+        DailyAchievement dailyAchievement = new DailyAchievement("from-uuid", "description");
+        String expectedJsonResponseBody =
+                "status 400 reading GamificationClient#saveDailyAchievement(); content: \n";
+        FeignException feignException = mock(FeignException.class);
+        when(gamificationClient.saveDailyAchievement(dailyAchievement)).thenThrow(feignException);
+        when(feignException.getMessage()).thenReturn(expectedJsonResponseBody);
 
-    @Test
-    public void shouldReturnIdAchievementWhenSendThanksToRemoteGamificationService() {
-        //given
-        String expectedRequestBody = "{\"description\":\"Thanks to Bob\",\"from\":\"Bill\",\"to\":\"Bob\"}";
-        String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(gamificationThanksUrl))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
-                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withSuccess("[\"1000\"]", MediaType.APPLICATION_JSON));
-        //when
-        String[] result = gamificationRepository.saveThanksAchievement(new ThanksAchievement("Bill", "Bob", "Thanks to Bob"));
-
-        // then
-        mockServer.verify();
-        assertEquals(1, result.length);
-        assertEquals("[1000]", Arrays.toString(result));
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenSendThanksToRemoteGamificationServiceThrowException() {
-        // given
-        String expectedRequestBody = "{\"description\":\"Thanks to Bob\",\"from\":\"Bill\",\"to\":\"Bob\"}";
-        String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(gamificationThanksUrl))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(), containsString(expectedRequestHeader)))
-                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":1," +
-                        "\"clientMessage\":\"Oops something went wrong :(\"," +
-                        "\"developerMessage\":\"General exception for this service\"," +
-                        "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
-        //then
-        thrown.expect(GamificationExchangeException.class);
-        thrown.expectMessage(containsString("Oops something went wrong :("));
-        //when
-        gamificationRepository.saveThanksAchievement(new ThanksAchievement("Bill", "Bob", "Thanks to Bob"));
-    }
-
-    @Test
-    public void shouldReturnIdAchievementWhenSendInterviewToRemoteGamificationService() {
-        //given
-        String expectedRequestBody = "{\"description\":\"description\",\"from\":\"bill\"}";
-        String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(gamificationInterviewUrl))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(),
-                        containsString(expectedRequestHeader)))
-                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withSuccess("[\"1000\"]", MediaType.APPLICATION_JSON));
-        //when
-        String[] result = gamificationRepository.saveInterviewAchievement(new InterviewAchievement("bill", "description"));
-
-        // then
-        mockServer.verify();
-
-        assertEquals(1, result.length);
-        assertEquals("[1000]", Arrays.toString(result));
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenSendInterviewToRemoteInterviewServiceThrowException() {
-        // given
-        String expectedRequestBody = "{\"description\":\"description\",\"from\":\"101\"}";
-        String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(gamificationInterviewUrl))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(),
-                        containsString(expectedRequestHeader)))
-                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withBadRequest().body("{\"httpStatus\":400,\"internalErrorCode\":1," +
-                        "\"clientMessage\":\"Oops something went wrong :(\"," +
-                        "\"developerMessage\":\"General exception for this service\"," +
-                        "\"exceptionMessage\":\"very big and scare error\",\"detailErrors\":[]}"));
-        //then
-        thrown.expect(GamificationExchangeException.class);
-        thrown.expectMessage(containsString("Oops something went wrong :("));
-        //when
-        gamificationRepository.saveInterviewAchievement(new InterviewAchievement("101", "description"));
-    }
-
-    @Test
-    public void shouldReturnIdAchievementWhenSendTeamToRemoteGamificationService() {
-        //given
-        String expectedRequestBody = "{\"from\":\"uuid1\",\"members\":[\"uuid1\",\"uuid2\",\"uuid3\",\"uuid4\"]}";
-        String expectedRequestHeader = "application/json";
-        mockServer.expect(requestTo(gamificationTeamUrl))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(request -> assertThat(request.getHeaders().getContentType().toString(),
-                        containsString(expectedRequestHeader)))
-                .andExpect(request -> assertThat(request.getBody().toString(), equalTo(expectedRequestBody)))
-                .andRespond(withSuccess("[\"1000\", \"1001\", \"1002\", \"1003\"]", MediaType.APPLICATION_JSON));
-        //when
-        String[] result = gamificationRepository.saveTeamAchievement(new TeamAchievement("uuid1",
-                new LinkedHashSet(Arrays.asList("uuid1", "uuid2", "uuid3", "uuid4"))));
-
-        // then
-        mockServer.verify();
-        assertEquals(4, result.length);
-        assertEquals("[1000, 1001, 1002, 1003]", Arrays.toString(result));
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenGamificationRepositoryThrowException() {
-        //given
-        mockServer.expect(requestTo(gamificationTeamUrl))
-                .andExpect(method(HttpMethod.POST))
-                .andRespond(withBadRequest().body("bad request"));
-
-        //then
-        thrown.expect(GamificationExchangeException.class);
+        thrown.expect(RuntimeException.class);
         thrown.expectMessage(containsString("I'm, sorry. I cannot parse api error message from remote service :("));
 
+        try {
+            //when
+            gamificationRepository.saveDailyAchievement(dailyAchievement);
+
+        } finally {
+            //then
+            verify(gamificationClient).saveDailyAchievement(dailyAchievement);
+            verifyNoMoreInteractions(gamificationClient);
+        }
+    }
+
+    @Test
+    public void shouldReturnAchievementIdWhenSendCodenjoyToRemoteGamificationService() {
+        //given
+        CodenjoyAchievement codenjoyAchievement =
+                new CodenjoyAchievement("from-uuid", "first-uuid", "second-uuid", "third-uuid");
+        String[] expected = {"1000", "1001", "1002", "1003"};
+        when(gamificationClient.saveCodenjoyAchievement(codenjoyAchievement)).thenReturn(expected);
+
         //when
-        gamificationRepository.saveTeamAchievement(new TeamAchievement("uuid1",
-                new HashSet(Arrays.asList("uuid1", "uuid2", "uuid3", "uuid4"))));
+        String[] actual = gamificationRepository.saveCodenjoyAchievement(codenjoyAchievement);
+
+        // then
+        assertArrayEquals(expected, actual);
+        verify(gamificationClient).saveCodenjoyAchievement(codenjoyAchievement);
+        verifyNoMoreInteractions(gamificationClient);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenSendCodenjoyToRemoteGamificationServiceThrowsExceptionWithCorrectContent() {
+        // given
+        String expectedJsonResponseBody =
+                "status 400 reading GamificationClient#saveCodenjoyAchievement(); content:" +
+                        "{\n" +
+                        "  \"httpStatus\": 400,\n" +
+                        "  \"internalErrorCode\": \"GMF-F2-D2\",\n" +
+                        "  \"clientMessage\": \"Oops something went wrong :(\",\n" +
+                        "  \"developerMessage\": \"General exception for this service\",\n" +
+                        "  \"exceptionMessage\": \"very big and scare error\",\n" +
+                        "  \"detailErrors\": []\n" +
+                        "}";
+        CodenjoyAchievement codenjoyAchievement =
+                new CodenjoyAchievement("from-uuid", "first-uuid", "second-uuid", "third-uuid");
+        FeignException feignException = mock(FeignException.class);
+        when(gamificationClient.saveCodenjoyAchievement(codenjoyAchievement)).thenThrow(feignException);
+        when(feignException.getMessage()).thenReturn(expectedJsonResponseBody);
+
+        thrown.expect(GamificationExchangeException.class);
+        thrown.expectMessage(containsString("Oops something went wrong :("));
+
+        try {
+            //when
+            gamificationRepository.saveCodenjoyAchievement(codenjoyAchievement);
+
+        } finally {
+            //then
+            verify(gamificationClient).saveCodenjoyAchievement(codenjoyAchievement);
+            verifyNoMoreInteractions(gamificationClient);
+        }
+    }
+
+    @Test
+    public void shouldReturnAchievementIdWhenSendThanksToRemoteGamificationService() {
+        //given
+        ThanksAchievement thanksAchievement = new ThanksAchievement("from-uuid", "to-uuid", "description");
+        String[] expected = {"1000"};
+        when(gamificationClient.saveThanksAchievement(thanksAchievement)).thenReturn(expected);
+
+        //when
+        String[] actual = gamificationRepository.saveThanksAchievement(thanksAchievement);
+
+        // then
+        assertArrayEquals(expected, actual);
+        verify(gamificationClient).saveThanksAchievement(thanksAchievement);
+        verifyNoMoreInteractions(gamificationClient);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenSendThanksToRemoteGamificationServiceThrowsExceptionWithIncorrectContent() {
+        // given
+        ThanksAchievement thanksAchievement = new ThanksAchievement("from-uuid", "to-uuid", "description");
+        String expectedJsonResponseBody =
+                "status 400 reading GamificationClient#saveThanksAchievement(); content: \n";
+        FeignException feignException = mock(FeignException.class);
+        when(gamificationClient.saveThanksAchievement(thanksAchievement)).thenThrow(feignException);
+        when(feignException.getMessage()).thenReturn(expectedJsonResponseBody);
+
+        thrown.expect(RuntimeException.class);
+        thrown.expectMessage(containsString("I'm, sorry. I cannot parse api error message from remote service :("));
+
+        try {
+            //when
+            gamificationRepository.saveThanksAchievement(thanksAchievement);
+
+        } finally {
+            //then
+            verify(gamificationClient).saveThanksAchievement(thanksAchievement);
+            verifyNoMoreInteractions(gamificationClient);
+        }
+    }
+
+    @Test
+    public void shouldReturnAchievementIdWhenSendInterviewToRemoteGamificationService() {
+        //given
+        InterviewAchievement interviewAchievement = new InterviewAchievement("from-uuid", "description");
+        String[] expected = {"1000"};
+        when(gamificationClient.saveInterviewAchievement(interviewAchievement)).thenReturn(expected);
+
+        //when
+        String[] actual = gamificationRepository.saveInterviewAchievement(interviewAchievement);
+
+        // then
+        assertArrayEquals(expected, actual);
+        verify(gamificationClient).saveInterviewAchievement(interviewAchievement);
+        verifyNoMoreInteractions(gamificationClient);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenSendInterviewToRemoteGamificationServiceThrowsExceptionWitIncorrectContent() {
+        // given
+        InterviewAchievement interviewAchievement = new InterviewAchievement("from-uuid", "description");
+        String expectedJsonResponseBody =
+                "status 400 reading GamificationClient#saveInterviewAchievement(); content: \n";
+        FeignException feignException = mock(FeignException.class);
+        when(gamificationClient.saveInterviewAchievement(interviewAchievement)).thenThrow(feignException);
+        when(feignException.getMessage()).thenReturn(expectedJsonResponseBody);
+
+        thrown.expect(RuntimeException.class);
+        thrown.expectMessage(containsString("I'm, sorry. I cannot parse api error message from remote service :("));
+
+        try {
+            //when
+            gamificationRepository.saveInterviewAchievement(interviewAchievement);
+
+        } finally {
+            //then
+            verify(gamificationClient).saveInterviewAchievement(interviewAchievement);
+            verifyNoMoreInteractions(gamificationClient);
+        }
+    }
+
+    @Test
+    public void shouldReturnAchievementIdWhenSendTeamToRemoteGamificationService() {
+        //given
+        Set<String> members = new HashSet<>(Arrays.asList("uuid1", "uuid2", "uuid3", "uuid4"));
+        TeamAchievement teamAchievement = new TeamAchievement("from-uuid", members);
+        String[] expected = {"1000"};
+        when(gamificationClient.saveTeamAchievement(teamAchievement)).thenReturn(expected);
+
+        //when
+        String[] actual = gamificationRepository.saveTeamAchievement(teamAchievement);
+
+        // then
+        assertArrayEquals(expected, actual);
+        verify(gamificationClient).saveTeamAchievement(teamAchievement);
+        verifyNoMoreInteractions(gamificationClient);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenSendTeamToRemoteGamificationServiceThrowsExceptionWithIncorrectContent() {
+        // given
+        Set<String> members = new HashSet<>(Arrays.asList("uuid1", "uuid2", "uuid3", "uuid4"));
+        TeamAchievement teamAchievement = new TeamAchievement("from-uuid", members);
+        String expectedJsonResponseBody =
+                "status 400 reading GamificationClient#saveDailyAchievement(); content: \n";
+        FeignException feignException = mock(FeignException.class);
+        when(gamificationClient.saveTeamAchievement(teamAchievement)).thenThrow(feignException);
+        when(feignException.getMessage()).thenReturn(expectedJsonResponseBody);
+
+        thrown.expect(RuntimeException.class);
+        thrown.expectMessage(containsString("I'm, sorry. I cannot parse api error message from remote service :("));
+
+        try {
+            //when
+            gamificationRepository.saveTeamAchievement(teamAchievement);
+
+        } finally {
+            //then
+            verify(gamificationClient).saveTeamAchievement(teamAchievement);
+            verifyNoMoreInteractions(gamificationClient);
+        }
     }
 }

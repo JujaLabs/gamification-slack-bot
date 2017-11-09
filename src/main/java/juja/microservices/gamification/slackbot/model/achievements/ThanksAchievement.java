@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -14,6 +15,7 @@ import lombok.ToString;
  */
 @Getter
 @ToString
+@EqualsAndHashCode(exclude = {"toUser"})
 public class ThanksAchievement implements ResponseWithSlackName {
     @JsonProperty("from")
     private String fromUuid;

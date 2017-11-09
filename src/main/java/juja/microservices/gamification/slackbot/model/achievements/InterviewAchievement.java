@@ -2,6 +2,7 @@ package juja.microservices.gamification.slackbot.model.achievements;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -11,6 +12,7 @@ import lombok.ToString;
  */
 @Getter
 @ToString
+@EqualsAndHashCode
 public class InterviewAchievement {
     @JsonProperty("from")
     private String fromUuid;

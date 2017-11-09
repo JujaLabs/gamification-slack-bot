@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 @ToString
 @JsonIgnoreProperties({"tokens", "okSlackResponse", "firstPlaceUser",
         "secondPlaceUser", "thirdPlaceUser"})
+@EqualsAndHashCode(exclude = {"firstPlaceUser","secondPlaceUser","thirdPlaceUser"})
 public class CodenjoyAchievement implements ResponseWithSlackName {
     @JsonProperty("from")
     private String fromUuid;
