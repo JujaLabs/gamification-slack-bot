@@ -18,7 +18,7 @@ group 'juja'
 
 apply plugin: 'java'
 apply plugin: 'idea'
-apply plugin: 'spring-boot'
+apply plugin: 'org.springframework.boot'
 apply plugin: 'docker'
 
 jar {
@@ -60,7 +60,7 @@ test.testLogging {
 test {
 
     filter{
-        includeTestsMatching "juja.microservices.gamification.slackbot.*"
+        includeTestsMatching "ua.com.juja.microservices.gamification.slackbot.*"
     }
 
     afterTest { desc, result ->
