@@ -18,7 +18,7 @@ group 'juja'
 
 apply plugin: 'java'
 apply plugin: 'idea'
-apply plugin: 'spring-boot'
+apply plugin: 'org.springframework.boot'
 apply plugin: 'docker'
 
 jar {
@@ -60,14 +60,18 @@ test.testLogging {
 test {
 
     filter{
-        includeTestsMatching "juja.microservices.gamification.slackbot.*"
+        includeTestsMatching "ua.com.juja.microservices.gamification.slackbot.*"
     }
 
     afterTest { desc, result ->
         println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
     }
 }
-
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Dalston.SR3'
+    }
+}
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter'
     compile 'org.springframework:spring-web'
@@ -76,10 +80,14 @@ dependencies {
     compile 'javax.inject:javax.inject:1'
     compile 'org.projectlombok:lombok:1.16.10'
 
+    compile 'org.springframework.cloud:spring-cloud-starter-eureka-server'
+    compile 'org.springframework.cloud:spring-cloud-starter-feign'
+
     compile 'me.ramswaroop.jbot:jbot:3.0.2'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'net.javacrumbs.json-unit:json-unit-fluent:1.19.0'
+    testCompile group: 'org.assertj', name: 'assertj-core', version: '3.8.0'
 }
 
 task wrapper(type: Wrapper) {
