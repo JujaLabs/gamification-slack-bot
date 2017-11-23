@@ -5,7 +5,6 @@ buildscript {
     }
     dependencies {
         classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.1.RELEASE'
-        classpath 'se.transmode.gradle:gradle-docker:1.2'
     }
 }
 
@@ -18,8 +17,7 @@ group 'juja'
 
 apply plugin: 'java'
 apply plugin: 'idea'
-apply plugin: 'spring-boot'
-apply plugin: 'docker'
+apply plugin: 'org.springframework.boot'
 
 jar {
     baseName = "gamification-slack-bot"
@@ -33,22 +31,6 @@ targetCompatibility = 1.8
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
-}
-
-import org.gradle.internal.os.OperatingSystem
-
-task buildDocker(type: Docker, dependsOn: build) {
-    if(OperatingSystem.current().isLinux()){
-        dockerBinary = "sudo docker"
-    }
-    applicationName = jar.baseName
-    dockerfile = file('docker/Dockerfile')
-    doFirst {
-        copy {
-            from jar
-            into "${stageDir}/target"
-        }
-    }
 }
 
 test.testLogging {
