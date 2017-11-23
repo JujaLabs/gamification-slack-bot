@@ -1,7 +1,7 @@
 package juja.microservices.gamification.slackbot.service;
 
-import juja.microservices.gamification.slackbot.exceptions.ApiError;
-import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
+import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
 import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,9 +11,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.inject.Inject;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -26,127 +29,88 @@ public class SlackNameHandlerServiceTest {
     private SlackNameHandlerService slackNameHandlerService;
     @MockBean
     private UserService userService;
-    private String defaultUuid;
+    private UserDTO userFrom;
+    private UserDTO user1;
+    private UserDTO user2;
 
     @Before
     public void setup() {
-        defaultUuid = "uuid";
+        userFrom = new UserDTO("AAA000", "@slackFrom");
+        user1 = new UserDTO("AAA111", "@slack1");
+        user2 = new UserDTO("AAA222", "@slack2");
     }
 
     @Test
-    public void changeSlackNamesToUuidWhenTextWithoutSlackNames() throws Exception {
+    public void getSlackParcedCommandOneSlackInText() throws Exception {
         //given
-        String text = "textWithoutSlackNames";
+        String text = "text " + user1.getSlack() + " TexT text.";
+        List<String> requestToUserService = Arrays.asList(user1.getSlack(), userFrom.getSlack());
+        List<UserDTO> responseFromUserService = Arrays.asList(userFrom, user1);
+        when(userService.findUsersBySlackNames(requestToUserService)).thenReturn(responseFromUserService);
         //when
-        String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), text);
         //then
-        assertEquals("textWithoutSlackNames", preparedText);
+        assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text @slack1 TexT text., " +
+                "slackNamesInText=[@slack1], userCountInText=1, " +
+                "users={@slackFrom=UserDTO(uuid=AAA000, slack=@slackFrom), " +
+                "@slack1=UserDTO(uuid=AAA111, slack=@slack1)})", slackParsedCommand.toString());
+        verify(userService).findUsersBySlackNames(requestToUserService);
+        verifyNoMoreInteractions(userService);
     }
 
-
     @Test
-    public void changeSlackNamesToUuid() throws Exception {
+    public void getSlackParcedCommandOneSlackInTextWhenUserFromWithoutAt() throws Exception {
         //given
-        String text = "text @slack.name TexT text.";
-        when(userService.findUuidUserBySlack("@slack.name")).thenReturn(defaultUuid);
+        String text = "text " + user1.getSlack() + " TexT text.";
+        UserDTO userFromWithoutAt = new UserDTO("AAA000", "slackFrom");
+        List<String> requestToUserService = Arrays.asList(user1.getSlack(), userFrom.getSlack());
+        List<UserDTO> responseFromUserService = Arrays.asList(userFrom, user1);
+        when(userService.findUsersBySlackNames(requestToUserService)).thenReturn(responseFromUserService);
         //when
-        String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFromWithoutAt.getSlack()
+                , text);
         //then
-        assertEquals("text @#uuid#@ TexT text.", preparedText);
+        assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text @slack1 TexT text., " +
+                "slackNamesInText=[@slack1], userCountInText=1, " +
+                "users={@slackFrom=UserDTO(uuid=AAA000, slack=@slackFrom), " +
+                "@slack1=UserDTO(uuid=AAA111, slack=@slack1)})", slackParsedCommand.toString());
+        verify(userService).findUsersBySlackNames(requestToUserService);
+        verifyNoMoreInteractions(userService);
     }
 
     @Test
-    public void changeSlackNamesToUuidWhenTwoSlackNamesInText() throws Exception {
+    public void getSlackParcedCommandTwoSlackInText() throws Exception {
         //given
-        String text = "text @slack.name TexT @slack.name text.";
-        when(userService.findUuidUserBySlack("@slack.name")).thenReturn(defaultUuid);
+        String text = "text " + user1.getSlack() + " TexT " + user2.getSlack() + " text.";
+        List<String> requestToUserService = Arrays.asList(user1.getSlack(), user2.getSlack(), userFrom.getSlack());
+        List<UserDTO> responseFromUserService = Arrays.asList(userFrom, user1, user2);
+        when(userService.findUsersBySlackNames(requestToUserService)).thenReturn(responseFromUserService);
         //when
-        String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), text);
         //then
-        assertEquals("text @#uuid#@ TexT @#uuid#@ text.", preparedText);
+        assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text @slack1 TexT @slack2 text., " +
+                "slackNamesInText=[@slack1, @slack2], userCountInText=2, " +
+                "users={@slackFrom=UserDTO(uuid=AAA000, slack=@slackFrom), @slack2=UserDTO(uuid=AAA222, slack=@slack2), " +
+                "@slack1=UserDTO(uuid=AAA111, slack=@slack1)})", slackParsedCommand.toString());
+        verify(userService).findUsersBySlackNames(requestToUserService);
+        verifyNoMoreInteractions(userService);
     }
 
     @Test
-    public void changeSlackNamesToUuidIfSlackNameWithoutSpace() throws Exception {
-        String text = "text@slack.name TexT text.";
-        when(userService.findUuidUserBySlack("@slack.name")).thenReturn(defaultUuid);
-        //when
-        String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
-        //then
-        assertEquals("text@#uuid#@ TexT text.", preparedText);
-    }
-
-    @Test
-    public void changeSlackNamesToUuidIfTwoSlackNameWithoutSpace() throws Exception {
-        String text = "text@slack.name TexT@slack.name text.";
-        when(userService.findUuidUserBySlack("@slack.name")).thenReturn(defaultUuid);
-        //when
-        String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
-        //then
-        assertEquals("text@#uuid#@ TexT@#uuid#@ text.", preparedText);
-    }
-
-    @Test
-    public void changeSlackNamesToUuidIfSlackNameInUpperCase() throws Exception {
+    public void getSlackParcedCommandWithoutSlackInText() throws Exception {
         //given
-        String text = "text @SLACK.NAME TexT text.";
-        when(userService.findUuidUserBySlack("@slack.name")).thenReturn(defaultUuid);
+        String text = "text without slack name TexT text.";
+        List<String> requestToUserService = Arrays.asList(userFrom.getSlack());
+        List<UserDTO> responseFromUserService = Arrays.asList(userFrom);
+        when(userService.findUsersBySlackNames(requestToUserService)).thenReturn(responseFromUserService);
         //when
-        String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), text);
         //then
-        assertEquals("text @#uuid#@ TexT text.", preparedText);
+        assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text without slack name TexT text., " +
+                "slackNamesInText=[], userCountInText=0, " +
+                "users={@slackFrom=UserDTO(uuid=AAA000, slack=@slackFrom)})", slackParsedCommand.toString());
+        verify(userService).findUsersBySlackNames(requestToUserService);
+        verifyNoMoreInteractions(userService);
     }
 
-    @Test
-    public void changeSlackNamesToUuidIfSomeCharSlackNameInUpperCase() throws Exception {
-        //given
-        String text = "text @SlACK.NaME TexT text.";
-        when(userService.findUuidUserBySlack("@slack.name")).thenReturn(defaultUuid);
-        //when
-        String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
-        //then
-        assertEquals("text @#uuid#@ TexT text.", preparedText);
-    }
-
-
-    @Test
-    public void changeSlackNamesToUuidIfTextNull() throws Exception {
-        String text = null;
-        //when
-        String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
-        //then
-        assertEquals("", preparedText);
-    }
-
-    @Test
-    public void changeSlackNamesToUuidIfTextEmpty() throws Exception {
-        String text = "";
-        //when
-        String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
-        //then
-        assertEquals("", preparedText);
-    }
-
-    @Test
-    public void ifTextContainsTextSeemsLikeSlackName() throws Exception {
-        //given
-        String text = "text @SLACK.NAME TexT @notSlackName text.";
-
-        ApiError apiError = new ApiError(
-                500, "BotError",
-                "test exception",
-                "test exception",
-                "bad request",
-                Collections.EMPTY_LIST
-        );
-
-        when(userService.findUuidUserBySlack("@slack.name")).thenReturn(defaultUuid);
-        when(userService.findUuidUserBySlack("@notslackname")).thenThrow(new UserExchangeException(
-                apiError, new RuntimeException()
-        ));
-        //when
-        String preparedText = slackNameHandlerService.replaceSlackNamesToUuids(text);
-        //then
-        assertEquals("text @#uuid#@ TexT @notSlackName text.", preparedText);
-    }
 }
