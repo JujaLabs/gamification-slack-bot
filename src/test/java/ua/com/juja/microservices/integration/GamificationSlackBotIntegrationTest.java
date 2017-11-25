@@ -8,7 +8,7 @@ import ua.com.juja.microservices.gamification.slackbot.dao.feign.TeamsClient;
 import ua.com.juja.microservices.gamification.slackbot.dao.feign.UsersClient;
 import ua.com.juja.microservices.gamification.slackbot.model.DTO.SlackNameRequest;
 import ua.com.juja.microservices.gamification.slackbot.model.DTO.TeamDTO;
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import ua.com.juja.slack.command.handler.model.UserDTO;
 import ua.com.juja.microservices.gamification.slackbot.model.DTO.UuidRequest;
 import ua.com.juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
 import ua.com.juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
@@ -109,8 +109,8 @@ public class GamificationSlackBotIntegrationTest {
         String codenjoyCommandText = "-1th @slack1 -2th @slack2 -3th @slack3";
 
         List<UserDTO> usersInCommand = Arrays.asList(user1, user2, user3, userFrom);
-        List<String> slackNames = Arrays.asList(user1.getSlack(), user2.getSlack(),
-                user3.getSlack(), userFrom.getSlack());
+        List<String> slackNames = Arrays.asList(user1.getSlackUserId(), user2.getSlackUserId(),
+                user3.getSlackUserId(), userFrom.getSlackUserId());
         CodenjoyAchievement codenjoyAchievement =
                 new CodenjoyAchievement(userFrom.getUuid(), user1.getUuid(), user2.getUuid(), user3.getUuid());
         ArgumentCaptor<SlackNameRequest> captorSlackNameRequest = ArgumentCaptor.forClass(SlackNameRequest.class);
@@ -121,7 +121,7 @@ public class GamificationSlackBotIntegrationTest {
         when(gamificationClient.saveCodenjoyAchievement(captorCodenjoyAchievement.capture())).thenReturn(achievementUuids);
 
         mockSlackResponseUrl(responseUrl, new RichMessage(String.format(CODENJOY_THANKS_MESSAGE,
-                user1.getSlack(), user2.getSlack(), user3.getSlack())));
+                user1.getSlackUserId(), user2.getSlackUserId(), user3.getSlackUserId())));
 
         //when
         mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotCodenjoyUrl),
@@ -149,8 +149,8 @@ public class GamificationSlackBotIntegrationTest {
         //given
         String codenjoyCommandText = "-1th@slack1 -2th@slack2 -3th@slack3";
         List<UserDTO> usersInCommand = Arrays.asList(user1, user2, user3, userFrom);
-        List<String> slackNames = Arrays.asList(user1.getSlack(), user2.getSlack(),
-                user3.getSlack(), userFrom.getSlack());
+        List<String> slackNames = Arrays.asList(user1.getSlackUserId(), user2.getSlackUserId(),
+                user3.getSlackUserId(), userFrom.getSlackUserId());
         CodenjoyAchievement codenjoyAchievement =
                 new CodenjoyAchievement(userFrom.getUuid(), user1.getUuid(), user2.getUuid(), user3.getUuid());
         ArgumentCaptor<SlackNameRequest> captorSlackNameRequest = ArgumentCaptor.forClass(SlackNameRequest.class);
@@ -161,7 +161,7 @@ public class GamificationSlackBotIntegrationTest {
         when(gamificationClient.saveCodenjoyAchievement(captorCodenjoyAchievement.capture())).thenReturn(achievementUuids);
 
         mockSlackResponseUrl(responseUrl, new RichMessage(String.format(CODENJOY_THANKS_MESSAGE,
-                user1.getSlack(), user2.getSlack(), user3.getSlack())));
+                user1.getSlackUserId(), user2.getSlackUserId(), user3.getSlackUserId())));
 
         //when
         mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotCodenjoyUrl),
@@ -189,8 +189,8 @@ public class GamificationSlackBotIntegrationTest {
         //given
         String codenjoyCommandText = "-2th @slack2 -1th @slack1 -3th @slack3";
         List<UserDTO> usersInCommand = Arrays.asList(user1, user2, user3, userFrom);
-        List<String> slackNames = Arrays.asList(user1.getSlack(), user2.getSlack(),
-                user3.getSlack(), userFrom.getSlack());
+        List<String> slackNames = Arrays.asList(user1.getSlackUserId(), user2.getSlackUserId(),
+                user3.getSlackUserId(), userFrom.getSlackUserId());
         CodenjoyAchievement codenjoyAchievement =
                 new CodenjoyAchievement(userFrom.getUuid(), user1.getUuid(), user2.getUuid(), user3.getUuid());
         ArgumentCaptor<SlackNameRequest> captorSlackNameRequest = ArgumentCaptor.forClass(SlackNameRequest.class);
@@ -201,7 +201,7 @@ public class GamificationSlackBotIntegrationTest {
         when(gamificationClient.saveCodenjoyAchievement(captorCodenjoyAchievement.capture())).thenReturn(achievementUuids);
 
         mockSlackResponseUrl(responseUrl, new RichMessage(String.format(CODENJOY_THANKS_MESSAGE,
-                user1.getSlack(), user2.getSlack(), user3.getSlack())));
+                user1.getSlackUserId(), user2.getSlackUserId(), user3.getSlackUserId())));
 
         //when
         mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotCodenjoyUrl),
@@ -229,8 +229,8 @@ public class GamificationSlackBotIntegrationTest {
         //given
         String codenjoyCommandText = "-1th @slack1 @slack2 -3th @slack3";
         List<UserDTO> usersInCommand = Arrays.asList(user1, user2, user3, userFrom);
-        List<String> slackNames = Arrays.asList(user1.getSlack(), user2.getSlack(),
-                user3.getSlack(), userFrom.getSlack());
+        List<String> slackNames = Arrays.asList(user1.getSlackUserId(), user2.getSlackUserId(),
+                user3.getSlackUserId(), userFrom.getSlackUserId());
         ArgumentCaptor<SlackNameRequest> captorSlackNameRequest = ArgumentCaptor.forClass(SlackNameRequest.class);
         when(usersClient.findUsersBySlackNames(captorSlackNameRequest.capture())).thenReturn(usersInCommand);
 
@@ -262,7 +262,7 @@ public class GamificationSlackBotIntegrationTest {
         String dailyCommandText = "I did smth today";
         List<UserDTO> usersInCommand = Collections.singletonList(userFrom);
 
-        List<String> slackNames = Collections.singletonList(userFrom.getSlack());
+        List<String> slackNames = Collections.singletonList(userFrom.getSlackUserId());
         DailyAchievement dailyAchievement = new DailyAchievement(userFrom.getUuid(), dailyCommandText);
         ArgumentCaptor<SlackNameRequest> captorSlackNameRequest = ArgumentCaptor.forClass(SlackNameRequest.class);
         when(usersClient.findUsersBySlackNames(captorSlackNameRequest.capture())).thenReturn(usersInCommand);
@@ -300,7 +300,7 @@ public class GamificationSlackBotIntegrationTest {
         String interviewCommandText = "I went to an interview yesterday and got offer";
         List<UserDTO> usersInCommand = Collections.singletonList(userFrom);
 
-        List<String> slackNames = Collections.singletonList(userFrom.getSlack());
+        List<String> slackNames = Collections.singletonList(userFrom.getSlackUserId());
         InterviewAchievement interviewAchievement = new InterviewAchievement(userFrom.getUuid(), interviewCommandText);
         ArgumentCaptor<SlackNameRequest> captorSlackNameRequest = ArgumentCaptor.forClass(SlackNameRequest.class);
         when(usersClient.findUsersBySlackNames(captorSlackNameRequest.capture())).thenReturn(usersInCommand);
@@ -338,7 +338,7 @@ public class GamificationSlackBotIntegrationTest {
         final String thanksCommandText = "@slack1 thanks for your help!";
         final List<UserDTO> usersInCommand = Arrays.asList(user1, userFrom);
 
-        List<String> slackNames = Arrays.asList(userFrom.getSlack(), user1.getSlack());
+        List<String> slackNames = Arrays.asList(userFrom.getSlackUserId(), user1.getSlackUserId());
         ThanksAchievement thanksAchievement = new ThanksAchievement(userFrom.getUuid(), user1.getUuid(),
                 "thanks for your help!");
         ArgumentCaptor<SlackNameRequest> captorSlackNameRequest = ArgumentCaptor.forClass(SlackNameRequest.class);
@@ -348,7 +348,7 @@ public class GamificationSlackBotIntegrationTest {
         String[] achievementUuids = {"101"};
         when(gamificationClient.saveThanksAchievement(captorThanksAchievement.capture())).thenReturn(achievementUuids);
 
-        mockSlackResponseUrl(responseUrl, new RichMessage(String.format(THANKS_ONE_THANKS_MESSAGE, user1.getSlack())));
+        mockSlackResponseUrl(responseUrl, new RichMessage(String.format(THANKS_ONE_THANKS_MESSAGE, user1.getSlackUserId())));
 
         //when
         mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotThanksUrl),
@@ -377,7 +377,7 @@ public class GamificationSlackBotIntegrationTest {
         final String thanksCommandText = "@slack1 thanks @slack2 for your help!";
         final List<UserDTO> usersInCommand = Arrays.asList(user1, user2, userFrom);
 
-        List<String> slackNames = Arrays.asList(userFrom.getSlack(), user1.getSlack(), user2.getSlack());
+        List<String> slackNames = Arrays.asList(userFrom.getSlackUserId(), user1.getSlackUserId(), user2.getSlackUserId());
         ArgumentCaptor<SlackNameRequest> captorSlackNameRequest = ArgumentCaptor.forClass(SlackNameRequest.class);
         when(usersClient.findUsersBySlackNames(captorSlackNameRequest.capture())).thenReturn(usersInCommand);
 
@@ -408,7 +408,7 @@ public class GamificationSlackBotIntegrationTest {
         final String teamCommandText = "";
         final List<UserDTO> usersInCommand = Collections.singletonList(userFrom);
 
-        List<String> slackNames = Collections.singletonList(userFrom.getSlack());
+        List<String> slackNames = Collections.singletonList(userFrom.getSlackUserId());
         TeamDTO members = new TeamDTO(new LinkedHashSet<>(Arrays.asList(
                 userFrom.getUuid(), user1.getUuid(), user2.getUuid(), user3.getUuid())));
         TeamAchievement teamAchievement = new TeamAchievement(userFrom.getUuid(), members.getMembers());
@@ -459,7 +459,7 @@ public class GamificationSlackBotIntegrationTest {
     public void onReceiveSlashCommandThanksWhenUsersServiceReturnErrorWithCorrectContent() throws Exception {
         //given
         String thanksCommandText = "@slack1 thanks @slack2 for your help!";
-        List<String> slackNames = Arrays.asList(userFrom.getSlack(), user1.getSlack(), user2.getSlack());
+        List<String> slackNames = Arrays.asList(userFrom.getSlackUserId(), user1.getSlackUserId(), user2.getSlackUserId());
         String expectedJsonResponseBody =
                 "status 400 reading UsersClient#findUserBySlacknames(); content:" +
                         "{\n" +
@@ -499,7 +499,7 @@ public class GamificationSlackBotIntegrationTest {
         //given
         final String thanksCommandText = "@slack1 thanks for your help!";
         final List<UserDTO> usersInCommand = Arrays.asList(user1, userFrom);
-        List<String> slackNames = Arrays.asList(userFrom.getSlack(), user1.getSlack());
+        List<String> slackNames = Arrays.asList(userFrom.getSlackUserId(), user1.getSlackUserId());
 
         ArgumentCaptor<SlackNameRequest> captorSlackNameRequest = ArgumentCaptor.forClass(SlackNameRequest.class);
         when(usersClient.findUsersBySlackNames(captorSlackNameRequest.capture())).thenReturn(usersInCommand);

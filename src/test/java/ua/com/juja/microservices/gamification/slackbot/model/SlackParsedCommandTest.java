@@ -1,7 +1,7 @@
 package ua.com.juja.microservices.gamification.slackbot.model;
 
 import ua.com.juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import ua.com.juja.slack.command.handler.model.UserDTO;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

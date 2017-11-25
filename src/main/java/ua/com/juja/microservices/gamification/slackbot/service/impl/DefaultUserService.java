@@ -1,7 +1,7 @@
 package ua.com.juja.microservices.gamification.slackbot.service.impl;
 
 import ua.com.juja.microservices.gamification.slackbot.dao.UserRepository;
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import ua.com.juja.slack.command.handler.model.UserDTO;
 import ua.com.juja.microservices.gamification.slackbot.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

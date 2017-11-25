@@ -1,6 +1,6 @@
 package ua.com.juja.microservices.gamification.slackbot.dao;
 
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import ua.com.juja.slack.command.handler.model.UserDTO;
 
 import java.util.List;
 import java.util.Set;

@@ -3,7 +3,7 @@ package ua.com.juja.microservices.gamification.slackbot.model.achievements;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ua.com.juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import ua.com.juja.slack.command.handler.model.UserDTO;
 import ua.com.juja.microservices.gamification.slackbot.model.SlackParsedCommand;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -54,6 +54,6 @@ public class ThanksAchievement implements ResponseWithSlackName {
 
     @Override
     public String injectSlackNames(String messageFormat) {
-        return String.format(messageFormat, toUser.getSlack());
+        return String.format(messageFormat, toUser.getSlackUserId());
     }
 }

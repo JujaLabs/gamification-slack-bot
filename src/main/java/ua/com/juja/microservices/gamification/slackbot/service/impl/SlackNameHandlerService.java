@@ -4,7 +4,7 @@ import ua.com.juja.microservices.gamification.slackbot.model.SlackParsedCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import ua.com.juja.slack.command.handler.model.UserDTO;
 import ua.com.juja.microservices.gamification.slackbot.service.UserService;
 
 import javax.inject.Inject;
@@ -45,7 +45,7 @@ public class SlackNameHandlerService {
         logger.debug("send slack names: {} to user service", slackNames);
         List<UserDTO> users = userService.findUsersBySlackNames(slackNames);
         return users.stream()
-                .collect(Collectors.toMap(UserDTO::getSlack, user -> user));
+                .collect(Collectors.toMap(UserDTO::getSlackUserId, user -> user));
     }
 
     private List<String> receiveAllSlackNames(String text) {

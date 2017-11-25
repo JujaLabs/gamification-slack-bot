@@ -4,7 +4,7 @@ import feign.FeignException;
 import ua.com.juja.microservices.gamification.slackbot.dao.feign.UsersClient;
 import ua.com.juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
 import ua.com.juja.microservices.gamification.slackbot.model.DTO.SlackNameRequest;
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import ua.com.juja.slack.command.handler.model.UserDTO;
 import ua.com.juja.microservices.gamification.slackbot.model.DTO.UuidRequest;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;

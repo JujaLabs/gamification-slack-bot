@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ua.com.juja.microservices.gamification.slackbot.model.DTO.TeamDTO;
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import ua.com.juja.slack.command.handler.model.UserDTO;
 import ua.com.juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
 import ua.com.juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
 import ua.com.juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
@@ -135,7 +135,7 @@ public class DefaultGamificationService implements GamificationService {
 
         Set<UserDTO> users = userService.findUsersByUuids(teamMembers);
         Set<String> slackNames = new LinkedHashSet<>();
-        users.forEach(user -> slackNames.add(user.getSlack()));
+        users.forEach(user -> slackNames.add(user.getSlackUserId()));
         logger.debug("Slack names for team {} were received: {}", team.toString(), slackNames);
 
         String[] ids = gamificationRepository.saveTeamAchievement(team);

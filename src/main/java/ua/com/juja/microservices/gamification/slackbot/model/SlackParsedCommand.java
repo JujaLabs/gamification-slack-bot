@@ -6,7 +6,7 @@ import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ua.com.juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import ua.com.juja.slack.command.handler.model.UserDTO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,7 +93,7 @@ public class SlackParsedCommand {
     public List<UserDTO> getAllUsers() {
         checkIsTextContainsSlackName();
         List<UserDTO> result = new LinkedList<>(users.values());
-        result.remove(result.stream().filter(res -> res.getSlack().equals(fromSlackName)).findFirst().get());
+        result.remove(result.stream().filter(res -> res.getSlackUserId().equals(fromSlackName)).findFirst().get());
         logger.debug("Found {} users in the text: [{}]", result.size(), text);
         return result;
     }

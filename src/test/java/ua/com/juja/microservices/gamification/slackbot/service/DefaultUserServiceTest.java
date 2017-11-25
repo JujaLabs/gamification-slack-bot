@@ -1,7 +1,7 @@
 package ua.com.juja.microservices.gamification.slackbot.service;
 
 import ua.com.juja.microservices.gamification.slackbot.dao.UserRepository;
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import ua.com.juja.slack.command.handler.model.UserDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

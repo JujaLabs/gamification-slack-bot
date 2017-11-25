@@ -2,7 +2,7 @@ package ua.com.juja.microservices.gamification.slackbot.model.achievements;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import ua.com.juja.slack.command.handler.model.UserDTO;
 import ua.com.juja.microservices.gamification.slackbot.model.SlackParsedCommand;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -56,7 +56,7 @@ public class CodenjoyAchievement implements ResponseWithSlackName {
 
     @Override
     public String injectSlackNames(String messageFormat) {
-        return String.format(messageFormat, firstPlaceUser.getSlack(),
-                secondPlaceUser.getSlack(), thirdPlaceUser.getSlack());
+        return String.format(messageFormat, firstPlaceUser.getSlackUserId(),
+                secondPlaceUser.getSlackUserId(), thirdPlaceUser.getSlackUserId());
     }
 }

@@ -8,7 +8,7 @@ import ua.com.juja.microservices.gamification.slackbot.model.DTO.SlackNameReques
 import ua.com.juja.microservices.gamification.slackbot.model.DTO.UuidRequest;
 import ua.com.juja.microservices.gamification.slackbot.dao.feign.UsersClient;
 import ua.com.juja.microservices.gamification.slackbot.exceptions.ApiError;
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import ua.com.juja.slack.command.handler.model.UserDTO;
 import ua.com.juja.microservices.gamification.slackbot.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

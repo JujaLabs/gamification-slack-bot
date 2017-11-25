@@ -2,7 +2,7 @@ package ua.com.juja.microservices.gamification.slackbot.dao.feign;
 
 import ua.com.juja.microservices.gamification.slackbot.model.DTO.SlackNameRequest;
 import ua.com.juja.microservices.gamification.slackbot.model.DTO.UuidRequest;
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import ua.com.juja.slack.command.handler.model.UserDTO;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;

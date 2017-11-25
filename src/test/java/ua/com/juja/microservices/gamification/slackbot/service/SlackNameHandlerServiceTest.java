@@ -1,7 +1,7 @@
 package ua.com.juja.microservices.gamification.slackbot.service;
 
 import ua.com.juja.microservices.gamification.slackbot.model.SlackParsedCommand;
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import ua.com.juja.slack.command.handler.model.UserDTO;
 import ua.com.juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,12 +44,12 @@ public class SlackNameHandlerServiceTest {
     @Test
     public void getSlackParcedCommandOneSlackInText() throws Exception {
         //given
-        String text = "text " + user1.getSlack() + " TexT text.";
-        List<String> requestToUserService = Arrays.asList(user1.getSlack(), userFrom.getSlack());
+        String text = "text " + user1.getSlackUserId() + " TexT text.";
+        List<String> requestToUserService = Arrays.asList(user1.getSlackUserId(), userFrom.getSlackUserId());
         List<UserDTO> responseFromUserService = Arrays.asList(userFrom, user1);
         when(userService.findUsersBySlackNames(requestToUserService)).thenReturn(responseFromUserService);
         //when
-        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), text);
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlackUserId(), text);
         //then
         assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text @slack1 TexT text., " +
                 "slackNamesInText=[@slack1], userCountInText=1, " +
@@ -62,13 +62,13 @@ public class SlackNameHandlerServiceTest {
     @Test
     public void getSlackParcedCommandOneSlackInTextWhenUserFromWithoutAt() throws Exception {
         //given
-        String text = "text " + user1.getSlack() + " TexT text.";
+        String text = "text " + user1.getSlackUserId() + " TexT text.";
         UserDTO userFromWithoutAt = new UserDTO("AAA000", "slackFrom");
-        List<String> requestToUserService = Arrays.asList(user1.getSlack(), userFrom.getSlack());
+        List<String> requestToUserService = Arrays.asList(user1.getSlackUserId(), userFrom.getSlackUserId());
         List<UserDTO> responseFromUserService = Arrays.asList(userFrom, user1);
         when(userService.findUsersBySlackNames(requestToUserService)).thenReturn(responseFromUserService);
         //when
-        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFromWithoutAt.getSlack()
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFromWithoutAt.getSlackUserId()
                 , text);
         //then
         assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text @slack1 TexT text., " +
@@ -82,12 +82,12 @@ public class SlackNameHandlerServiceTest {
     @Test
     public void getSlackParcedCommandTwoSlackInText() throws Exception {
         //given
-        String text = "text " + user1.getSlack() + " TexT " + user2.getSlack() + " text.";
-        List<String> requestToUserService = Arrays.asList(user1.getSlack(), user2.getSlack(), userFrom.getSlack());
+        String text = "text " + user1.getSlackUserId() + " TexT " + user2.getSlackUserId() + " text.";
+        List<String> requestToUserService = Arrays.asList(user1.getSlackUserId(), user2.getSlackUserId(), userFrom.getSlackUserId());
         List<UserDTO> responseFromUserService = Arrays.asList(userFrom, user1, user2);
         when(userService.findUsersBySlackNames(requestToUserService)).thenReturn(responseFromUserService);
         //when
-        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), text);
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlackUserId(), text);
         //then
         assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text @slack1 TexT @slack2 text., " +
                 "slackNamesInText=[@slack1, @slack2], userCountInText=2, " +
@@ -101,11 +101,11 @@ public class SlackNameHandlerServiceTest {
     public void getSlackParcedCommandWithoutSlackInText() throws Exception {
         //given
         String text = "text without slack name TexT text.";
-        List<String> requestToUserService = Collections.singletonList(userFrom.getSlack());
+        List<String> requestToUserService = Collections.singletonList(userFrom.getSlackUserId());
         List<UserDTO> responseFromUserService = Collections.singletonList(userFrom);
         when(userService.findUsersBySlackNames(requestToUserService)).thenReturn(responseFromUserService);
         //when
-        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), text);
+        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlackUserId(), text);
         //then
         assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text without slack name TexT text., " +
                 "slackNamesInText=[], userCountInText=0, " +
