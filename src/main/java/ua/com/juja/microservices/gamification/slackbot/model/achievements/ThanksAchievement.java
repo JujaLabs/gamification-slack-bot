@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ua.com.juja.microservices.gamification.slackbot.exceptions.WrongCommandFormatException;
 import ua.com.juja.slack.command.handler.model.UserDTO;
-import ua.com.juja.microservices.gamification.slackbot.model.SlackParsedCommand;
+import ua.com.juja.slack.command.handler.model.SlackParsedCommand;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -49,11 +49,11 @@ public class ThanksAchievement implements ResponseWithSlackName {
             throw new WrongCommandFormatException(String.format("We didn't find slack name in your command. '%s'" +
                     " You must write user's slack name for 'thanks'.", slackParsedCommand.getText()));
         }
-        return slackParsedCommand.getFirstUser();
+        return slackParsedCommand.getFirstUserFromText();
     }
 
     @Override
-    public String injectSlackNames(String messageFormat) {
-        return String.format(messageFormat, toUser.getSlackUserId());
+    public String injectSlackId(String messageFormat) {
+        return String.format(messageFormat, toUser.getSlackId());
     }
 }

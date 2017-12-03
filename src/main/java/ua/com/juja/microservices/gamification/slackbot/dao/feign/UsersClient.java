@@ -1,12 +1,12 @@
 package ua.com.juja.microservices.gamification.slackbot.dao.feign;
 
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.SlackNameRequest;
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.UuidRequest;
-import ua.com.juja.slack.command.handler.model.UserDTO;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import ua.com.juja.microservices.gamification.slackbot.model.DTO.SlackIdRequest;
+import ua.com.juja.microservices.gamification.slackbot.model.DTO.UuidRequest;
+import ua.com.juja.slack.command.handler.model.UserDTO;
 
 import java.util.List;
 import java.util.Set;
@@ -18,7 +18,7 @@ import java.util.Set;
 public interface UsersClient {
     @RequestMapping(method = RequestMethod.POST, value = "/v1/users/usersBySlackNames",
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    List<UserDTO> findUsersBySlackNames(SlackNameRequest request);
+    List<UserDTO> findUsersBySlackNames(SlackIdRequest request);
 
     @RequestMapping(method = RequestMethod.POST, value = "/v1/users/usersByUuids",
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

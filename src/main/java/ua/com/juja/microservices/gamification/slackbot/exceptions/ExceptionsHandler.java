@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.RestTemplate;
+import ua.com.juja.slack.command.handler.exception.ParseSlackCommandException;
 
 import javax.inject.Inject;
 
@@ -51,6 +52,12 @@ public class ExceptionsHandler {
     @ExceptionHandler(TeamExchangeException.class)
     public void handleTeamExchangeException(TeamExchangeException ex) {
         logger.warn("TeamExchangeException : {}", ex.detailMessage());
+        sendErrorResponseAsRichMessage(new RichMessage(ex.getMessage()));
+    }
+
+    @ExceptionHandler(ParseSlackCommandException.class)
+    public void handleParseSlackCommandException(ParseSlackCommandException ex) {
+        logger.warn("TeamExchangeException : {}", ex.getMessage());
         sendErrorResponseAsRichMessage(new RichMessage(ex.getMessage()));
     }
 

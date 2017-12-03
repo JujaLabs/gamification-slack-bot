@@ -27,25 +27,24 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public List<UserDTO> findUsersBySlackNames(List<String> slackNames) {
+    public List<UserDTO> receiveUsersBySlackUserId(List<String> slackNames) {
         logger.debug("Received SlackName: [{}] for conversion", slackNames.toString());
-        for (int i = 0; i < slackNames.size(); i++) {
-            if (!slackNames.get(i).startsWith("@")) {
-                logger.debug("add '@' to SlackName : [{}]", slackNames.get(i));
-                String slackName = slackNames.get(i);
-                slackNames.set(i, "@" + slackName);
-            }
-        }
         List<UserDTO> users = userRepository.findUsersBySlackNames(slackNames);
         logger.info("Found users: [{}] by SlackName: [{}]", users.toString(), slackNames.toString());
         return users;
     }
 
     @Override
-    public Set<UserDTO> findUsersByUuids(Set<String> uuids) {
+    public Set<UserDTO> receiveUsersByUuids(Set<String> uuids) {
         logger.debug("Received uuids: [{}] for conversion", uuids.toString());
         Set<UserDTO> users = userRepository.findUsersByUuids(uuids);
         logger.info("Found users: [{}] by uuids: [{}]", users.toString(), uuids.toString());
         return users;
+    }
+
+
+    @Override
+    public List<UserDTO> findUsersBySlackUserId(List<String> list) {
+        return receiveUsersBySlackUserId(list);
     }
 }

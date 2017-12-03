@@ -10,6 +10,6 @@ import java.util.List;
  */
 @Getter
 @AllArgsConstructor
-public class SlackNameRequest {
-    List<String> slackNames;
+public class SlackIdRequest {
+    List<String> slackIds;
 }

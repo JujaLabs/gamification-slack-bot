@@ -3,7 +3,7 @@ package ua.com.juja.microservices.gamification.slackbot.dao;
 import feign.FeignException;
 import ua.com.juja.microservices.gamification.slackbot.dao.feign.UsersClient;
 import ua.com.juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.SlackNameRequest;
+import ua.com.juja.microservices.gamification.slackbot.model.DTO.SlackIdRequest;
 import ua.com.juja.slack.command.handler.model.UserDTO;
 import ua.com.juja.microservices.gamification.slackbot.model.DTO.UuidRequest;
 import org.assertj.core.api.Assertions;
@@ -60,7 +60,7 @@ public class RestUserRepositoryTest {
     public void findUsersBySlackNamesIfUserServerReturnsUsersCorrectly() throws IOException {
         List<String> slackNames = Arrays.asList("@slack1", "@slack2", "@slack3", "@slack4");
         List<UserDTO> expected = Arrays.asList(user1, user2, user3, user4);
-        ArgumentCaptor<SlackNameRequest> captorSlackNameRequest = ArgumentCaptor.forClass(SlackNameRequest.class);
+        ArgumentCaptor<SlackIdRequest> captorSlackNameRequest = ArgumentCaptor.forClass(SlackIdRequest.class);
         when(usersClient.findUsersBySlackNames(captorSlackNameRequest.capture())).thenReturn(expected);
 
         List<UserDTO> actual = userRepository.findUsersBySlackNames(slackNames);
@@ -69,7 +69,7 @@ public class RestUserRepositoryTest {
             soft.assertThat(actual)
                     .as("expected not equals actual")
                     .isEqualTo(expected);
-            soft.assertThat(captorSlackNameRequest.getValue().getSlackNames())
+            soft.assertThat(captorSlackNameRequest.getValue().getSlackIds())
                     .as("'captorSlackNameRequest' slacknames not contains 'slackNames'")
                     .containsExactlyInAnyOrder(slackNames.toArray(new String[slackNames.size()]));
         });
@@ -81,7 +81,7 @@ public class RestUserRepositoryTest {
     public void findUsersBySlackNamesIfUserServerReturnsFeignExceptionWithCorrectContent() throws IOException {
         List<String> slackNames = Arrays.asList("@slack1", "@slack2", "@slack3", "@slack4");
         String expectedJsonResponseBody =
-                "status 400 reading UsersClient#findUsersBySlackNames(); content:" +
+                "status 400 reading UsersClient#receiveUsersBySlackUserId(); content:" +
                         "{\n" +
                         "  \"httpStatus\": 400,\n" +
                         "  \"internalErrorCode\": \"TMF-F1-D3\",\n" +
@@ -91,7 +91,7 @@ public class RestUserRepositoryTest {
                         "  \"detailErrors\": []\n" +
                         "}";
         FeignException feignException = mock(FeignException.class);
-        ArgumentCaptor<SlackNameRequest> captorSlackNameRequest = ArgumentCaptor.forClass(SlackNameRequest.class);
+        ArgumentCaptor<SlackIdRequest> captorSlackNameRequest = ArgumentCaptor.forClass(SlackIdRequest.class);
         when(usersClient.findUsersBySlackNames(captorSlackNameRequest.capture())).thenThrow(feignException);
         when(feignException.getMessage()).thenReturn(expectedJsonResponseBody);
 
@@ -101,7 +101,7 @@ public class RestUserRepositoryTest {
         try {
             userRepository.findUsersBySlackNames(slackNames);
         } finally {
-            Assertions.assertThat(captorSlackNameRequest.getValue().getSlackNames())
+            Assertions.assertThat(captorSlackNameRequest.getValue().getSlackIds())
                     .containsExactlyInAnyOrder((slackNames.toArray(new String[slackNames.size()])));
             verify(usersClient).findUsersBySlackNames(captorSlackNameRequest.capture());
             verifyNoMoreInteractions(usersClient);
@@ -112,9 +112,9 @@ public class RestUserRepositoryTest {
     public void findUsersBySlackNamesIfUserServerReturnsFeignExceptionWithIncorrectContent() throws IOException {
         List<String> slackNames = Arrays.asList("@slack1", "@slack2", "@slack3", "@slack4");
         String expectedJsonResponseBody =
-                "status 400 reading UsersClient#findUsersBySlackNames(); content: \n";
+                "status 400 reading UsersClient#receiveUsersBySlackUserId(); content: \n";
         FeignException feignException = mock(FeignException.class);
-        ArgumentCaptor<SlackNameRequest> captorSlackNameRequest = ArgumentCaptor.forClass(SlackNameRequest.class);
+        ArgumentCaptor<SlackIdRequest> captorSlackNameRequest = ArgumentCaptor.forClass(SlackIdRequest.class);
         when(usersClient.findUsersBySlackNames(captorSlackNameRequest.capture())).thenThrow(feignException);
         when(feignException.getMessage()).thenReturn(expectedJsonResponseBody);
 
@@ -125,7 +125,7 @@ public class RestUserRepositoryTest {
         try {
             userRepository.findUsersBySlackNames(slackNames);
         } finally {
-            Assertions.assertThat(captorSlackNameRequest.getValue().getSlackNames())
+            Assertions.assertThat(captorSlackNameRequest.getValue().getSlackIds())
                     .containsExactlyInAnyOrder((slackNames.toArray(new String[slackNames.size()])));
             verify(usersClient).findUsersBySlackNames(captorSlackNameRequest.capture());
             verifyNoMoreInteractions(usersClient);
@@ -137,7 +137,7 @@ public class RestUserRepositoryTest {
         List<String> slackNames = Arrays.asList("@slack1", "@slack2", "@slack3", "@slack4");
         String expectedJsonResponseBody = "";
         FeignException feignException = mock(FeignException.class);
-        ArgumentCaptor<SlackNameRequest> captorSlackNameRequest = ArgumentCaptor.forClass(SlackNameRequest.class);
+        ArgumentCaptor<SlackIdRequest> captorSlackNameRequest = ArgumentCaptor.forClass(SlackIdRequest.class);
         when(usersClient.findUsersBySlackNames(captorSlackNameRequest.capture())).thenThrow(feignException);
         when(feignException.getMessage()).thenReturn(expectedJsonResponseBody);
 
@@ -148,7 +148,7 @@ public class RestUserRepositoryTest {
         try {
             userRepository.findUsersBySlackNames(slackNames);
         } finally {
-            Assertions.assertThat(captorSlackNameRequest.getValue().getSlackNames())
+            Assertions.assertThat(captorSlackNameRequest.getValue().getSlackIds())
                     .containsExactlyInAnyOrder((slackNames.toArray(new String[slackNames.size()])));
             verify(usersClient).findUsersBySlackNames(captorSlackNameRequest.capture());
             verifyNoMoreInteractions(usersClient);
@@ -180,7 +180,7 @@ public class RestUserRepositoryTest {
     public void findUsersByUuidsIfUserServerReturnsException() throws IOException {
         Set<String> uuids = new HashSet<>(Arrays.asList("uuid1", "uuid2", "uuid3", "uuid4"));
         String expectedJsonResponseBody =
-                "status 400 reading UsersClient#findUsersByUuids(); content:" +
+                "status 400 reading UsersClient#receiveUsersByUuids(); content:" +
                         "{\n" +
                         "  \"httpStatus\": 400,\n" +
                         "  \"internalErrorCode\": \"TMF-F1-D3\",\n" +

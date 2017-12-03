@@ -1,5 +1,9 @@
 package ua.com.juja.microservices.gamification.slackbot.controller;
 
+import org.springframework.cloud.netflix.feign.FeignAutoConfiguration;
+import org.springframework.cloud.netflix.feign.ribbon.FeignRibbonClientAutoConfiguration;
+import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import ua.com.juja.microservices.gamification.slackbot.exceptions.ExceptionsHandler;
 import ua.com.juja.microservices.gamification.slackbot.service.GamificationService;
 import ua.com.juja.microservices.utils.SlackUrlUtils;
@@ -34,13 +38,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(GamificationSlackCommandController.class)
+@ImportAutoConfiguration({RibbonAutoConfiguration.class, FeignRibbonClientAutoConfiguration.class, FeignAutoConfiguration.class})
 public class GamificationSlackCommandControllerTest {
 
     private final String SORRY_MESSAGE = "Sorry! You're not lucky enough to use our slack command.";
     private final String INSTANT_MESSAGE = "Your command accepted. Please wait...";
     private final String responseUrl = "http://example.com";
 
-    private final String FROM_USER_SLACK_NAME = "@from-user";
+    private final String FROM_USER_SLACK_ID = "UNJSD9OKM";
     private final String VALID_SLASH_COMMAND_TOKEN = "slashCommandToken";
 
     @Rule
@@ -90,7 +95,7 @@ public class GamificationSlackCommandControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
         verify(exceptionsHandler).setResponseUrl(anyString());
-        verify(gamificationService).sendCodenjoyAchievement(FROM_USER_SLACK_NAME, CODENJOY_COMMAND_TEXT);
+        verify(gamificationService).sendCodenjoyAchievement(FROM_USER_SLACK_ID, CODENJOY_COMMAND_TEXT);
 
         assertDelayedResponseMessage(RESPONSE_TO_SLACK);
         verifyNoMoreInteractions(gamificationService);
@@ -143,7 +148,7 @@ public class GamificationSlackCommandControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
         verify(exceptionsHandler).setResponseUrl(anyString());
-        verify(gamificationService).sendDailyAchievement(FROM_USER_SLACK_NAME, DAILY_COMMAND_TEXT);
+        verify(gamificationService).sendDailyAchievement(FROM_USER_SLACK_ID, DAILY_COMMAND_TEXT);
 
         assertDelayedResponseMessage(RESPONSE_TO_SLACK);
         verifyNoMoreInteractions(gamificationService);
@@ -196,7 +201,7 @@ public class GamificationSlackCommandControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
         verify(exceptionsHandler).setResponseUrl(anyString());
-        verify(gamificationService).sendThanksAchievement(FROM_USER_SLACK_NAME, THANKS_COMMAND_TEXT);
+        verify(gamificationService).sendThanksAchievement(FROM_USER_SLACK_ID, THANKS_COMMAND_TEXT);
 
         assertDelayedResponseMessage(RESPONSE_TO_SLACK);
         verifyNoMoreInteractions(gamificationService);
@@ -249,7 +254,7 @@ public class GamificationSlackCommandControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
         verify(exceptionsHandler).setResponseUrl(anyString());
-        verify(gamificationService).sendInterviewAchievement(FROM_USER_SLACK_NAME, INTERVIEW_COMMAND_TEXT);
+        verify(gamificationService).sendInterviewAchievement(FROM_USER_SLACK_ID, INTERVIEW_COMMAND_TEXT);
 
         assertDelayedResponseMessage(RESPONSE_TO_SLACK);
         verifyNoMoreInteractions(gamificationService);
@@ -292,7 +297,7 @@ public class GamificationSlackCommandControllerTest {
 
         exceptions.expect(RuntimeException.class);
         exceptions.expectMessage(RESPONSE_TO_SLACK);
-        gamificationService.sendTeamAchievement(FROM_USER_SLACK_NAME, TEAM_COMMAND_TEXT);
+        gamificationService.sendTeamAchievement(FROM_USER_SLACK_ID, TEAM_COMMAND_TEXT);
     }
 
     @Test
@@ -322,7 +327,7 @@ public class GamificationSlackCommandControllerTest {
                 .andExpect(content().string(INSTANT_MESSAGE));
 
         verify(exceptionsHandler).setResponseUrl(anyString());
-        verify(gamificationService).sendTeamAchievement(FROM_USER_SLACK_NAME, TEAM_COMMAND_TEXT);
+        verify(gamificationService).sendTeamAchievement(FROM_USER_SLACK_ID, TEAM_COMMAND_TEXT);
 
         assertDelayedResponseMessage(RESPONSE_TO_SLACK);
         verifyNoMoreInteractions(gamificationService);
