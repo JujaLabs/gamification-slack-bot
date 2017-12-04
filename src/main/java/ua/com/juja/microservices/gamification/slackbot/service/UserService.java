@@ -1,6 +1,8 @@
 package ua.com.juja.microservices.gamification.slackbot.service;
 
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+
+import ua.com.juja.slack.command.handler.UserBySlackUserId;
+import ua.com.juja.slack.command.handler.model.UserDTO;
 
 import java.util.List;
 import java.util.Set;
@@ -9,9 +11,9 @@ import java.util.Set;
  * @author Artem
  * @author Nikolay Horushko
  */
-public interface UserService {
+public interface UserService extends UserBySlackUserId{
 
-    List<UserDTO> findUsersBySlackNames(List<String> slackNames);
+    List<UserDTO> receiveUsersBySlackUserId(List<String> slackNames);
 
-    Set<UserDTO> findUsersByUuids(Set<String> uuids);
+    Set<UserDTO> receiveUsersByUuids(Set<String> uuids);
 }

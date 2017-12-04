@@ -4,11 +4,11 @@ import feign.FeignException;
 import org.springframework.context.annotation.Profile;
 import ua.com.juja.microservices.gamification.slackbot.dao.UserRepository;
 import ua.com.juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.SlackNameRequest;
+import ua.com.juja.microservices.gamification.slackbot.model.DTO.SlackIdRequest;
 import ua.com.juja.microservices.gamification.slackbot.model.DTO.UuidRequest;
 import ua.com.juja.microservices.gamification.slackbot.dao.feign.UsersClient;
 import ua.com.juja.microservices.gamification.slackbot.exceptions.ApiError;
-import ua.com.juja.microservices.gamification.slackbot.model.DTO.UserDTO;
+import ua.com.juja.slack.command.handler.model.UserDTO;
 import ua.com.juja.microservices.gamification.slackbot.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,14 +30,13 @@ public class RestUserRepository implements UserRepository {
 
     @Inject
     private UsersClient usersClient;
-
     @Override
     public List<UserDTO> findUsersBySlackNames(List<String> slackNames) {
         logger.debug("Received SlackNames : [{}]", slackNames);
-        SlackNameRequest slackNameRequest = new SlackNameRequest(slackNames);
+        SlackIdRequest slackIdRequest = new SlackIdRequest(slackNames);
         List<UserDTO> users;
         try {
-            users = usersClient.findUsersBySlackNames(slackNameRequest);
+            users = usersClient.findUsersBySlackNames(slackIdRequest);
             logger.debug("Finished request to Users service. Users [{}]", users.toString());
         } catch (FeignException ex) {
             ApiError error = Utils.convertToApiError(ex.getMessage());

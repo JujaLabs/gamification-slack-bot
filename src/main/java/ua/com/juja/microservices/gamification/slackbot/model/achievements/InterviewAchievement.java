@@ -1,7 +1,7 @@
 package ua.com.juja.microservices.gamification.slackbot.model.achievements;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ua.com.juja.microservices.gamification.slackbot.model.SlackParsedCommand;
+import ua.com.juja.slack.command.handler.model.SlackParsedCommand;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;

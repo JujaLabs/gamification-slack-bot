@@ -1,5 +1,9 @@
 package ua.com.juja.microservices.gamification.slackbot.exceptions;
 
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.cloud.netflix.feign.FeignAutoConfiguration;
+import org.springframework.cloud.netflix.feign.ribbon.FeignRibbonClientAutoConfiguration;
+import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
 import ua.com.juja.microservices.gamification.slackbot.controller.GamificationSlackCommandController;
 import ua.com.juja.microservices.gamification.slackbot.service.GamificationService;
 import ua.com.juja.microservices.utils.SlackUrlUtils;
@@ -36,6 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(GamificationSlackCommandController.class)
+@ImportAutoConfiguration({RibbonAutoConfiguration.class, FeignRibbonClientAutoConfiguration.class, FeignAutoConfiguration.class})
 public class ExceptionHandlerTest {
     private final static String INSTANT_MESSAGE = "Your command accepted. Please wait...";
     private final static String responseUrl = "http://example.com";
@@ -136,7 +141,7 @@ public class ExceptionHandlerTest {
 
     @Test
     public void shouldHandleResourceAccessException() throws Exception {
-        final String COMMAND_TEXT = "@slack1 -2th @slack2 -3th @slack3";
+        final String COMMAND_TEXT = "<@U1DR97JLA|slackName1> -2th <@U2DR97JLA|slackName2> -3th <@U3DR97JLA|slackName3>";
         when(gamificationService.sendCodenjoyAchievement(any(String.class), any(String.class))).
                 thenThrow(new ResourceAccessException("Some service unavailable"));
 
@@ -156,7 +161,7 @@ public class ExceptionHandlerTest {
     @Test
     public void shouldHandleWrongCommandException() throws Exception {
 
-        final String COMMAND_TEXT = "@slack1 -2th @slack2 -3th @slack3";
+        final String COMMAND_TEXT = "<@U1DR97JLA|slackName1> -2th <@U2DR97JLA|slackName2> -3th @slack3";
 
         when(gamificationService.sendCodenjoyAchievement(any(String.class), any(String.class))).
                 thenThrow(new WrongCommandFormatException("Wrong command exception"));
@@ -193,7 +198,7 @@ public class ExceptionHandlerTest {
 
     @Test
     public void shouldHandleSendResponseAsRichMessage() throws Exception {
-        final String COMMAND_TEXT = "@slack1 -2th @slack2 -3th @slack3";
+        final String COMMAND_TEXT = "<@U1DR97JLA|slackName1> -2th <@U2DR97JLA|slackName2> -3th <@U3DR97JLA|slackName3>";
         when(gamificationService.sendCodenjoyAchievement(any(String.class), any(String.class))).
                 thenThrow(new WrongCommandFormatException("Wrong command exception"));
         RuntimeException exception = new RuntimeException("any exception");

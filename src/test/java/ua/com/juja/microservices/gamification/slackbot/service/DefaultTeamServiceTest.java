@@ -1,5 +1,9 @@
 package ua.com.juja.microservices.gamification.slackbot.service;
 
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.cloud.netflix.feign.FeignAutoConfiguration;
+import org.springframework.cloud.netflix.feign.ribbon.FeignRibbonClientAutoConfiguration;
+import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
 import ua.com.juja.microservices.gamification.slackbot.dao.TeamRepository;
 import ua.com.juja.microservices.gamification.slackbot.model.DTO.TeamDTO;
 import org.junit.Test;
@@ -17,6 +21,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(TeamService.class)
+@ImportAutoConfiguration({RibbonAutoConfiguration.class, FeignRibbonClientAutoConfiguration.class, FeignAutoConfiguration.class})
 public class DefaultTeamServiceTest {
 
     @Inject

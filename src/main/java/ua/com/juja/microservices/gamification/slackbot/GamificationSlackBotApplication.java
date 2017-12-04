@@ -2,10 +2,12 @@ package ua.com.juja.microservices.gamification.slackbot;
 
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -22,6 +24,7 @@ import java.util.List;
 @SpringBootApplication
 @EnableEurekaClient
 @EnableFeignClients
+@ComponentScan({"ua.com.juja.slack.command.handler", "ua.com.juja.microservices.gamification.slackbot"})
 public class GamificationSlackBotApplication {
 
     public static void main(String[] args) {

@@ -25,6 +25,7 @@
     </appender>
 
     <logger name="org.springframework.web" level="INFO"/>
+    <logger name="ua.com.juja.slack.command.handler" level="DEBUG"/>
 
     <logger name="ua.com.juja.microservices" level="DEBUG" additivity="false">
         <appender-ref ref="Console-Appender"/>
