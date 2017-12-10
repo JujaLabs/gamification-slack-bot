@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  */
 
 @Service
-public class SlackNameHandlerService {
+public class SlackCommandService {
 
     private UserService userService;
 
@@ -35,7 +35,7 @@ public class SlackNameHandlerService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Inject
-    public SlackNameHandlerService(UserService userService) {
+    public SlackCommandService(UserService userService) {
         this.userService = userService;
     }
 

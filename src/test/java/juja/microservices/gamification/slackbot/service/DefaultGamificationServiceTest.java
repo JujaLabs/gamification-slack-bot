@@ -5,7 +5,7 @@ import juja.microservices.gamification.slackbot.model.DTO.TeamDTO;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
 import juja.microservices.gamification.slackbot.model.achievements.*;
-import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
+import juja.microservices.gamification.slackbot.service.impl.SlackCommandService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +41,7 @@ public class DefaultGamificationServiceTest {
     @MockBean
     private UserService userService;
     @MockBean
-    private SlackNameHandlerService slackNameHandlerService;
+    private SlackCommandService slackCommandService;
     @Inject
     private GamificationService gamificationService;
     private UserDTO fromUser = new UserDTO("uuid-from-user", FROM_USER_SLACK_NAME);
@@ -65,7 +65,7 @@ public class DefaultGamificationServiceTest {
         Map<String, UserDTO> users = new HashMap<>();
         users.put(fromUser.getSlack(), fromUser);
 
-        when(slackNameHandlerService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
+        when(slackCommandService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
                 .thenReturn(new SlackParsedCommand(fromUser.getSlack(), TEXT_COMMAND, users));
         when(gamificationRepository.saveDailyAchievement(any(DailyAchievement.class)))
                 .thenReturn(SAVED_ACHIEVEMENT_ID);
@@ -75,9 +75,9 @@ public class DefaultGamificationServiceTest {
 
         //then
         assertThat(result, equalTo(EXPECTED_RESPONSE_TO_SLACK));
-        verify(slackNameHandlerService).createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND);
+        verify(slackCommandService).createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND);
         verify(gamificationRepository).saveDailyAchievement(any(DailyAchievement.class));
-        verifyNoMoreInteractions(slackNameHandlerService, gamificationRepository);
+        verifyNoMoreInteractions(slackCommandService, gamificationRepository);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class DefaultGamificationServiceTest {
         Map<String, UserDTO> users = new HashMap<>();
         users.put(fromUser.getSlack(), fromUser);
 
-        when(slackNameHandlerService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
+        when(slackCommandService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
                 .thenReturn(new SlackParsedCommand(fromUser.getSlack(), TEXT_COMMAND, users));
         when(gamificationRepository.saveDailyAchievement(any(DailyAchievement.class)))
                 .thenReturn(SAVED_ACHIEVEMENT_ID);
@@ -100,9 +100,9 @@ public class DefaultGamificationServiceTest {
 
         //then
         assertThat(result, equalTo(EXPECTED_RESPONSE_TO_SLACK));
-        verify(slackNameHandlerService).createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND);
+        verify(slackCommandService).createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND);
         verify(gamificationRepository).saveDailyAchievement(any(DailyAchievement.class));
-        verifyNoMoreInteractions(slackNameHandlerService, gamificationRepository);
+        verifyNoMoreInteractions(slackCommandService, gamificationRepository);
     }
 
     @Test
@@ -120,7 +120,7 @@ public class DefaultGamificationServiceTest {
         users.put(user2.getSlack(), user2);
         users.put(user3.getSlack(), user3);
 
-        when(slackNameHandlerService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
+        when(slackCommandService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
                 .thenReturn(new SlackParsedCommand(fromUser.getSlack(), TEXT_COMMAND, users));
         when(gamificationRepository.saveCodenjoyAchievement(any(CodenjoyAchievement.class)))
                 .thenReturn(SAVED_ACHIEVEMENT_ID);
@@ -130,9 +130,9 @@ public class DefaultGamificationServiceTest {
 
         //then
         assertThat(result, equalTo(EXPECTED_RESPONSE_TO_SLACK));
-        verify(slackNameHandlerService).createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND);
+        verify(slackCommandService).createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND);
         verify(gamificationRepository).saveCodenjoyAchievement(any(CodenjoyAchievement.class));
-        verifyNoMoreInteractions(slackNameHandlerService, gamificationRepository);
+        verifyNoMoreInteractions(slackCommandService, gamificationRepository);
     }
 
     @Test
@@ -148,7 +148,7 @@ public class DefaultGamificationServiceTest {
         users.put(user2.getSlack(), user2);
         users.put(user3.getSlack(), user3);
 
-        when(slackNameHandlerService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
+        when(slackCommandService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
                 .thenReturn(new SlackParsedCommand(fromUser.getSlack(), TEXT_COMMAND, users));
         when(gamificationRepository.saveCodenjoyAchievement(any(CodenjoyAchievement.class)))
                 .thenReturn(SAVED_ACHIEVEMENT_ID);
@@ -158,9 +158,9 @@ public class DefaultGamificationServiceTest {
 
         //then
         assertThat(result, equalTo(EXPECTED_RESPONSE_TO_SLACK));
-        verify(slackNameHandlerService).createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND);
+        verify(slackCommandService).createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND);
         verify(gamificationRepository).saveCodenjoyAchievement(any(CodenjoyAchievement.class));
-        verifyNoMoreInteractions(slackNameHandlerService, gamificationRepository);
+        verifyNoMoreInteractions(slackCommandService, gamificationRepository);
     }
 
     @Test
@@ -175,7 +175,7 @@ public class DefaultGamificationServiceTest {
         users.put(fromUser.getSlack(), fromUser);
         users.put(user1.getSlack(), user1);
 
-        when(slackNameHandlerService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
+        when(slackCommandService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
                 .thenReturn(new SlackParsedCommand(fromUser.getSlack(), TEXT_COMMAND, users));
         when(gamificationRepository.saveThanksAchievement(any(ThanksAchievement.class)))
                 .thenReturn(SAVED_ACHIEVEMENT_ID);
@@ -185,9 +185,9 @@ public class DefaultGamificationServiceTest {
 
         //then
         assertThat(result, equalTo(EXPECTED_RESPONSE_TO_SLACK));
-        verify(slackNameHandlerService).createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND);
+        verify(slackCommandService).createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND);
         verify(gamificationRepository).saveThanksAchievement(any(ThanksAchievement.class));
-        verifyNoMoreInteractions(slackNameHandlerService, gamificationRepository);
+        verifyNoMoreInteractions(slackCommandService, gamificationRepository);
     }
 
     @Test
@@ -203,7 +203,7 @@ public class DefaultGamificationServiceTest {
         users.put(fromUser.getSlack(), fromUser);
         users.put(user1.getSlack(), user1);
 
-        when(slackNameHandlerService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
+        when(slackCommandService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
                 .thenReturn(new SlackParsedCommand(fromUser.getSlack(), TEXT_COMMAND, users));
         when(gamificationRepository.saveThanksAchievement(any(ThanksAchievement.class)))
                 .thenReturn(SAVED_ACHIEVEMENT_ID);
@@ -213,9 +213,9 @@ public class DefaultGamificationServiceTest {
 
         //then
         assertThat(result, equalTo(EXPECTED_RESPONSE_TO_SLACK));
-        verify(slackNameHandlerService).createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND);
+        verify(slackCommandService).createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND);
         verify(gamificationRepository).saveThanksAchievement(any(ThanksAchievement.class));
-        verifyNoMoreInteractions(slackNameHandlerService, gamificationRepository);
+        verifyNoMoreInteractions(slackCommandService, gamificationRepository);
     }
 
     @Test
@@ -229,7 +229,7 @@ public class DefaultGamificationServiceTest {
         Map<String, UserDTO> users = new HashMap<>();
         users.put(fromUser.getSlack(), fromUser);
 
-        when(slackNameHandlerService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
+        when(slackCommandService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
                 .thenReturn(new SlackParsedCommand(fromUser.getSlack(), TEXT_COMMAND, users));
         when(gamificationRepository.saveInterviewAchievement(any(InterviewAchievement.class)))
                 .thenReturn(SAVED_ACHIEVEMENT_ID);
@@ -239,9 +239,9 @@ public class DefaultGamificationServiceTest {
 
         //then
         assertThat(result, equalTo(EXPECTED_RESPONSE_TO_SLACK));
-        verify(slackNameHandlerService).createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND);
+        verify(slackCommandService).createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND);
         verify(gamificationRepository).saveInterviewAchievement(any(InterviewAchievement.class));
-        verifyNoMoreInteractions(slackNameHandlerService, gamificationRepository);
+        verifyNoMoreInteractions(slackCommandService, gamificationRepository);
     }
 
     @Test
@@ -254,7 +254,7 @@ public class DefaultGamificationServiceTest {
         Map<String, UserDTO> users = new HashMap<>();
         users.put(fromUser.getSlack(), fromUser);
 
-        when(slackNameHandlerService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
+        when(slackCommandService.createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND))
                 .thenReturn(new SlackParsedCommand(fromUser.getSlack(), TEXT_COMMAND, users));
         when(gamificationRepository.saveInterviewAchievement(any(InterviewAchievement.class)))
                 .thenReturn(SAVED_ACHIEVEMENT_ID);
@@ -264,9 +264,9 @@ public class DefaultGamificationServiceTest {
 
         //then
         assertThat(result, equalTo(EXPECTED_RESPONSE_TO_SLACK));
-        verify(slackNameHandlerService).createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND);
+        verify(slackCommandService).createSlackParsedCommand(FROM_USER_SLACK_NAME, TEXT_COMMAND);
         verify(gamificationRepository).saveInterviewAchievement(any(InterviewAchievement.class));
-        verifyNoMoreInteractions(slackNameHandlerService, gamificationRepository);
+        verifyNoMoreInteractions(slackCommandService, gamificationRepository);
     }
 
     @Test
@@ -287,7 +287,7 @@ public class DefaultGamificationServiceTest {
         users.put(fromUser.getSlack(), fromUser);
 
         //when
-        when(slackNameHandlerService.createSlackParsedCommand(FROM_USER_SLACK_NAME, textCommand))
+        when(slackCommandService.createSlackParsedCommand(FROM_USER_SLACK_NAME, textCommand))
                 .thenReturn(new SlackParsedCommand(fromUser.getSlack(), textCommand, users));
         when(teamService.getTeamByUserUuid(fromUser.getUuid())).thenReturn(team);
         when(userService.findUsersByUuids(members)).thenReturn(usersResponce);
@@ -315,7 +315,7 @@ public class DefaultGamificationServiceTest {
         users.put(fromUser.getSlack(), fromUser);
 
         //when
-        when(slackNameHandlerService.createSlackParsedCommand(FROM_USER_SLACK_NAME, textCommand))
+        when(slackCommandService.createSlackParsedCommand(FROM_USER_SLACK_NAME, textCommand))
                 .thenReturn(new SlackParsedCommand(fromUser.getSlack(), textCommand, users));
         when(teamService.getTeamByUserUuid(fromUser.getUuid())).thenReturn(team);
         when(userService.findUsersByUuids(members)).thenReturn(usersResponce);

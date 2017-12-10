@@ -29,15 +29,15 @@ public class DefaultGamificationService implements GamificationService {
     private final GamificationRepository gamificationRepository;
     private final TeamService teamService;
     private final UserService userService;
-    private final SlackNameHandlerService slackNameHandlerService;
+    private final SlackCommandService slackCommandService;
 
     @Inject
     public DefaultGamificationService(GamificationRepository gamificationRepository, TeamService teamService,
-                                      UserService userService, SlackNameHandlerService slackNameHandlerService) {
+                                      UserService userService, SlackCommandService slackCommandService) {
         this.gamificationRepository = gamificationRepository;
         this.teamService = teamService;
         this.userService = userService;
-        this.slackNameHandlerService = slackNameHandlerService;
+        this.slackCommandService = slackCommandService;
     }
 
     @Override
@@ -150,7 +150,7 @@ public class DefaultGamificationService implements GamificationService {
     private SlackParsedCommand createSlackParsedCommand(String fromUser, String text) {
 
         logger.debug("Start create slackParsedCommand");
-        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(fromUser, text);
+        SlackParsedCommand slackParsedCommand = slackCommandService.createSlackParsedCommand(fromUser, text);
         logger.debug("Finish create slackParsedCommand: {}", slackParsedCommand.toString());
         return slackParsedCommand;
     }

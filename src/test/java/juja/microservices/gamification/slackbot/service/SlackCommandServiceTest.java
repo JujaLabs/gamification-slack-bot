@@ -2,7 +2,7 @@ package juja.microservices.gamification.slackbot.service;
 
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
-import juja.microservices.gamification.slackbot.service.impl.SlackNameHandlerService;
+import juja.microservices.gamification.slackbot.service.impl.SlackCommandService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,9 +24,9 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class SlackNameHandlerServiceTest {
+public class SlackCommandServiceTest {
     @Inject
-    private SlackNameHandlerService slackNameHandlerService;
+    private SlackCommandService slackCommandService;
     @MockBean
     private UserService userService;
     private UserDTO userFrom;
@@ -48,7 +48,7 @@ public class SlackNameHandlerServiceTest {
         List<UserDTO> responseFromUserService = Arrays.asList(userFrom, user1);
         when(userService.findUsersBySlackNames(requestToUserService)).thenReturn(responseFromUserService);
         //when
-        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), text);
+        SlackParsedCommand slackParsedCommand = slackCommandService.createSlackParsedCommand(userFrom.getSlack(), text);
         //then
         assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text @slack1 TexT text., " +
                 "slackNamesInText=[@slack1], userCountInText=1, " +
@@ -67,7 +67,7 @@ public class SlackNameHandlerServiceTest {
         List<UserDTO> responseFromUserService = Arrays.asList(userFrom, user1);
         when(userService.findUsersBySlackNames(requestToUserService)).thenReturn(responseFromUserService);
         //when
-        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFromWithoutAt.getSlack()
+        SlackParsedCommand slackParsedCommand = slackCommandService.createSlackParsedCommand(userFromWithoutAt.getSlack()
                 , text);
         //then
         assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text @slack1 TexT text., " +
@@ -86,7 +86,7 @@ public class SlackNameHandlerServiceTest {
         List<UserDTO> responseFromUserService = Arrays.asList(userFrom, user1, user2);
         when(userService.findUsersBySlackNames(requestToUserService)).thenReturn(responseFromUserService);
         //when
-        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), text);
+        SlackParsedCommand slackParsedCommand = slackCommandService.createSlackParsedCommand(userFrom.getSlack(), text);
         //then
         assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text @slack1 TexT @slack2 text., " +
                 "slackNamesInText=[@slack1, @slack2], userCountInText=2, " +
@@ -104,7 +104,7 @@ public class SlackNameHandlerServiceTest {
         List<UserDTO> responseFromUserService = Arrays.asList(userFrom);
         when(userService.findUsersBySlackNames(requestToUserService)).thenReturn(responseFromUserService);
         //when
-        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(userFrom.getSlack(), text);
+        SlackParsedCommand slackParsedCommand = slackCommandService.createSlackParsedCommand(userFrom.getSlack(), text);
         //then
         assertEquals("SlackParsedCommand(fromSlackName=@slackFrom, text=text without slack name TexT text., " +
                 "slackNamesInText=[], userCountInText=0, " +
