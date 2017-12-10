@@ -2,7 +2,7 @@ package juja.microservices.gamification.slackbot.exceptions;
 
 import juja.microservices.gamification.slackbot.controller.GamificationSlackCommandController;
 import juja.microservices.gamification.slackbot.service.GamificationService;
-import juja.microservices.utils.SlackUrlUtils;
+import juja.microservices.utils.SlackUtils;
 import me.ramswaroop.jbot.core.slack.models.RichMessage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,8 +77,8 @@ public class ExceptionHandlerTest {
         when(gamificationService.sendDailyAchievement(any(String.class), any(String.class)))
                 .thenThrow(new GamificationExchangeException(apiError, new RuntimeException("exception")));
 
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotDailyUrl),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUtils.getUrlTemplate(gamificationSlackbotDailyUrl),
+                SlackUtils.getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
@@ -104,8 +104,8 @@ public class ExceptionHandlerTest {
         when(gamificationService.sendDailyAchievement(any(), any())).
                 thenThrow(new UserExchangeException(apiError, new RuntimeException("exception")));
 
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotDailyUrl),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUtils.getUrlTemplate(gamificationSlackbotDailyUrl),
+                SlackUtils.getUriVars("slashCommandToken", "/daily", DAILY_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
@@ -131,8 +131,8 @@ public class ExceptionHandlerTest {
         when(gamificationService.sendTeamAchievement(any(), any())).
                 thenThrow(new TeamExchangeException(apiError, new RuntimeException("exception")));
 
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotTeamUrl),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/team", TEAM_COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUtils.getUrlTemplate(gamificationSlackbotTeamUrl),
+                SlackUtils.getUriVars("slashCommandToken", "/team", TEAM_COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
@@ -148,8 +148,8 @@ public class ExceptionHandlerTest {
         when(gamificationService.sendCodenjoyAchievement(any(String.class), any(String.class))).
                 thenThrow(new ResourceAccessException("Some service unavailable"));
 
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotCodenjoyUrl),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/codenjoy", COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUtils.getUrlTemplate(gamificationSlackbotCodenjoyUrl),
+                SlackUtils.getUriVars("slashCommandToken", "/codenjoy", COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
@@ -169,8 +169,8 @@ public class ExceptionHandlerTest {
         when(gamificationService.sendCodenjoyAchievement(any(String.class), any(String.class))).
                 thenThrow(new WrongCommandFormatException("Wrong command exception"));
 
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotCodenjoyUrl),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/codenjoy", COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUtils.getUrlTemplate(gamificationSlackbotCodenjoyUrl),
+                SlackUtils.getUriVars("slashCommandToken", "/codenjoy", COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
@@ -188,8 +188,8 @@ public class ExceptionHandlerTest {
         when(gamificationService.sendDailyAchievement(any(String.class), any(String.class))).
                 thenThrow(new RuntimeException("Runtime exception"));
 
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotDailyUrl),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/daily", COMMAND_TEXT))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUtils.getUrlTemplate(gamificationSlackbotDailyUrl),
+                SlackUtils.getUriVars("slashCommandToken", "/daily", COMMAND_TEXT))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));

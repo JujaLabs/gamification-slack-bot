@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import juja.microservices.gamification.slackbot.GamificationSlackBotApplication;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
-import juja.microservices.utils.SlackUrlUtils;
+import juja.microservices.utils.SlackUtils;
 import me.ramswaroop.jbot.core.slack.models.RichMessage;
 import org.junit.Before;
 import org.junit.Test;
@@ -118,10 +118,10 @@ public class GamificationSlackBotIntegrationTest {
         mockSuccessPostService(gamificationCodenjoyUrl, EXPECTED_REQUEST_TO_GAMIFICATION,
                 EXPECTED_RESPONSE_FROM_GAMIFICATION);
         mockSlackResponseUrl(responseUrl, new RichMessage(String.format(CODENJOY_THANKS_MESSAGE,
-                user1.getSlack(), user2.getSlack(), user3.getSlack())));
+                user1.getSlackUser(), user2.getSlackUser(), user3.getSlackUser())));
 
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotCodenjoyUrl),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_FROM_SLACK))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUtils.getUrlTemplate(gamificationSlackbotCodenjoyUrl),
+                SlackUtils.getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_FROM_SLACK))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
@@ -141,10 +141,10 @@ public class GamificationSlackBotIntegrationTest {
         mockSuccessPostService(gamificationCodenjoyUrl, EXPECTED_REQUEST_TO_GAMIFICATION,
                 EXPECTED_RESPONSE_FROM_GAMIFICATION);
         mockSlackResponseUrl(responseUrl, new RichMessage(String.format(CODENJOY_THANKS_MESSAGE,
-                user1.getSlack(), user2.getSlack(), user3.getSlack())));
+                user1.getSlackUser(), user2.getSlackUser(), user3.getSlackUser())));
 
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotCodenjoyUrl),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_FROM_SLACK))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUtils.getUrlTemplate(gamificationSlackbotCodenjoyUrl),
+                SlackUtils.getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_FROM_SLACK))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
@@ -164,10 +164,10 @@ public class GamificationSlackBotIntegrationTest {
         mockSuccessPostService(gamificationCodenjoyUrl, EXPECTED_REQUEST_TO_GAMIFICATION,
                 EXPECTED_RESPONSE_FROM_GAMIFICATION);
         mockSlackResponseUrl(responseUrl, new RichMessage(String.format(CODENJOY_THANKS_MESSAGE,
-                user1.getSlack(), user2.getSlack(), user3.getSlack())));
+                user1.getSlackUser(), user2.getSlackUser(), user3.getSlackUser())));
 
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotCodenjoyUrl),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_FROM_SLACK))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUtils.getUrlTemplate(gamificationSlackbotCodenjoyUrl),
+                SlackUtils.getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_FROM_SLACK))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
@@ -183,8 +183,8 @@ public class GamificationSlackBotIntegrationTest {
                 "-3th @slack3'";
         mockSlackResponseUrl(responseUrl, new RichMessage(EXPECTED_RESPONSE_TO_SLACK));
 
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotCodenjoyUrl),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_FROM_SLACK))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUtils.getUrlTemplate(gamificationSlackbotCodenjoyUrl),
+                SlackUtils.getUriVars("slashCommandToken", "/codenjoy", CODENJOY_COMMAND_FROM_SLACK))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
@@ -204,8 +204,8 @@ public class GamificationSlackBotIntegrationTest {
                 EXPECTED_RESPONSE_FROM_GAMIFICATION);
         mockSlackResponseUrl(responseUrl, new RichMessage(DAILY_THANKS_MESSAGE));
 
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotDailyUrl),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/codenjoy", DAILY_COMMAND_TEXT_FROM_SLACK))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUtils.getUrlTemplate(gamificationSlackbotDailyUrl),
+                SlackUtils.getUriVars("slashCommandToken", "/codenjoy", DAILY_COMMAND_TEXT_FROM_SLACK))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
@@ -225,8 +225,8 @@ public class GamificationSlackBotIntegrationTest {
                 EXPECTED_RESPONSE_FROM_GAMIFICATION);
         mockSlackResponseUrl(responseUrl, new RichMessage(INTERVIEW_THANKS_MESSAGE));
 
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotInterviewUrl),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/interview", INTERVIEW_COMMAND_TEXT_FROM_SLACK))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUtils.getUrlTemplate(gamificationSlackbotInterviewUrl),
+                SlackUtils.getUriVars("slashCommandToken", "/interview", INTERVIEW_COMMAND_TEXT_FROM_SLACK))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
@@ -244,10 +244,10 @@ public class GamificationSlackBotIntegrationTest {
 
         mockSuccessPostService(gamificationThanksUrl, EXPECTED_REQUEST_TO_GAMIFICATION,
                 EXPECTED_RESPONSE_FROM_GAMIFICATION);
-        mockSlackResponseUrl(responseUrl, new RichMessage(String.format(THANKS_ONE_THANKS_MESSAGE, user1.getSlack())));
+        mockSlackResponseUrl(responseUrl, new RichMessage(String.format(THANKS_ONE_THANKS_MESSAGE, user1.getSlackUser())));
 
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotThanksUrl),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/thanks", THANKS_COMMAND_TEXT_FROM_SLACK))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUtils.getUrlTemplate(gamificationSlackbotThanksUrl),
+                SlackUtils.getUriVars("slashCommandToken", "/thanks", THANKS_COMMAND_TEXT_FROM_SLACK))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
@@ -263,8 +263,8 @@ public class GamificationSlackBotIntegrationTest {
                 "@slack2 for your help!'  You can't send thanks more than one user.";
         mockSlackResponseUrl(responseUrl, new RichMessage(EXPECTED_RESPONSE_TO_SLACK));
 
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotThanksUrl),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/thanks", THANKS_COMMAND_TEXT_FROM_SLACK))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUtils.getUrlTemplate(gamificationSlackbotThanksUrl),
+                SlackUtils.getUriVars("slashCommandToken", "/thanks", THANKS_COMMAND_TEXT_FROM_SLACK))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
@@ -297,8 +297,8 @@ public class GamificationSlackBotIntegrationTest {
         mockSlackResponseUrl(responseUrl, new RichMessage(TEAM_THANKS_MESSAGE));
 
         final String teamCommandTextFromSlack = "";
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotTeamUrl),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/team", teamCommandTextFromSlack))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUtils.getUrlTemplate(gamificationSlackbotTeamUrl),
+                SlackUtils.getUriVars("slashCommandToken", "/team", teamCommandTextFromSlack))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
@@ -313,8 +313,8 @@ public class GamificationSlackBotIntegrationTest {
         final String EXPECTED_RESPONSE_TO_SLACK = "very big and scare error";
         mockSlackResponseUrl(responseUrl, new RichMessage(EXPECTED_RESPONSE_TO_SLACK));
 
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotThanksUrl),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/thanks", THANKS_COMMAND_TEXT_FROM_SLACK))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUtils.getUrlTemplate(gamificationSlackbotThanksUrl),
+                SlackUtils.getUriVars("slashCommandToken", "/thanks", THANKS_COMMAND_TEXT_FROM_SLACK))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
@@ -334,8 +334,8 @@ public class GamificationSlackBotIntegrationTest {
         final String EXPECTED_RESPONSE_TO_SLACK = "Oops something went wrong :(";
         mockSlackResponseUrl(responseUrl, new RichMessage(EXPECTED_RESPONSE_TO_SLACK));
 
-        mvc.perform(MockMvcRequestBuilders.post(SlackUrlUtils.getUrlTemplate(gamificationSlackbotThanksUrl),
-                SlackUrlUtils.getUriVars("slashCommandToken", "/thanks", THANKS_COMMAND_TEXT_FROM_SLACK))
+        mvc.perform(MockMvcRequestBuilders.post(SlackUtils.getUrlTemplate(gamificationSlackbotThanksUrl),
+                SlackUtils.getUriVars("slashCommandToken", "/thanks", THANKS_COMMAND_TEXT_FROM_SLACK))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(INSTANT_MESSAGE));
@@ -344,7 +344,7 @@ public class GamificationSlackBotIntegrationTest {
     private void mockFailUsersService(List<UserDTO> users) throws JsonProcessingException {
         List<String> slackNames = new ArrayList<>();
         for (UserDTO user : users) {
-            slackNames.add(user.getSlack());
+            slackNames.add(user.getSlackUser());
         }
         ObjectMapper mapper = new ObjectMapper();
         mockServer.expect(requestTo(usersFindUsersBySlackNamesUrl))
@@ -372,7 +372,7 @@ public class GamificationSlackBotIntegrationTest {
     private void mockSuccessUsersService(List<UserDTO> users) throws JsonProcessingException {
         List<String> slackNames = new ArrayList<>();
         for (UserDTO user : users) {
-            slackNames.add(user.getSlack());
+            slackNames.add(user.getSlackUser());
         }
         ObjectMapper mapper = new ObjectMapper();
         mockServer.expect(requestTo(usersFindUsersBySlackNamesUrl))
