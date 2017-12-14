@@ -11,10 +11,11 @@ import lombok.ToString;
 /**
  * @author Vitalii Viazovoi
  * @author Nikolay Horushko
+ * @author Danil Kuznetsov kuznetsov.danil.v@gmail.com
  */
 @Getter
 @ToString
-public class ThanksAchievement implements ResponseWithSlackName {
+public class ThanksAchievement implements ResponseWithSlackUsers {
     @JsonProperty("from")
     private String fromUuid;
     @JsonProperty("to")
@@ -34,24 +35,24 @@ public class ThanksAchievement implements ResponseWithSlackName {
         this.fromUuid = slackParsedCommand.getFromUser().getUuid();
         this.toUser = receiveToUser(slackParsedCommand);
         this.toUuid = toUser.getUuid();
-        this.description = slackParsedCommand.getTextWithoutSlackNames();
+        this.description = slackParsedCommand.getTextWithoutSlackUsers();
     }
 
     private UserDTO receiveToUser(SlackParsedCommand slackParsedCommand) {
         if (slackParsedCommand.getUserCountInText() > 1) {
-            throw new WrongCommandFormatException(String.format("We found %d slack names in your command: '%s' " +
+            throw new WrongCommandFormatException(String.format("We found %d slack user in your command: '%s' " +
                             " You can't send thanks more than one user.", slackParsedCommand.getUserCountInText(),
                     slackParsedCommand.getText()));
         }
         if (slackParsedCommand.getUserCountInText() == 0) {
-            throw new WrongCommandFormatException(String.format("We didn't find slack name in your command. '%s'" +
-                    " You must write user's slack name for 'thanks'.", slackParsedCommand.getText()));
+            throw new WrongCommandFormatException(String.format("We didn't find slack user in your command. '%s'" +
+                    " You must write user's slack user for 'thanks'.", slackParsedCommand.getText()));
         }
         return slackParsedCommand.getFirstUser();
     }
 
     @Override
-    public String injectSlackNames(String messageFormat) {
-        return String.format(messageFormat, toUser.getSlack());
+    public String injectSlackUsers(String messageFormat) {
+        return String.format(messageFormat, toUser.getSlackUser());
     }
 }

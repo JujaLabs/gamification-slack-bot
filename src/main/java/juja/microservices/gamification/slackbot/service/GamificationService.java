@@ -5,13 +5,13 @@ package juja.microservices.gamification.slackbot.service;
  */
 public interface GamificationService {
 
-    String sendDailyAchievement(String fromUser, String text);
+    String sendDailyAchievement(String fromSlackUser, String text);
 
-    String sendCodenjoyAchievement(String fromUser, String text);
+    String sendCodenjoyAchievement(String fromSlackUser, String text);
 
-    String sendThanksAchievement(String fromUser, String text);
+    String sendThanksAchievement(String fromSlackUser, String text);
 
-    String sendInterviewAchievement(String fromUser, String text);
+    String sendInterviewAchievement(String fromSlackUser, String text);
 
-    String sendTeamAchievement(String fromUser, String text);
+    String sendTeamAchievement(String fromSlackUser, String text);
 }

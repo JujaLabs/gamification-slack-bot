@@ -20,32 +20,28 @@ import java.util.regex.Pattern;
 
 /**
  * @author Nikolay Horushko
+ * @author Danil Kuznetsov kuznetsov.danil.v@gmail.com
  */
-@ToString(exclude = {"SLACK_NAME_PATTERN", "logger"})
+@ToString(exclude = {"SLACK_USER_PATTERN", "logger"})
 public class SlackParsedCommand {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final String SLACK_NAME_PATTERN = "@([a-zA-z0-9\\.\\_\\-]){1,21}";
-    private String fromSlackName;
+    private final String SLACK_USER_PATTERN = "\\<@(.*?)(\\||\\>)";
+    private String fromSlackUser;
     private String text;
-    private List<String> slackNamesInText;
+    private List<String> slackUserInText;
     private int userCountInText;
     private Map<String, UserDTO> users;
 
-    public SlackParsedCommand(String fromSlackName, String text, Map<String, UserDTO> users) {
-
-        if (!fromSlackName.startsWith("@")) {
-            logger.debug("add '@' to slack name [{}]", fromSlackName);
-            fromSlackName = "@" + fromSlackName;
-        }
-        this.fromSlackName = fromSlackName;
+    public SlackParsedCommand(String fromSlackUser, String text, Map<String, UserDTO> users) {
+        this.fromSlackUser = fromSlackUser;
         this.text = text;
-        this.slackNamesInText = receiveAllSlackNames(text);
+        this.slackUserInText = receiveAllSlacUsers(text);
         this.users = users;
-        this.userCountInText = slackNamesInText.size();
+        this.userCountInText = slackUserInText.size();
     }
 
-    public List<String> getSlackNamesInText() {
-        return slackNamesInText;
+    public List<String> getSlackUserInText() {
+        return slackUserInText;
     }
 
     public String getText() {
@@ -53,12 +49,12 @@ public class SlackParsedCommand {
     }
 
     public UserDTO getFromUser() {
-        return users.get(fromSlackName);
+        return users.get(fromSlackUser);
     }
 
     public UserDTO getFirstUser() {
-        checkIsTextContainsSlackName();
-        UserDTO result = users.get(slackNamesInText.get(0));
+        checkIsTextContainsSlackUser();
+        UserDTO result = users.get(slackUserInText.get(0));
         logger.debug("Found the user: {} in the text: [{}]", result.toString(), text);
         return result;
     }
@@ -67,63 +63,65 @@ public class SlackParsedCommand {
         return userCountInText;
     }
 
-    private List<String> receiveAllSlackNames(String text) {
+    private List<String> receiveAllSlacUsers(String text) {
         List<String> result = new ArrayList<>();
-        Pattern pattern = Pattern.compile(SLACK_NAME_PATTERN);
+        Pattern pattern = Pattern.compile(SLACK_USER_PATTERN);
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
-            result.add(matcher.group().trim());
+            result.add(matcher.group(1).trim());
         }
         return result;
     }
 
-    public String getTextWithoutSlackNames() {
-        String result = text.replaceAll(SLACK_NAME_PATTERN, "");
+    public String getTextWithoutSlackUsers() {
+        String result = text.replaceAll(SLACK_USER_PATTERN, "");
         result = result.replaceAll("\\s+", " ").trim();
         return result;
     }
 
     public List<UserDTO> getAllUsers() {
-        checkIsTextContainsSlackName();
+        //TODO it's strange check, fix it later.
+        // checkIsTextContainsSlackUser();
         List<UserDTO> result = new LinkedList(users.values());
-        result.remove(result.stream().filter(res -> res.getSlack().equals(fromSlackName)).findFirst().get());
+        result.remove(result.stream().filter(res -> res.getSlackUser().equals(fromSlackUser)).findFirst().get());
         logger.debug("Found {} users in the text: [{}]", result.size(), text);
         return result;
     }
 
-    public void checkIsTextContainsSlackName() {
+    public void checkIsTextContainsSlackUser() {
         if (userCountInText == 0) {
-            logger.warn("The text: [{}] doesn't contain slack name.");
-            throw new WrongCommandFormatException(String.format("The text '%s' doesn't contains slackName", text));
+            logger.warn("The text: [{}] doesn't contain slack user.");
+            throw new WrongCommandFormatException(String.format("The text '%s' doesn't contains slackUser", text));
         }
     }
 
     public Map<String, UserDTO> getUsersWithTokens(String[] tokens) {
-        logger.debug("Recieve tokens: [{}] for searching. in the text: [{}]", tokens, text);
+        logger.debug("Received tokens: [{}] for searching. in the text: [{}]", tokens, text);
         List<Token> sortedTokenList = receiveTokensWithPositionInText(tokens);
         Map<String, UserDTO> result = new HashMap<>();
+
         for (int i = 0; i < sortedTokenList.size(); i++) {
             Token currentToken = sortedTokenList.get(i);
-            Pattern slackNamePattern = Pattern.compile(SLACK_NAME_PATTERN);
-            Matcher matcher = slackNamePattern.matcher(text.substring(text.indexOf(currentToken.getToken())));
+            Pattern slackUserPattern = Pattern.compile(SLACK_USER_PATTERN);
+            Matcher matcher = slackUserPattern.matcher(text.substring(text.indexOf(currentToken.getToken())));
             if (matcher.find()) {
-                String foundedSlackName = matcher.group().trim();
-                int indexFoundedSlackName = text.indexOf(foundedSlackName);
+                String foundedSlackUser = matcher.group(1).trim();
+                int indexFoundedSlackUser = text.indexOf(foundedSlackUser);
                 for (int j = i + 1; j < sortedTokenList.size(); j++) {
-                    if (indexFoundedSlackName > sortedTokenList.get(j).getPositionInText()) {
-                        logger.warn("The text: [{}] doesn't contain slack name for token: [{}]",
+                    if (indexFoundedSlackUser > sortedTokenList.get(j).getPositionInText()) {
+                        logger.warn("The text: [{}] doesn't contain slack user for token: [{}]",
                                 text, currentToken.getToken());
-                        throw new WrongCommandFormatException(String.format("The text '%s' doesn't contain slackName " +
+                        throw new WrongCommandFormatException(String.format("The text '%s' doesn't contain slackUser " +
                                 "for token '%s'", text, currentToken.getToken()));
                     }
                 }
-                logger.debug("Found user: {} for token:", users.get(foundedSlackName), currentToken.getToken());
-                result.put(currentToken.getToken(), users.get(foundedSlackName));
+                logger.debug("Found user: {} for token: {}", users.get(foundedSlackUser), currentToken.getToken());
+                result.put(currentToken.getToken(), users.get(foundedSlackUser));
             } else {
-                logger.warn("The text: [{}] doesn't contain slack name for token: [{}]",
+                logger.warn("The text: [{}] doesn't contain slack User for token: [{}]",
                         text, sortedTokenList.get(i).getToken());
                 throw new WrongCommandFormatException(String.format("The text '%s' " +
-                        "doesn't contain slackName for token '%s'", text, sortedTokenList.get(i).getToken()));
+                        "doesn't contain slackUser for token '%s'", text, sortedTokenList.get(i).getToken()));
             }
         }
         return result;

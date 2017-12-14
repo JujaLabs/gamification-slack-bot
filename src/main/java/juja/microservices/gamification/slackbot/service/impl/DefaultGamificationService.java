@@ -21,7 +21,6 @@ import java.util.Set;
  * @author Danil Kuznetsov
  * @author Nikolay Horushko
  */
-
 @Service
 public class DefaultGamificationService implements GamificationService {
 
@@ -29,22 +28,22 @@ public class DefaultGamificationService implements GamificationService {
     private final GamificationRepository gamificationRepository;
     private final TeamService teamService;
     private final UserService userService;
-    private final SlackNameHandlerService slackNameHandlerService;
+    private final SlackCommandService slackCommandService;
 
     @Inject
     public DefaultGamificationService(GamificationRepository gamificationRepository, TeamService teamService,
-                                      UserService userService, SlackNameHandlerService slackNameHandlerService) {
+                                      UserService userService, SlackCommandService slackCommandService) {
         this.gamificationRepository = gamificationRepository;
         this.teamService = teamService;
         this.userService = userService;
-        this.slackNameHandlerService = slackNameHandlerService;
+        this.slackCommandService = slackCommandService;
     }
 
     @Override
-    public String sendDailyAchievement(String fromUser, String text) {
+    public String sendDailyAchievement(String fromSlackUser, String text) {
 
         logger.debug("Start create Daily achievement from slack parsed command");
-        DailyAchievement daily = new DailyAchievement(createSlackParsedCommand(fromUser, text));
+        DailyAchievement daily = new DailyAchievement(createSlackParsedCommand(fromSlackUser, text));
         logger.debug("Daily achievement was created. Daily: {}", daily.toString());
 
         String[] ids = gamificationRepository.saveDailyAchievement(daily);
@@ -59,17 +58,17 @@ public class DefaultGamificationService implements GamificationService {
     }
 
     @Override
-    public String sendCodenjoyAchievement(String fromUser, String text) {
+    public String sendCodenjoyAchievement(String fromSlackUser, String text) {
 
         logger.debug("Start create Codenjoy achievement from slack parsed command");
-        CodenjoyAchievement codenjoy = new CodenjoyAchievement(createSlackParsedCommand(fromUser, text));
+        CodenjoyAchievement codenjoy = new CodenjoyAchievement(createSlackParsedCommand(fromSlackUser, text));
         logger.debug("Codenjoy achievement was created. codenjoy: {}", codenjoy.toString());
 
         String[] ids = gamificationRepository.saveCodenjoyAchievement(codenjoy);
         logger.info("Codenjoy achievement was saved with id: {}", Arrays.toString(ids));
 
         if (ids.length == 3) {
-            return codenjoy.injectSlackNames("Thanks, we awarded the users. " +
+            return codenjoy.injectSlackUsers("Thanks, we awarded the users. " +
                     "First place: %s, Second place: %s, Third place: %s");
         } else {
             logger.debug("Expected 3 saved achievements, but gamification service saved: {} ", ids.length);
@@ -78,10 +77,10 @@ public class DefaultGamificationService implements GamificationService {
     }
 
     @Override
-    public String sendThanksAchievement(String fromUser, String text) {
+    public String sendThanksAchievement(String fromSlackUser, String text) {
 
         logger.debug("Start create Thanks achievement from slack parsed command");
-        ThanksAchievement thanks = new ThanksAchievement(createSlackParsedCommand(fromUser, text));
+        ThanksAchievement thanks = new ThanksAchievement(createSlackParsedCommand(fromSlackUser, text));
         logger.debug("Thanks achievement was created. thanks: {}", thanks.toString());
 
         String[] ids = gamificationRepository.saveThanksAchievement(thanks);
@@ -90,10 +89,10 @@ public class DefaultGamificationService implements GamificationService {
         String response = "Something went wrong and we didn't save the thanks.";
 
         if (ids.length == 1) {
-            response = thanks.injectSlackNames("Thanks, your 'thanks' for %s saved.");
+            response = thanks.injectSlackUsers("Thanks, your 'thanks' for %s saved.");
         }
         if (ids.length == 2) {
-            response = thanks.injectSlackNames("Thanks, your 'thanks' for %s saved. " +
+            response = thanks.injectSlackUsers("Thanks, your 'thanks' for %s saved. " +
                     "Also you received +1 for your activity.");
         }
 
@@ -101,10 +100,10 @@ public class DefaultGamificationService implements GamificationService {
     }
 
     @Override
-    public String sendInterviewAchievement(String fromUser, String text) {
+    public String sendInterviewAchievement(String fromSlackUser, String text) {
 
         logger.debug("Start create Interview achievement from slack parsed command");
-        InterviewAchievement interview = new InterviewAchievement(createSlackParsedCommand(fromUser, text));
+        InterviewAchievement interview = new InterviewAchievement(createSlackParsedCommand(fromSlackUser, text));
         logger.debug("Interview achievement was created. interview: {}", interview.toString());
 
         String[] ids = gamificationRepository.saveInterviewAchievement(interview);
@@ -118,12 +117,12 @@ public class DefaultGamificationService implements GamificationService {
     }
 
     @Override
-    public String sendTeamAchievement(String fromUser, String text) {
+    public String sendTeamAchievement(String fromSlackUser, String text) {
 
-        logger.debug("Start sending and saving Team achievement. fromUser: [{}] text: [{}]", fromUser, text);
+        logger.debug("Start sending and saving Team achievement. fromSlackUser: [{}] text: [{}]", fromSlackUser, text);
 
         logger.debug("Start create Team achievement from slack parsed command");
-        String fromUuid = createSlackParsedCommand(fromUser, text).getFromUser().getUuid();
+        String fromUuid = createSlackParsedCommand(fromSlackUser, text).getFromUser().getUuid();
         TeamDTO teamDTO = teamService.getTeamByUserUuid(fromUuid);
 
         Set<String> teamMembers= teamDTO.getMembers();
@@ -131,26 +130,26 @@ public class DefaultGamificationService implements GamificationService {
         logger.debug("Team achievement was created. team: {}", team.toString());
 
         Set<UserDTO> users = userService.findUsersByUuids(teamMembers);
-        Set<String> slackNames = new LinkedHashSet<>();
-        users.forEach(user -> slackNames.add(user.getSlack()));
-        logger.debug("Slack names for team {} were received: {}", team.toString(), slackNames);
+        Set<String> slackUsers = new LinkedHashSet<>();
+        users.forEach(user -> slackUsers.add(user.getSlackUser()));
+        logger.debug("Slack users for team {} were received: {}", team.toString(), slackUsers);
 
         String[] ids = gamificationRepository.saveTeamAchievement(team);
         logger.info("Team achievement was saved with ids: {}", Arrays.toString(ids));
 
         int teamSize = teamMembers.size();
         if (ids.length == teamSize) {
-            return  "Thanks, your team report saved. Members: " + slackNames;
+            return  "Thanks, your team report saved. Members: " + slackUsers;
         } else {
             logger.debug("Expected {} saved achievements, but gamification service saved: {} ", teamSize, ids.length);
             return  "Something went wrong during saving your team report";
         }
     }
 
-    private SlackParsedCommand createSlackParsedCommand(String fromUser, String text) {
+    private SlackParsedCommand createSlackParsedCommand(String fromSlackUser, String text) {
 
         logger.debug("Start create slackParsedCommand");
-        SlackParsedCommand slackParsedCommand = slackNameHandlerService.createSlackParsedCommand(fromUser, text);
+        SlackParsedCommand slackParsedCommand = slackCommandService.createSlackCommand(fromSlackUser, text);
         logger.debug("Finish create slackParsedCommand: {}", slackParsedCommand.toString());
         return slackParsedCommand;
     }

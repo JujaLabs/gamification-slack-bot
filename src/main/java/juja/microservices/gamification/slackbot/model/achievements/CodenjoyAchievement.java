@@ -11,12 +11,13 @@ import java.util.Map;
 
 /**
  * @author Nikolay Horushko
+ * @author Danil Kuznetsov kuznetsov.danil.v@gmail.com
  */
 @Getter
 @ToString
 @JsonIgnoreProperties({"tokens", "okSlackResponse", "firstPlaceUser",
         "secondPlaceUser", "thirdPlaceUser"})
-public class CodenjoyAchievement implements ResponseWithSlackName {
+public class CodenjoyAchievement implements ResponseWithSlackUsers {
     @JsonProperty("from")
     private String fromUuid;
     @JsonProperty("firstPlace")
@@ -53,8 +54,8 @@ public class CodenjoyAchievement implements ResponseWithSlackName {
     }
 
     @Override
-    public String injectSlackNames(String messageFormat) {
-        return String.format(messageFormat, firstPlaceUser.getSlack(),
-                secondPlaceUser.getSlack(), thirdPlaceUser.getSlack());
+    public String injectSlackUsers(String messageFormat) {
+        return String.format(messageFormat, firstPlaceUser.getSlackUser(),
+                secondPlaceUser.getSlackUser(), thirdPlaceUser.getSlackUser());
     }
 }

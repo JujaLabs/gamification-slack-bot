@@ -3,7 +3,7 @@ package juja.microservices.gamification.slackbot.dao.impl;
 import juja.microservices.gamification.slackbot.dao.UserRepository;
 import juja.microservices.gamification.slackbot.exceptions.ApiError;
 import juja.microservices.gamification.slackbot.exceptions.UserExchangeException;
-import juja.microservices.gamification.slackbot.model.DTO.SlackNameRequest;
+import juja.microservices.gamification.slackbot.model.DTO.SlackUsersRequest;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.DTO.UuidRequest;
 import juja.microservices.gamification.slackbot.util.Utils;
@@ -33,10 +33,11 @@ public class RestUserRepository implements UserRepository {
     private final RestTemplate restTemplate;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${users.endpoint.usersBySlackNames}")
-    private String usersFindUsersBySlackNamesUrl;
-    @Value("${users.endpoint.usersByUuids}")
-    private String usersFindUsersByUuidsUrl;
+    @Value("${users.endpoint.findUsersBySlackIds}")
+    private String urlFindUsersBySlackUsers;
+
+    @Value("${users.endpoint.findUsersByUuids}")
+    private String urlFindUsersByUuids;
 
     @Inject
     public RestUserRepository(RestTemplate restTemplate) {
@@ -44,24 +45,16 @@ public class RestUserRepository implements UserRepository {
     }
 
     @Override
-    public List<UserDTO> findUsersBySlackNames(List<String> slackNames) {
-        logger.debug("Received SlackNames : [{}]", slackNames);
+    public List<UserDTO> findUsersBySlackUsers(List<String> slackUsers) {
+        logger.debug("Received SlackUsers : [{}]", slackUsers);
 
-        for (int i = 0; i < slackNames.size(); i++) {
-            if (!slackNames.get(i).startsWith("@")) {
-                logger.debug("add '@' to SlackName : [{}]", slackNames.get(i));
-                String slackName = slackNames.get(i);
-                slackNames.set(i, "@" + slackName);
-            }
-        }
-
-        SlackNameRequest slackNameRequest = new SlackNameRequest(slackNames);
-        HttpEntity<SlackNameRequest> request = new HttpEntity<>(slackNameRequest, Utils.setupJsonHttpHeaders());
+        SlackUsersRequest slackUsersRequest = new SlackUsersRequest(slackUsers);
+        HttpEntity<SlackUsersRequest> request = new HttpEntity<>(slackUsersRequest, Utils.setupJsonHttpHeaders());
 
         List<UserDTO> result;
         try {
             logger.debug("Started request to Users service. Request is : [{}]", request.toString());
-            ResponseEntity<UserDTO[]> response = restTemplate.exchange(usersFindUsersBySlackNamesUrl,
+            ResponseEntity<UserDTO[]> response = restTemplate.exchange(urlFindUsersBySlackUsers,
                     HttpMethod.POST, request, UserDTO[].class);
             logger.debug("Finished request to Users service. Response is: [{}]", response.toString());
             result = Arrays.asList(response.getBody());
@@ -71,7 +64,7 @@ public class RestUserRepository implements UserRepository {
             throw new UserExchangeException(error, ex);
         }
 
-        logger.info("Got UserDTO:{} by users: {}", result, slackNames);
+        logger.info("Got UserDTO:{} by users: {}", result, slackUsers);
         return result;
     }
 
@@ -85,7 +78,7 @@ public class RestUserRepository implements UserRepository {
         Set<UserDTO> result;
         try {
             logger.debug("Started request to Users service. Request is : [{}]", request.toString());
-            ResponseEntity<UserDTO[]> response = restTemplate.postForEntity(usersFindUsersByUuidsUrl,
+            ResponseEntity<UserDTO[]> response = restTemplate.postForEntity(urlFindUsersByUuids,
                     request, UserDTO[].class);
             logger.debug("Finished request to Users service. Response is: [{}]", response.toString());
             result = new LinkedHashSet<>(Arrays.asList(response.getBody()));
