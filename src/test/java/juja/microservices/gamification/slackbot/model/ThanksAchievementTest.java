@@ -12,68 +12,91 @@ import org.junit.rules.ExpectedException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static juja.microservices.utils.SlackUtils.convertSlackUserInSlackFormat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 
 public class ThanksAchievementTest {
     private ObjectMapper objectMapper;
-    private Map<String, UserDTO> users;
-    private String fromSlackName;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+    private static final String SLACK_USER_FROM = "from";
+    private static final String SLACK_USER1 = "slack1";
+    private static final String SLACK_USER2 = "slack2";
+
+    private UserDTO userFrom;
+    private UserDTO user1;
+    private UserDTO user2;
+
     @Before
     public void setup() {
         objectMapper = new ObjectMapper();
-        users = new HashMap<>();
-        users.put("@from", new UserDTO("uuid0", "@from"));
-        users.put("@slack1", new UserDTO("uuid1", "@slack1"));
-        fromSlackName = "@from";
+        userFrom = new UserDTO("uuid0", SLACK_USER_FROM);
+        user1 = new UserDTO("uuid1", SLACK_USER1);
+        user2 = new UserDTO("uuid2", SLACK_USER2);
     }
 
     @Test
     public void createAchievement() throws Exception {
         //given
-        String text = "Thanks @slack1 for help";
+        Map<String, UserDTO> users = new HashMap<>();
+        users.put(SLACK_USER_FROM, userFrom);
+        users.put(SLACK_USER1, user1);
+
+        String expectedJson = String.format("{\"description\":\"Thanks for help\",\"from\":\"%s\",\"to\":\"%s\"}",
+                userFrom.getUuid(),
+                user1.getUuid());
+
+        String text = String.format("Thanks %s for help",
+                convertSlackUserInSlackFormat(user1.getSlackUser())
+        );
+
         //when
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(fromSlackName, text, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(SLACK_USER_FROM, text, users);
         ThanksAchievement thanks = new ThanksAchievement(slackParsedCommand);
+        String actualJson = objectMapper.writeValueAsString(thanks);
         //then
-        assertEquals("{\"description\":\"Thanks for help\",\"from\":\"uuid0\",\"to\":\"uuid1\"}", objectMapper.writeValueAsString(thanks));
+        assertEquals(expectedJson, actualJson);
     }
 
     @Test
-    public void createAchievementThrowExceptionIfWithoutSlackName() throws Exception {
+    public void createAchievementThrowExceptionIfWithoutSlackUser() throws Exception {
         //given
-        users = new HashMap<>();
-        users.put("@from", new UserDTO("uuid0", "@from"));
-        String text = "Thanks without slack name";
+        Map<String, UserDTO> users = new HashMap<>();
+        users.put(SLACK_USER_FROM, userFrom);
+        String text = "Thanks without slack user";
         //then
         thrown.expect(WrongCommandFormatException.class);
-        thrown.expectMessage(containsString("We didn't find slack name in your command. 'Thanks without slack name'" +
-                " You must write user's slack name for 'thanks'."));
+        thrown.expectMessage(containsString("We didn't find slack user in your command. 'Thanks without slack user'" +
+                " You must write user's slack user for 'thanks'."));
         //when
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(fromSlackName, text, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(SLACK_USER_FROM, text, users);
         new ThanksAchievement(slackParsedCommand);
     }
 
     @Test
-    public void createAchievementThrowExceptionIfMoreThanOneSlackName() throws Exception {
+    public void createAchievementThrowExceptionIfMoreThanOneSlackUser() throws Exception {
         //given
-        users = new HashMap<>();
-        users.put("@from", new UserDTO("uuid0", "@from"));
-        users.put("@slack1", new UserDTO("uuid1", "@slack1"));
-        users.put("@slack2", new UserDTO("uuid2", "@slack2"));
-        String text = "Thanks @slack1 text @slack2";
+        Map<String, UserDTO> users = new HashMap<>();
+        users.put(SLACK_USER_FROM, userFrom);
+        users.put(SLACK_USER1, user1);
+        users.put(SLACK_USER2, user2);
+
+        String text = String.format("Thanks %s text %s",
+                convertSlackUserInSlackFormat(user1.getSlackUser()),
+                convertSlackUserInSlackFormat(user2.getSlackUser())
+        );
+
         //then
         thrown.expect(WrongCommandFormatException.class);
-        thrown.expectMessage(containsString("We found 2 slack names in your command: 'Thanks @slack1 text @slack2'" +
-                "  You can't send thanks more than one user."));
+        thrown.expectMessage(containsString(String.format("We found 2 slack user in your command: 'Thanks %s text %s'  You can't send thanks more than one user.",
+                convertSlackUserInSlackFormat(user1.getSlackUser()),
+                convertSlackUserInSlackFormat(user2.getSlackUser())))
+        );
         //when
-        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(fromSlackName, text, users);
+        SlackParsedCommand slackParsedCommand = new SlackParsedCommand(SLACK_USER_FROM, text, users);
         new ThanksAchievement(slackParsedCommand);
     }
-
-
 }
