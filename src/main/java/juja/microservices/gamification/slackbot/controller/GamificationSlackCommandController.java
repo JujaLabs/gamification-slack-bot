@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -24,6 +25,7 @@ import java.io.PrintWriter;
  * @author Danil Kuznetsov kuznetsov.danil.v@gmail.com
  */
 @RestController
+@RequestMapping("/v1/commands")
 public class GamificationSlackCommandController {
 
     private final static String INSTANT_MESSAGE = "Your command accepted. Please wait...";
@@ -47,7 +49,7 @@ public class GamificationSlackCommandController {
         this.exceptionsHandler = exceptionsHandler;
     }
 
-    @PostMapping(value = "${gamification.slackbot.endpoint.codenjoy}",
+    @PostMapping(value = "/codenjoy",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandCodenjoy(@RequestParam("token") String token,
                                               @RequestParam("user_id") String fromSlackUser,
@@ -74,7 +76,7 @@ public class GamificationSlackCommandController {
         sendDelayedResponseMessage(responseUrl, message);
     }
 
-    @PostMapping(value = "${gamification.slackbot.endpoint.daily}",
+    @PostMapping(value = "/daily",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandDaily(@RequestParam("token") String token,
                                            @RequestParam("user_id") String fromSlackUser,
@@ -101,7 +103,7 @@ public class GamificationSlackCommandController {
         sendDelayedResponseMessage(responseUrl, message);
     }
 
-    @PostMapping(value = "${gamification.slackbot.endpoint.thanks}",
+    @PostMapping(value = "/thanks",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandThanks(@RequestParam("token") String token,
                                             @RequestParam("user_id") String fromSlackUser,
@@ -127,7 +129,7 @@ public class GamificationSlackCommandController {
         sendDelayedResponseMessage(responseUrl, message);
     }
 
-    @PostMapping(value = "${gamification.slackbot.endpoint.interview}",
+    @PostMapping(value = "/interview",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandInterview(@RequestParam("token") String token,
                                                @RequestParam("user_id") String fromSlackUser,
@@ -154,7 +156,7 @@ public class GamificationSlackCommandController {
         sendDelayedResponseMessage(responseUrl, message);
     }
 
-    @PostMapping(value = "${gamification.slackbot.endpoint.team}",
+    @PostMapping(value = "/team",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandTeam(@RequestParam("token") String token,
                                           @RequestParam("user_id") String fromSlackUser,

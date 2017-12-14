@@ -6,7 +6,6 @@ import juja.microservices.gamification.slackbot.GamificationSlackBotApplication;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import me.ramswaroop.jbot.core.slack.models.RichMessage;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +26,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static juja.microservices.utils.SlackUtils.*;
+import static juja.microservices.utils.SlackUtils.convertSlackUserInSlackFormat;
+import static juja.microservices.utils.SlackUtils.getUriVars;
+import static juja.microservices.utils.SlackUtils.getUrlTemplate;
 import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -66,16 +67,11 @@ public class GamificationSlackBotIntegrationTest {
     private MockMvc mvc;
     private MockRestServiceServer mockServer;
 
-    @Value("${gamification.slackbot.endpoint.daily}")
-    private String gamificationSlackbotDailyUrl;
-    @Value("${gamification.slackbot.endpoint.thanks}")
-    private String gamificationSlackbotThanksUrl;
-    @Value("${gamification.slackbot.endpoint.codenjoy}")
-    private String gamificationSlackbotCodenjoyUrl;
-    @Value("${gamification.slackbot.endpoint.interview}")
-    private String gamificationSlackbotInterviewUrl;
-    @Value("${gamification.slackbot.endpoint.team}")
-    private String gamificationSlackbotTeamUrl;
+    private String gamificationSlackbotDailyUrl =  "/v1/commands/daily";
+    private String gamificationSlackbotThanksUrl = "/v1/commands/thanks";
+    private String gamificationSlackbotCodenjoyUrl =  "/v1/commands/codenjoy";
+    private String gamificationSlackbotInterviewUrl = "/v1/commands/interview";
+    private String gamificationSlackbotTeamUrl = "/v1/commands/team";
 
     @Value("${gamification.endpoint.daily}")
     private String gamificationDailyUrl;
