@@ -17,20 +17,14 @@ import java.util.stream.Collectors;
 
 /**
  * @author Nikolay Horushko
+ * @author Danil Kuznetsov kuznetsov.danil.v@gmail.com
  */
-
 @Service
 public class SlackCommandService {
 
     private UserService userService;
 
-    /**
-     * Slack name cannot be longer than 21 characters and
-     * can only contain letters, numbers, periods, hyphens, and underscores.
-     * ([a-z0-9\.\_\-]){1,21}
-     * quick test regExp http://regexr.com/
-     */
-    private final String SLACK_NAME_PATTERN = "@([a-zA-z0-9\\.\\_\\-]){1,21}";
+    private final String SLACK_USER_PATTERN = "\\<@(.*?)(\\||\\>)";
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -39,32 +33,27 @@ public class SlackCommandService {
         this.userService = userService;
     }
 
-    public SlackParsedCommand createSlackParsedCommand(String fromSlackName, String text) {
-        if (!fromSlackName.startsWith("@")) {
-            logger.debug("add '@' to slack name: [{}]", fromSlackName);
-            fromSlackName = "@" + fromSlackName;
-        }
-        return new SlackParsedCommand(fromSlackName, text, receiveUsersMap(fromSlackName, text));
+    public SlackParsedCommand createSlackCommand(String fromSlackUser, String text) {
+        return new SlackParsedCommand(fromSlackUser, text, receiveUsersMap(fromSlackUser, text));
     }
 
-    private Map<String, UserDTO> receiveUsersMap(String fromSlackName, String text) {
-        List<String> slackNames = receiveAllSlackNames(text);
-        slackNames.add(fromSlackName);
-        logger.debug("added \"fromSlackName\" slack name to request: [{}]", fromSlackName);
-        logger.debug("send slack names: {} to user service", slackNames);
-        List<UserDTO> users = userService.findUsersBySlackNames(slackNames);
+    private Map<String, UserDTO> receiveUsersMap(String fromSlackUser, String text) {
+        List<String> slackUsers = findAllSlackUsersIn(text);
+        slackUsers.add(fromSlackUser);
+        logger.debug("Send slack users: {} to user service", slackUsers);
+        List<UserDTO> users = userService.findUsersBySlackUsers(slackUsers);
         return users.stream()
-                .collect(Collectors.toMap(UserDTO::getSlack, user -> user));
+                .collect(Collectors.toMap(UserDTO::getSlackUser, user -> user));
     }
 
-    private List<String> receiveAllSlackNames(String text) {
+    private List<String> findAllSlackUsersIn(String text) {
         List<String> result = new ArrayList<>();
-        Pattern pattern = Pattern.compile(SLACK_NAME_PATTERN);
+        Pattern pattern = Pattern.compile(SLACK_USER_PATTERN);
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
-            result.add(matcher.group().trim());
+            result.add(matcher.group(1).trim());
         }
-        logger.debug("Recieved slack names: {} from text:", result.toString(), text);
+        logger.debug("Received slack users: {} from text:", result.toString(), text);
         return result;
     }
 }
