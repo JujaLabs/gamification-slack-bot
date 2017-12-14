@@ -21,6 +21,7 @@ import java.io.PrintWriter;
  * @author Nikolay Horushko
  * @author Ivan Shapovalov
  * @author Konstantin Sergey
+ * @author Danil Kuznetsov kuznetsov.danil.v@gmail.com
  */
 @RestController
 public class GamificationSlackCommandController {
@@ -30,8 +31,9 @@ public class GamificationSlackCommandController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${slack.slashCommandToken}")
-    private String slackToken;
+    @Value("${slack.securityToken}")
+    private String slackSecurityToken;
+
     private GamificationService gamificationService;
     private RestTemplate restTemplate;
     private ExceptionsHandler exceptionsHandler;
@@ -48,25 +50,25 @@ public class GamificationSlackCommandController {
     @PostMapping(value = "${gamification.slackbot.endpoint.codenjoy}",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandCodenjoy(@RequestParam("token") String token,
-                                              @RequestParam("user_name") String fromUser,
+                                              @RequestParam("user_id") String fromSlackUser,
                                               @RequestParam("text") String text,
                                               @RequestParam("response_url") String responseUrl,
                                               HttpServletResponse servletResponse) throws IOException {
 
         logger.debug("Received slash command Condenjoy achievement: from user: [{}] command: [{}] token: [{}]",
-                fromUser, text, token);
+                fromSlackUser, text, token);
 
-        if (!token.equals(slackToken)) {
-            logger.warn("Received invalid slack token: [{}] in command Codenjoy for user: [{}]", token, fromUser);
+        if (!token.equals(slackSecurityToken)) {
+            logger.warn("Received invalid slack token: [{}] in command Codenjoy for user: [{}]", token, fromSlackUser);
             sendInstantResponseMessage(servletResponse, SORRY_MESSAGE);
         }
         exceptionsHandler.setResponseUrl(responseUrl);
         sendInstantResponseMessage(servletResponse, INSTANT_MESSAGE);
 
-        String responseToSlack = gamificationService.sendCodenjoyAchievement(fromUser, text);
+        String responseToSlack = gamificationService.sendCodenjoyAchievement(fromSlackUser, text);
 
         logger.info("Codenjoy command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
-                fromUser, text, responseToSlack);
+                fromSlackUser, text, responseToSlack);
 
         RichMessage message = new RichMessage(responseToSlack);
         sendDelayedResponseMessage(responseUrl, message);
@@ -75,25 +77,25 @@ public class GamificationSlackCommandController {
     @PostMapping(value = "${gamification.slackbot.endpoint.daily}",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandDaily(@RequestParam("token") String token,
-                                           @RequestParam("user_name") String fromUser,
+                                           @RequestParam("user_id") String fromSlackUser,
                                            @RequestParam("text") String text,
                                            @RequestParam("response_url") String responseUrl,
                                            HttpServletResponse servletResponse) throws IOException {
 
         logger.debug("Received slash command Daily achievement: user: [{}] command: [{}] token: [{}]",
-                fromUser, text, token);
+                fromSlackUser, text, token);
 
-        if (!token.equals(slackToken)) {
-            logger.warn("Received invalid slack token: [{}] in command Daily for user: [{}] ", token, fromUser);
+        if (!token.equals(slackSecurityToken)) {
+            logger.warn("Received invalid slack token: [{}] in command Daily for user: [{}] ", token, fromSlackUser);
             sendInstantResponseMessage(servletResponse, SORRY_MESSAGE);
         }
         exceptionsHandler.setResponseUrl(responseUrl);
         sendInstantResponseMessage(servletResponse, INSTANT_MESSAGE);
 
-        String responseToSlack = gamificationService.sendDailyAchievement(fromUser, text);
+        String responseToSlack = gamificationService.sendDailyAchievement(fromSlackUser, text);
 
         logger.info("Daily command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
-                fromUser, text, responseToSlack);
+                fromSlackUser, text, responseToSlack);
 
         RichMessage message = new RichMessage(responseToSlack);
         sendDelayedResponseMessage(responseUrl, message);
@@ -102,24 +104,24 @@ public class GamificationSlackCommandController {
     @PostMapping(value = "${gamification.slackbot.endpoint.thanks}",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandThanks(@RequestParam("token") String token,
-                                            @RequestParam("user_name") String fromUser,
+                                            @RequestParam("user_id") String fromSlackUser,
                                             @RequestParam("text") String text,
                                             @RequestParam("response_url") String responseUrl,
                                             HttpServletResponse servletResponse) throws IOException {
 
         logger.debug("Received slash command Thanks achievement: user: [{}] command: [{}] token: [{}]",
-                fromUser, text, token);
-        if (!token.equals(slackToken)) {
-            logger.warn("Received invalid slack token: [{}] in command thanks for user: [{}]", token, fromUser);
+                fromSlackUser, text, token);
+        if (!token.equals(slackSecurityToken)) {
+            logger.warn("Received invalid slack token: [{}] in command thanks for user: [{}]", token, fromSlackUser);
             sendInstantResponseMessage(servletResponse, SORRY_MESSAGE);
         }
         exceptionsHandler.setResponseUrl(responseUrl);
         sendInstantResponseMessage(servletResponse, INSTANT_MESSAGE);
 
-        String responseToSlack = gamificationService.sendThanksAchievement(fromUser, text);
+        String responseToSlack = gamificationService.sendThanksAchievement(fromSlackUser, text);
 
         logger.info("Thanks command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
-                fromUser, text, responseToSlack);
+                fromSlackUser, text, responseToSlack);
 
         RichMessage message = new RichMessage(responseToSlack);
         sendDelayedResponseMessage(responseUrl, message);
@@ -128,25 +130,25 @@ public class GamificationSlackCommandController {
     @PostMapping(value = "${gamification.slackbot.endpoint.interview}",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandInterview(@RequestParam("token") String token,
-                                               @RequestParam("user_name") String fromUser,
+                                               @RequestParam("user_id") String fromSlackUser,
                                                @RequestParam("text") String text,
                                                @RequestParam("response_url") String responseUrl,
                                                HttpServletResponse servletResponse) throws IOException {
 
         logger.debug("Received slash command Interview achievement: user: [{}] command: [{}] token: [{}]",
-                fromUser, text, token);
+                fromSlackUser, text, token);
 
-        if (!token.equals(slackToken)) {
-            logger.warn("Received invalid slack token: [{}] in command interview for user: [{}]", token, fromUser);
+        if (!token.equals(slackSecurityToken)) {
+            logger.warn("Received invalid slack token: [{}] in command interview for user: [{}]", token, fromSlackUser);
             sendInstantResponseMessage(servletResponse, SORRY_MESSAGE);
         }
         exceptionsHandler.setResponseUrl(responseUrl);
         sendInstantResponseMessage(servletResponse, INSTANT_MESSAGE);
 
-        String responseToSlack = gamificationService.sendInterviewAchievement(fromUser, text);
+        String responseToSlack = gamificationService.sendInterviewAchievement(fromSlackUser, text);
 
         logger.info("Interview command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
-                fromUser, text, responseToSlack);
+                fromSlackUser, text, responseToSlack);
 
         RichMessage message = new RichMessage(responseToSlack);
         sendDelayedResponseMessage(responseUrl, message);
@@ -155,25 +157,25 @@ public class GamificationSlackCommandController {
     @PostMapping(value = "${gamification.slackbot.endpoint.team}",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void onReceiveSlashCommandTeam(@RequestParam("token") String token,
-                                          @RequestParam("user_name") String fromUser,
+                                          @RequestParam("user_id") String fromSlackUser,
                                           @RequestParam("text") String text,
                                           @RequestParam("response_url") String responseUrl,
                                           HttpServletResponse servletResponse) throws IOException {
 
         logger.debug("Received slash command Team achievement: user: [{}] command: [{}] token: [{}]",
-                fromUser, text, token);
+                fromSlackUser, text, token);
 
-        if (!token.equals(slackToken)) {
-            logger.warn("Received invalid slack token: [{}] in command Team for user: [{}] ", token, fromUser);
+        if (!token.equals(slackSecurityToken)) {
+            logger.warn("Received invalid slack token: [{}] in command Team for user: [{}] ", token, fromSlackUser);
             sendInstantResponseMessage(servletResponse, SORRY_MESSAGE);
         }
         exceptionsHandler.setResponseUrl(responseUrl);
         sendInstantResponseMessage(servletResponse, INSTANT_MESSAGE);
 
-        String responseToSlack = gamificationService.sendTeamAchievement(fromUser, text);
+        String responseToSlack = gamificationService.sendTeamAchievement(fromSlackUser, text);
 
         logger.info("Team command processed : user: [{}] text: [{}] and sent response into slack: [{}]",
-                fromUser, text, responseToSlack);
+                fromSlackUser, text, responseToSlack);
 
         RichMessage message = new RichMessage(responseToSlack);
         sendDelayedResponseMessage(responseUrl, message);
