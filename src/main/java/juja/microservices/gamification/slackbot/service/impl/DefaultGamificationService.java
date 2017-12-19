@@ -17,6 +17,8 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static juja.microservices.gamification.slackbot.model.SlackParsedCommand.convertSlackUserInSlackFormat;
+
 /**
  * @author Danil Kuznetsov
  * @author Nikolay Horushko
@@ -131,7 +133,7 @@ public class DefaultGamificationService implements GamificationService {
 
         Set<UserDTO> users = userService.findUsersByUuids(teamMembers);
         Set<String> slackUsers = new LinkedHashSet<>();
-        users.forEach(user -> slackUsers.add(user.getSlackUser()));
+        users.forEach(user -> slackUsers.add(convertSlackUserInSlackFormat(user.getSlackUser())));
         logger.debug("Slack users for team {} were received: {}", team.toString(), slackUsers);
 
         String[] ids = gamificationRepository.saveTeamAchievement(team);

@@ -9,6 +9,8 @@ import lombok.ToString;
 
 import java.util.Map;
 
+import static juja.microservices.gamification.slackbot.model.SlackParsedCommand.convertSlackUserInSlackFormat;
+
 /**
  * @author Nikolay Horushko
  * @author Danil Kuznetsov kuznetsov.danil.v@gmail.com
@@ -55,7 +57,9 @@ public class CodenjoyAchievement implements ResponseWithSlackUsers {
 
     @Override
     public String injectSlackUsers(String messageFormat) {
-        return String.format(messageFormat, firstPlaceUser.getSlackUser(),
-                secondPlaceUser.getSlackUser(), thirdPlaceUser.getSlackUser());
+        return String.format(messageFormat,
+                convertSlackUserInSlackFormat(firstPlaceUser.getSlackUser()),
+                convertSlackUserInSlackFormat(secondPlaceUser.getSlackUser()),
+                convertSlackUserInSlackFormat(thirdPlaceUser.getSlackUser()));
     }
 }

@@ -8,6 +8,8 @@ import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
 import lombok.Getter;
 import lombok.ToString;
 
+import static juja.microservices.gamification.slackbot.model.SlackParsedCommand.convertSlackUserInSlackFormat;
+
 /**
  * @author Vitalii Viazovoi
  * @author Nikolay Horushko
@@ -53,6 +55,6 @@ public class ThanksAchievement implements ResponseWithSlackUsers {
 
     @Override
     public String injectSlackUsers(String messageFormat) {
-        return String.format(messageFormat, toUser.getSlackUser());
+        return String.format(messageFormat, convertSlackUserInSlackFormat(toUser.getSlackUser()));
     }
 }

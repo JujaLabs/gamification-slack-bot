@@ -4,7 +4,11 @@ import juja.microservices.gamification.slackbot.dao.GamificationRepository;
 import juja.microservices.gamification.slackbot.model.DTO.TeamDTO;
 import juja.microservices.gamification.slackbot.model.DTO.UserDTO;
 import juja.microservices.gamification.slackbot.model.SlackParsedCommand;
-import juja.microservices.gamification.slackbot.model.achievements.*;
+import juja.microservices.gamification.slackbot.model.achievements.CodenjoyAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.DailyAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.InterviewAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.TeamAchievement;
+import juja.microservices.gamification.slackbot.model.achievements.ThanksAchievement;
 import juja.microservices.gamification.slackbot.service.impl.SlackCommandService;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,9 +19,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static juja.microservices.gamification.slackbot.model.SlackParsedCommand.convertSlackUserInFullSlackFormat;
+import static juja.microservices.gamification.slackbot.model.SlackParsedCommand.convertSlackUserInSlackFormat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -122,7 +131,9 @@ public class DefaultGamificationServiceTest {
         String[] savedAchievementId = {"100", "101", "102"};
         String expectedResponseToSlack = String.format("Thanks, we awarded the users. " +
                         "First place: %s, Second place: %s, Third place: %s",
-                user1.getSlackUser(), user2.getSlackUser(), user3.getSlackUser());
+                convertSlackUserInSlackFormat(user1.getSlackUser()),
+                convertSlackUserInSlackFormat(user2.getSlackUser()),
+                convertSlackUserInSlackFormat(user3.getSlackUser()));
 
         Map<String, UserDTO> users = new HashMap<>();
         users.put(userFrom.getSlackUser(), userFrom);
@@ -189,7 +200,7 @@ public class DefaultGamificationServiceTest {
 
         String[] savedAchievementId = {"100"};
         String expectedResponseToSlack = String.format("Thanks, your 'thanks' for %s saved.",
-                user1.getSlackUser()
+                convertSlackUserInSlackFormat(user1.getSlackUser())
         );
 
         Map<String, UserDTO> users = new HashMap<>();
@@ -220,7 +231,7 @@ public class DefaultGamificationServiceTest {
         );
         final String[] savedAchievementId = {"100", "101"};
         final String expectedResponseToSlack = String.format("Thanks, your 'thanks' for %s saved. " +
-                "Also you received +1 for your activity.", user1.getSlackUser());
+                "Also you received +1 for your activity.", convertSlackUserInSlackFormat(user1.getSlackUser()));
 
         Map<String, UserDTO> users = new HashMap<>();
         users.put(userFrom.getSlackUser(), userFrom);
@@ -300,7 +311,10 @@ public class DefaultGamificationServiceTest {
         String[] ids = {"100", "101", "102", "103"};
 
         String expectedResponseToSlack = String.format("Thanks, your team report saved. Members: [%s, %s, %s, %s]",
-                userFrom.getSlackUser(), user1.getSlackUser(), user2.getSlackUser(), user3.getSlackUser());
+                convertSlackUserInSlackFormat(userFrom.getSlackUser()),
+                convertSlackUserInSlackFormat(user1.getSlackUser()),
+                convertSlackUserInSlackFormat(user2.getSlackUser()),
+                convertSlackUserInSlackFormat(user3.getSlackUser()));
 
         Set<String> members = new LinkedHashSet<>(Arrays.asList(userFrom.getUuid(), user1.getUuid(),
                 user2.getUuid(), user3.getUuid()));
