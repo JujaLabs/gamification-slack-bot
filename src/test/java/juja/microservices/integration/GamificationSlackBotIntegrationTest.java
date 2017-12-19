@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static juja.microservices.utils.SlackUtils.convertSlackUserInSlackFormat;
+import static juja.microservices.gamification.slackbot.model.SlackParsedCommand.convertSlackUserInFullSlackFormat;
 import static juja.microservices.utils.SlackUtils.getUriVars;
 import static juja.microservices.utils.SlackUtils.getUrlTemplate;
 import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
@@ -111,9 +111,9 @@ public class GamificationSlackBotIntegrationTest {
     @Test
     public void onReceiveSlashCommandCodenjoyReturnOkRichMessage() throws Exception {
         String codenjoyCommandFromSlack = String.format("-1th %s -2th %s -3th %s",
-                convertSlackUserInSlackFormat(user1.getSlackUser()),
-                convertSlackUserInSlackFormat(user2.getSlackUser()),
-                convertSlackUserInSlackFormat(user3.getSlackUser()));
+                convertSlackUserInFullSlackFormat(user1.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user2.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user3.getSlackUser()));
 
         List<UserDTO> usersInCommand = Arrays.asList(user1, user2, user3, userFrom);
 
@@ -143,9 +143,9 @@ public class GamificationSlackBotIntegrationTest {
     @Test
     public void returnOkMessageIfCondejoyCommandTokensWithoutSpaces() throws Exception {
         String codenjoyCommandFromSlack = String.format("-1th%s-2th%s-3th%s",
-                convertSlackUserInSlackFormat(user1.getSlackUser()),
-                convertSlackUserInSlackFormat(user2.getSlackUser()),
-                convertSlackUserInSlackFormat(user3.getSlackUser()));
+                convertSlackUserInFullSlackFormat(user1.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user2.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user3.getSlackUser()));
 
         List<UserDTO> usersInCommand = Arrays.asList(user1, user2, user3, userFrom);
 
@@ -175,9 +175,9 @@ public class GamificationSlackBotIntegrationTest {
     @Test
     public void returnOkMessageIfCondejoyCommandTokensInWrongOrder() throws Exception {
         String codenjoyCommandFromSlack = String.format("-2th %s -1th %s -3th %s",
-                convertSlackUserInSlackFormat(user2.getSlackUser()),
-                convertSlackUserInSlackFormat(user1.getSlackUser()),
-                convertSlackUserInSlackFormat(user3.getSlackUser()));
+                convertSlackUserInFullSlackFormat(user2.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user1.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user3.getSlackUser()));
 
         List<UserDTO> usersInCommand = Arrays.asList(user2, user1, user3, userFrom);
 
@@ -207,16 +207,16 @@ public class GamificationSlackBotIntegrationTest {
     @Test
     public void returnErrorMessageIfCondejoyCommandWithout2thToken() throws Exception {
         String codenjoyCommandFromSlack = String.format("-1th %s %s -3th %s",
-                convertSlackUserInSlackFormat(user1.getSlackUser()),
-                convertSlackUserInSlackFormat(user2.getSlackUser()),
-                convertSlackUserInSlackFormat(user3.getSlackUser()));
+                convertSlackUserInFullSlackFormat(user1.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user2.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user3.getSlackUser()));
 
         List<UserDTO> usersInCommand = Arrays.asList(user1, user2, user3, userFrom);
 
         String expectedResponseToSlack = String.format("Token '-2th' didn't find in the string '-1th %s %s -3th %s'",
-                convertSlackUserInSlackFormat(user1.getSlackUser()),
-                convertSlackUserInSlackFormat(user2.getSlackUser()),
-                convertSlackUserInSlackFormat(user3.getSlackUser()));
+                convertSlackUserInFullSlackFormat(user1.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user2.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user3.getSlackUser()));
 
         mockSuccessUsersService(usersInCommand);
 
@@ -285,7 +285,7 @@ public class GamificationSlackBotIntegrationTest {
     @Test
     public void onReceiveSlashCommandThanksReturnOkRichMessage() throws Exception {
         String thanksCommandFromSlack = String.format("%s thanks for your help!",
-                convertSlackUserInSlackFormat(user1.getSlackUser()));
+                convertSlackUserInFullSlackFormat(user1.getSlackUser()));
 
         List<UserDTO> usersInCommand = Arrays.asList(user1, userFrom);
 
@@ -314,16 +314,16 @@ public class GamificationSlackBotIntegrationTest {
     public void returnErrorMessageIfThanksCommandConsistTwoOrMoreSlackUsers() throws Exception {
 
         String thanksCommandFromSlack = String.format("%s thanks %s for your help!",
-                convertSlackUserInSlackFormat(user1.getSlackUser()),
-                convertSlackUserInSlackFormat(user2.getSlackUser()));
+                convertSlackUserInFullSlackFormat(user1.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user2.getSlackUser()));
 
         List<UserDTO> usersInCommand = Arrays.asList(user1, user2, userFrom);
 
 
         final String expectedResponseToSlack = String.format("We found 2 slack user in your command: '%s thanks " +
                         "%s for your help!'  You can't send thanks more than one user.",
-                convertSlackUserInSlackFormat(user1.getSlackUser()),
-                convertSlackUserInSlackFormat(user2.getSlackUser()));
+                convertSlackUserInFullSlackFormat(user1.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user2.getSlackUser()));
 
         mockSuccessUsersService(usersInCommand);
 
@@ -392,8 +392,8 @@ public class GamificationSlackBotIntegrationTest {
     @Test
     public void returnClientErrorMessageWhenUserServiceIsFail() throws Exception {
         String thanksCommandFromSlack = String.format("%s thanks %s for your help!",
-                convertSlackUserInSlackFormat(user1.getSlackUser()),
-                convertSlackUserInSlackFormat(user2.getSlackUser()));
+                convertSlackUserInFullSlackFormat(user1.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user2.getSlackUser()));
 
         List<UserDTO> usersInCommand = Arrays.asList(user1, user2, userFrom);
 
@@ -415,7 +415,7 @@ public class GamificationSlackBotIntegrationTest {
     @Test
     public void returnClientErrorMessageWhenGamificationServiceIsFail() throws Exception {
         String thanksCommandFromSlack = String.format("%s thanks for your help!",
-                convertSlackUserInSlackFormat(user1.getSlackUser()));
+                convertSlackUserInFullSlackFormat(user1.getSlackUser()));
 
         List<UserDTO> usersInCommand = Arrays.asList(user1, userFrom);
 

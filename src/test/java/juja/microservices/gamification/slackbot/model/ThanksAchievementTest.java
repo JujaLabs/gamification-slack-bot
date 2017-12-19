@@ -12,7 +12,7 @@ import org.junit.rules.ExpectedException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static juja.microservices.utils.SlackUtils.convertSlackUserInSlackFormat;
+import static juja.microservices.gamification.slackbot.model.SlackParsedCommand.convertSlackUserInFullSlackFormat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 
@@ -50,7 +50,7 @@ public class ThanksAchievementTest {
                 user1.getUuid());
 
         String text = String.format("Thanks %s for help",
-                convertSlackUserInSlackFormat(user1.getSlackUser())
+                convertSlackUserInFullSlackFormat(user1.getSlackUser())
         );
 
         //when
@@ -85,15 +85,15 @@ public class ThanksAchievementTest {
         users.put(SLACK_USER2, user2);
 
         String text = String.format("Thanks %s text %s",
-                convertSlackUserInSlackFormat(user1.getSlackUser()),
-                convertSlackUserInSlackFormat(user2.getSlackUser())
+                convertSlackUserInFullSlackFormat(user1.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user2.getSlackUser())
         );
 
         //then
         thrown.expect(WrongCommandFormatException.class);
         thrown.expectMessage(containsString(String.format("We found 2 slack user in your command: 'Thanks %s text %s'  You can't send thanks more than one user.",
-                convertSlackUserInSlackFormat(user1.getSlackUser()),
-                convertSlackUserInSlackFormat(user2.getSlackUser())))
+                convertSlackUserInFullSlackFormat(user1.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user2.getSlackUser())))
         );
         //when
         SlackParsedCommand slackParsedCommand = new SlackParsedCommand(SLACK_USER_FROM, text, users);

@@ -15,6 +15,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static juja.microservices.gamification.slackbot.model.SlackParsedCommand.SLACK_USER_PATTERN;
+
 /**
  * @author Nikolay Horushko
  * @author Danil Kuznetsov kuznetsov.danil.v@gmail.com
@@ -23,8 +25,6 @@ import java.util.stream.Collectors;
 public class SlackCommandService {
 
     private UserService userService;
-
-    private final String SLACK_USER_PATTERN = "\\<@(.*?)(\\||\\>)";
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

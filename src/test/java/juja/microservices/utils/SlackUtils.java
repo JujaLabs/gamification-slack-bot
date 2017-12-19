@@ -5,12 +5,6 @@ package juja.microservices.utils;
  */
 public class SlackUtils {
 
-    private static final String SLACK_ID_WRAPPER_PATTERN = "<@%s>";
-
-    public static String convertSlackUserInSlackFormat(String slackUser) {
-        return String.format(SLACK_ID_WRAPPER_PATTERN, slackUser);
-    }
-
     public static String getUrlTemplate(String endpoint) {
         return endpoint + "?" +
                 "token={slashCommandToken}&" +

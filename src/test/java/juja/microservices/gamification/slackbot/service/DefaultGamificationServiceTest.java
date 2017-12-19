@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.inject.Inject;
 import java.util.*;
 
-import static juja.microservices.utils.SlackUtils.convertSlackUserInSlackFormat;
+import static juja.microservices.gamification.slackbot.model.SlackParsedCommand.convertSlackUserInFullSlackFormat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -114,9 +114,9 @@ public class DefaultGamificationServiceTest {
 
         //given
         String textCommand = String.format("-1th %s -2th %s -3th %s",
-                convertSlackUserInSlackFormat(user1.getSlackUser()),
-                convertSlackUserInSlackFormat(user2.getSlackUser()),
-                convertSlackUserInSlackFormat(user3.getSlackUser())
+                convertSlackUserInFullSlackFormat(user1.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user2.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user3.getSlackUser())
         );
 
         String[] savedAchievementId = {"100", "101", "102"};
@@ -150,9 +150,9 @@ public class DefaultGamificationServiceTest {
         //given
 
         String textCommand = String.format("-1th %s -2th %s -3th %s",
-                convertSlackUserInSlackFormat(user1.getSlackUser()),
-                convertSlackUserInSlackFormat(user2.getSlackUser()),
-                convertSlackUserInSlackFormat(user3.getSlackUser())
+                convertSlackUserInFullSlackFormat(user1.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user2.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user3.getSlackUser())
         );
 
         String[] savedAchievementId = {"100", "101", "102", "104"};
@@ -184,7 +184,7 @@ public class DefaultGamificationServiceTest {
 
         //given
         String textCommand = String.format("thanks %s comment",
-                convertSlackUserInSlackFormat(user1.getSlackUser())
+                convertSlackUserInFullSlackFormat(user1.getSlackUser())
         );
 
         String[] savedAchievementId = {"100"};
@@ -216,7 +216,7 @@ public class DefaultGamificationServiceTest {
 
         //given
         final String textCommand = String.format("thanks %s comment",
-                convertSlackUserInSlackFormat(user1.getSlackUser())
+                convertSlackUserInFullSlackFormat(user1.getSlackUser())
         );
         final String[] savedAchievementId = {"100", "101"};
         final String expectedResponseToSlack = String.format("Thanks, your 'thanks' for %s saved. " +

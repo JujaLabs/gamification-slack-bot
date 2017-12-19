@@ -17,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 
-import static juja.microservices.utils.SlackUtils.convertSlackUserInSlackFormat;
+import static juja.microservices.gamification.slackbot.model.SlackParsedCommand.convertSlackUserInFullSlackFormat;
 import static juja.microservices.utils.SlackUtils.getUriVars;
 import static juja.microservices.utils.SlackUtils.getUrlTemplate;
 import static org.junit.Assert.assertTrue;
@@ -176,7 +176,7 @@ public class GamificationSlackCommandControllerTest {
     @Test
     public void onReceiveSlashCommandThanksWhenIncorrectTokenShouldReturnSorryRichMessage() throws Exception {
         String thanksCommandText = String.format("thanks to %s description text",
-                convertSlackUserInSlackFormat(SLACK_USER_FROM)
+                convertSlackUserInFullSlackFormat(SLACK_USER_FROM)
         );
 
         mvc.perform(post(getUrlTemplate(GAMIFICATION_SLACK_BOT_THANKS_URL),
@@ -191,7 +191,7 @@ public class GamificationSlackCommandControllerTest {
     public void onReceiveSlashCommandThanksReturnOkRichMessage() throws Exception {
 
         String thanksCommandText = String.format("thanks %s for help",
-                convertSlackUserInSlackFormat(SLACK_USER_FROM));
+                convertSlackUserInFullSlackFormat(SLACK_USER_FROM));
         String responseToSlack = "Ok response";
 
         when(gamificationService.sendThanksAchievement(any(String.class), any(String.class))).thenReturn(responseToSlack);

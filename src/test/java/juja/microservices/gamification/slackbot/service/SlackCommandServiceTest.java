@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static juja.microservices.utils.SlackUtils.convertSlackUserInSlackFormat;
+import static juja.microservices.gamification.slackbot.model.SlackParsedCommand.convertSlackUserInFullSlackFormat;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -51,7 +51,7 @@ public class SlackCommandServiceTest {
     @Test
     public void createSlackCommandWithOneSlackUserInText() throws Exception {
         //given
-        String bodySlackCommand = "text " + convertSlackUserInSlackFormat(user1.getSlackUser()) + " TexT text.";
+        String bodySlackCommand = "text " + convertSlackUserInFullSlackFormat(user1.getSlackUser()) + " TexT text.";
 
         List<String> requestedUsersFromUserService = Arrays.asList(user1.getSlackUser(), userFrom.getSlackUser());
         List<UserDTO> foundUsersInUserService = Arrays.asList(userFrom, user1);
@@ -75,8 +75,8 @@ public class SlackCommandServiceTest {
     public void createSlackCommandWithTwoSlackUsersInText() throws Exception {
         //given
         String bodySlackCommand = String.format("text %s TexT %s text.",
-                convertSlackUserInSlackFormat(user1.getSlackUser()),
-                convertSlackUserInSlackFormat(user2.getSlackUser())
+                convertSlackUserInFullSlackFormat(user1.getSlackUser()),
+                convertSlackUserInFullSlackFormat(user2.getSlackUser())
         );
 
         List<String> requestedUsersFromUserService = Arrays.asList(user1.getSlackUser(),

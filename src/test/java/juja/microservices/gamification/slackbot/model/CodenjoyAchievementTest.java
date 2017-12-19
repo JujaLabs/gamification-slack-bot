@@ -13,7 +13,7 @@ import org.junit.rules.ExpectedException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static juja.microservices.utils.SlackUtils.convertSlackUserInSlackFormat;
+import static juja.microservices.gamification.slackbot.model.SlackParsedCommand.convertSlackUserInFullSlackFormat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 
@@ -58,9 +58,9 @@ public class CodenjoyAchievementTest {
     public void createAchievementTest() throws JsonProcessingException {
         //given
         String text = String.format("-1th %s -2th %s -3th %s",
-                convertSlackUserInSlackFormat(SLACK_USER1),
-                convertSlackUserInSlackFormat(SLACK_USER2),
-                convertSlackUserInSlackFormat(SLACK_USER3)
+                convertSlackUserInFullSlackFormat(SLACK_USER1),
+                convertSlackUserInFullSlackFormat(SLACK_USER2),
+                convertSlackUserInFullSlackFormat(SLACK_USER3)
         );
         SlackParsedCommand slackParsedCommand = new SlackParsedCommand(SLACK_USER_FROM, text, users);
         //when
@@ -74,9 +74,9 @@ public class CodenjoyAchievementTest {
     public void ifWrongTokensOrder() throws Exception {
         //given
         String text = String.format("-2th %s -1th %s -3th %s",
-                convertSlackUserInSlackFormat(SLACK_USER2),
-                convertSlackUserInSlackFormat(SLACK_USER1),
-                convertSlackUserInSlackFormat(SLACK_USER3)
+                convertSlackUserInFullSlackFormat(SLACK_USER2),
+                convertSlackUserInFullSlackFormat(SLACK_USER1),
+                convertSlackUserInFullSlackFormat(SLACK_USER3)
         );
         SlackParsedCommand slackParsedCommand = new SlackParsedCommand(SLACK_USER_FROM, text, users);
 
@@ -93,9 +93,9 @@ public class CodenjoyAchievementTest {
     public void ifWithoutSpaces() throws Exception {
         //given
         String text = String.format("-2th%s-1th%s-3th%s",
-                convertSlackUserInSlackFormat(SLACK_USER2),
-                convertSlackUserInSlackFormat(SLACK_USER1),
-                convertSlackUserInSlackFormat(SLACK_USER3)
+                convertSlackUserInFullSlackFormat(SLACK_USER2),
+                convertSlackUserInFullSlackFormat(SLACK_USER1),
+                convertSlackUserInFullSlackFormat(SLACK_USER3)
         );
 
 
@@ -113,9 +113,9 @@ public class CodenjoyAchievementTest {
     public void ifTextInTheCommand() throws Exception {
         //given
         String text = String.format("text -2th %s text text-3th %s -1th %s",
-                convertSlackUserInSlackFormat(SLACK_USER2),
-                convertSlackUserInSlackFormat(SLACK_USER3),
-                convertSlackUserInSlackFormat(SLACK_USER1)
+                convertSlackUserInFullSlackFormat(SLACK_USER2),
+                convertSlackUserInFullSlackFormat(SLACK_USER3),
+                convertSlackUserInFullSlackFormat(SLACK_USER1)
         );
 
 
@@ -133,8 +133,8 @@ public class CodenjoyAchievementTest {
     public void ifNotSlackUserForToken() throws Exception {
         //given
         String commandText = String.format("-2th %s -3th -1th %s",
-                convertSlackUserInSlackFormat(SLACK_USER2),
-                convertSlackUserInSlackFormat(SLACK_USER1)
+                convertSlackUserInFullSlackFormat(SLACK_USER2),
+                convertSlackUserInFullSlackFormat(SLACK_USER1)
         );
 
         String expectedExceptionMessage = "'"+commandText+"' doesn't contain slackUser for token '-3th'";
@@ -152,9 +152,9 @@ public class CodenjoyAchievementTest {
     public void ifIsNotToken() throws Exception {
         //given
         String commandText = String.format("-2th %s %s -1th %s",
-                convertSlackUserInSlackFormat(SLACK_USER2),
-                convertSlackUserInSlackFormat(SLACK_USER3),
-                convertSlackUserInSlackFormat(SLACK_USER1)
+                convertSlackUserInFullSlackFormat(SLACK_USER2),
+                convertSlackUserInFullSlackFormat(SLACK_USER3),
+                convertSlackUserInFullSlackFormat(SLACK_USER1)
         );
 
         String expectedExceptionMessage = "Token '-3th' didn't find in the string '"+commandText+"'";

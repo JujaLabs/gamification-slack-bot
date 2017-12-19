@@ -22,10 +22,16 @@ import java.util.regex.Pattern;
  * @author Nikolay Horushko
  * @author Danil Kuznetsov kuznetsov.danil.v@gmail.com
  */
-@ToString(exclude = {"SLACK_USER_PATTERN", "logger"})
+@ToString(exclude = {"logger"})
 public class SlackParsedCommand {
+
+    public static final String SLACK_USER_WRAPPER_PATTERN = "<@%s>";
+    public static final String SLACK_USER_FULL_WRAPPER_PATTERN = "<@%1$s|%1$s>";
+
+    public static final String SLACK_USER_PATTERN = "\\<@(.*?)(\\||\\>)";
+    public static final String SLACK_USER_FULL_PATTERN = "\\<@(.*?)(\\>)";
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final String SLACK_USER_PATTERN = "\\<@(.*?)(\\||\\>)";
     private String fromSlackUser;
     private String text;
     private List<String> slackUserInText;
@@ -35,13 +41,17 @@ public class SlackParsedCommand {
     public SlackParsedCommand(String fromSlackUser, String text, Map<String, UserDTO> users) {
         this.fromSlackUser = fromSlackUser;
         this.text = text;
-        this.slackUserInText = receiveAllSlacUsers(text);
+        this.slackUserInText = receiveAllSlackUsers(text);
         this.users = users;
         this.userCountInText = slackUserInText.size();
     }
 
-    public List<String> getSlackUserInText() {
-        return slackUserInText;
+    public static String convertSlackUserInFullSlackFormat(String slackUser) {
+        return String.format(SLACK_USER_FULL_WRAPPER_PATTERN, slackUser);
+    }
+
+    public static String convertSlackUserInSlackFormat(String slackUser) {
+        return String.format(SLACK_USER_WRAPPER_PATTERN, slackUser);
     }
 
     public String getText() {
@@ -63,7 +73,7 @@ public class SlackParsedCommand {
         return userCountInText;
     }
 
-    private List<String> receiveAllSlacUsers(String text) {
+    private List<String> receiveAllSlackUsers(String text) {
         List<String> result = new ArrayList<>();
         Pattern pattern = Pattern.compile(SLACK_USER_PATTERN);
         Matcher matcher = pattern.matcher(text);
@@ -74,7 +84,7 @@ public class SlackParsedCommand {
     }
 
     public String getTextWithoutSlackUsers() {
-        String result = text.replaceAll(SLACK_USER_PATTERN, "");
+        String result = text.replaceAll(SLACK_USER_FULL_PATTERN, "");
         result = result.replaceAll("\\s+", " ").trim();
         return result;
     }
