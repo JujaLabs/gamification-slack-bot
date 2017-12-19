@@ -63,6 +63,7 @@ public class GamificationSlackCommandController {
         if (!token.equals(slackSecurityToken)) {
             logger.warn("Received invalid slack token: [{}] in command Codenjoy for user: [{}]", token, fromSlackUser);
             sendInstantResponseMessage(servletResponse, SORRY_MESSAGE);
+            return;
         }
         exceptionsHandler.setResponseUrl(responseUrl);
         sendInstantResponseMessage(servletResponse, INSTANT_MESSAGE);
@@ -90,6 +91,7 @@ public class GamificationSlackCommandController {
         if (!token.equals(slackSecurityToken)) {
             logger.warn("Received invalid slack token: [{}] in command Daily for user: [{}] ", token, fromSlackUser);
             sendInstantResponseMessage(servletResponse, SORRY_MESSAGE);
+            return;
         }
         exceptionsHandler.setResponseUrl(responseUrl);
         sendInstantResponseMessage(servletResponse, INSTANT_MESSAGE);
@@ -116,6 +118,7 @@ public class GamificationSlackCommandController {
         if (!token.equals(slackSecurityToken)) {
             logger.warn("Received invalid slack token: [{}] in command thanks for user: [{}]", token, fromSlackUser);
             sendInstantResponseMessage(servletResponse, SORRY_MESSAGE);
+            return;
         }
         exceptionsHandler.setResponseUrl(responseUrl);
         sendInstantResponseMessage(servletResponse, INSTANT_MESSAGE);
@@ -143,6 +146,7 @@ public class GamificationSlackCommandController {
         if (!token.equals(slackSecurityToken)) {
             logger.warn("Received invalid slack token: [{}] in command interview for user: [{}]", token, fromSlackUser);
             sendInstantResponseMessage(servletResponse, SORRY_MESSAGE);
+            return;
         }
         exceptionsHandler.setResponseUrl(responseUrl);
         sendInstantResponseMessage(servletResponse, INSTANT_MESSAGE);
@@ -170,6 +174,7 @@ public class GamificationSlackCommandController {
         if (!token.equals(slackSecurityToken)) {
             logger.warn("Received invalid slack token: [{}] in command Team for user: [{}] ", token, fromSlackUser);
             sendInstantResponseMessage(servletResponse, SORRY_MESSAGE);
+            return;
         }
         exceptionsHandler.setResponseUrl(responseUrl);
         sendInstantResponseMessage(servletResponse, INSTANT_MESSAGE);

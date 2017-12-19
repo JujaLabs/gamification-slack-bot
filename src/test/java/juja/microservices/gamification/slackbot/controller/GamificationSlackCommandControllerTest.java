@@ -76,7 +76,8 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(SORRY_MESSAGE));
-        verify(exceptionsHandler).setResponseUrl(anyString());
+        verifyNoMoreInteractions(exceptionsHandler);
+        verifyNoMoreInteractions(gamificationService);
     }
 
     @Test
@@ -129,7 +130,8 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(SORRY_MESSAGE));
-        verify(exceptionsHandler).setResponseUrl(anyString());
+        verifyNoMoreInteractions(exceptionsHandler);
+        verifyNoMoreInteractions(gamificationService);
     }
 
     @Test
@@ -184,7 +186,8 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(SORRY_MESSAGE));
-        verify(exceptionsHandler).setResponseUrl(anyString());
+        verifyNoMoreInteractions(exceptionsHandler);
+        verifyNoMoreInteractions(gamificationService);
     }
 
     @Test
@@ -238,7 +241,8 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(SORRY_MESSAGE));
-        verify(exceptionsHandler).setResponseUrl(anyString());
+        verifyNoMoreInteractions(exceptionsHandler);
+        verifyNoMoreInteractions(gamificationService);
     }
 
     @Test
@@ -309,7 +313,8 @@ public class GamificationSlackCommandControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
                 .andExpect(content().string(SORRY_MESSAGE));
-        verify(exceptionsHandler).setResponseUrl(anyString());
+        verifyNoMoreInteractions(exceptionsHandler);
+        verifyNoMoreInteractions(gamificationService);
     }
 
     @Test
