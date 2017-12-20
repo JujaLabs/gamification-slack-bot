@@ -199,7 +199,7 @@ public class GamificationSlackCommandController {
     }
 
     private void sendDelayedResponseMessage(String responseUrl, RichMessage message) {
-        logger.debug("Before sending delayed response message '{}' to slack url '{}' ", message, responseUrl);
+        logger.debug("Before sending delayed response message '{}' to slack url '{}' ", message.getText(), responseUrl);
         String response = restTemplate.postForObject(responseUrl, message, String.class);
         logger.debug("After sending delayed response message. Response is '{}'", response);
     }
