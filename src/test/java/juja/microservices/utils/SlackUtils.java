@@ -3,7 +3,8 @@ package juja.microservices.utils;
 /**
  * @author Danil Kuznetsov
  */
-public class SlackUrlUtils {
+public class SlackUtils {
+
     public static String getUrlTemplate(String endpoint) {
         return endpoint + "?" +
                 "token={slashCommandToken}&" +

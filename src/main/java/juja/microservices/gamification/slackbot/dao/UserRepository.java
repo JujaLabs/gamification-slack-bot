@@ -7,10 +7,11 @@ import java.util.Set;
 
 /**
  * @author Artem
+ * @author Danil Kuznetsov kuznetsov.danil.v@gmail.com
  */
 public interface UserRepository {
 
-    List<UserDTO> findUsersBySlackNames(List<String> slackNames);
+    List<UserDTO> findUsersBySlackUsers(List<String> slackUsers);
 
     Set<UserDTO> findUsersByUuids(Set<String> uuids);
 }
